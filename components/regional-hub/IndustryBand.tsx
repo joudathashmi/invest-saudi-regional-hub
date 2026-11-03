@@ -2,17 +2,32 @@
 
 import type { DS } from '@/lib/ds';
 import { GREEN_FIGURES, INDUSTRIES, INDUSTRY_REGION, MARKETS } from '@/data/regional-hub';
-import { Reveal, Sideways, SourceLine, marketNames, type HubContext } from './shared';
+import { Reveal, SourceLine, marketNames, type HubContext } from './shared';
 import { industryPhoto } from './imagery';
 
 /**
- * Evaluate, continued. Your industry in the region as an editorial read:
- * the region, Saudi's place in it, and how connectivity matters, with the
- * published national figures set in type beside the text. Industry chips
- * select when none is chosen.
+ * 07 Industry. Structured, not an article: pick a sector, then three labelled
+ * panels (The region, Where Saudi Arabia stands, Connectivity that matters)
+ * over the sector photograph, the national figures as tiles, and the links
+ * as a row. Beneath, the industrial and green hub as a statement figure with
+ * four pillars (downstream, automotive, defence, hydrogen) and its records.
  */
+const PILLARS = [
+  { icon: 'tool-02', title: 'Downstream', text: 'Petrochemicals and specialty materials at Jubail and Yanbu.' },
+  { icon: 'truck-01', title: 'Automotive', text: 'Lucid and Ceer at King Abdullah Economic City.' },
+  { icon: 'shield-01', title: 'Defence', text: 'SAMI, with 50% of spending to be localised by 2030.' },
+  { icon: 'lightning-01', title: 'Hydrogen', text: 'NEOM Green Hydrogen, about 600 t/day at design capacity.' },
+];
+
 export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onPick: (industry: string) => void }) {
   const rec = ctx.industry ? INDUSTRY_REGION[ctx.industry] : null;
+  const photo = industryPhoto(rec?.industry ?? null);
+  const panels = rec ? [
+    { icon: 'globe-01', title: 'The region', text: rec.summary },
+    { icon: 'flag-01', title: 'Where Saudi Arabia stands', text: rec.saudiPosition },
+    { icon: 'route', title: 'Connectivity that matters', text: rec.connectivity },
+  ] : [];
+  const green = GREEN_FIGURES.filter((f) => f.status !== 'unavailable');
 
   return (
     <section id="industry" className="rh-band rh-glow-l" aria-labelledby="rh-industry">
@@ -20,71 +35,76 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">07 · Your industry</span>
           <h2 id="rh-industry" className="display-md-semibold rh-h2">{rec ? `${rec.industry} in the region` : 'Your industry in the region'}</h2>
-          <p className="text-lg-regular rh-muted rh-para">{rec ? `How the sector looks across ${marketNames(ctx.markets)}, where Saudi Arabia stands in it, and how the connections above matter for it.` : 'Pick an industry to read how the sector looks across the region and where Saudi Arabia stands in it.'}</p>
+          <p className="text-lg-regular rh-muted rh-para">{rec ? `Across ${marketNames(ctx.markets)}: the market, Saudi Arabia's place in it, and the links that carry it.` : 'Pick a sector. The market, Saudi Arabia’s place in it, and the links that carry it, in three panels.'}</p>
         </Reveal>
         <div className="rh-chips">
           {INDUSTRIES.map((i) => (
-            <DS.Chip key={i} size="md" selected={ctx.industry === i} onClick={() => onPick(i)}>
-              {i}
-            </DS.Chip>
+            <DS.Chip key={i} size="md" selected={ctx.industry === i} onClick={() => onPick(i)}>{i}</DS.Chip>
           ))}
         </div>
-        {rec && (
-          <div className="rh-industry">
-            <div className="rh-industry-text">
-              <p className="text-md-regular rh-para"><span className="rh-strong">The region.</span> {rec.summary}</p>
-              <p className="text-md-regular rh-para"><span className="rh-strong">Where Saudi Arabia stands.</span> {rec.saudiPosition}</p>
-              <p className="text-md-regular rh-para"><span className="rh-strong">How connectivity matters here.</span> {rec.connectivity}</p>
-              <SourceLine DS={DS} p={rec} />
-              <Sideways
-                DS={DS}
-                items={[
-                  { label: 'Sector page', href: rec.sectorHref, icon: 'briefcase-01' },
-                  { label: 'Opportunities in this sector', href: `/opportunities?sector=${encodeURIComponent(rec.industry)}`, icon: 'coins-stacked-01' },
-                  { label: 'Companies already here', href: '#companies', icon: 'users-01' },
-                  { label: 'See the network', href: '#connectivity', icon: 'route' },
-                ]}
-              />
+        {rec ? (
+          <>
+            <div className="rh-ind">
+              <figure className="rh-ind-photo"><img src={photo.src} alt={photo.alt} loading="lazy" /><figcaption className="text-xs-semibold rh-eyebrow">{rec.industry}</figcaption></figure>
+              <div className="rh-ind-panels">
+                {panels.map((p) => (
+                  <div key={p.title} className="rh-ind-panel">
+                    <DS.FeaturedIcon icon={p.icon} color="brand" size="md" />
+                    <span className="text-md-semibold rh-strong">{p.title}</span>
+                    <span className="text-sm-regular rh-muted">{p.text}</span>
+                  </div>
+                ))}
+                <span className="rh-ind-src"><SourceLine DS={DS} p={rec} /></span>
+              </div>
             </div>
-            <div className="rh-industry-aside">
-              <img key={rec.industry} className="rh-industry-photo" src={industryPhoto(rec.industry).src} alt={industryPhoto(rec.industry).alt} loading="lazy" />
-              {rec.nationalFigures.length > 0 ? (
-                <dl className="rh-factlist rh-factlist--col">
-                  {rec.nationalFigures.map((f) => (
-                    <div key={f.label} className="rh-fact">
-                      <dt className="display-xs-semibold">{f.value}</dt>
-                      <dd className="text-sm-regular rh-muted">{f.label}<br /><SourceLine DS={DS} p={f} /></dd>
-                    </div>
-                  ))}
-                </dl>
-              ) : (
-                <p className="text-sm-regular rh-tertiary rh-para">National figures for this sector are published on the sector page.</p>
-              )}
-              {rec.demandByMarket ? (
-                <DS.LineChart type="bar" title="Regional demand by market" labels={rec.demandByMarket.map((d) => MARKETS.find((m) => m.code === d.market)?.name ?? d.market)} series={[{ name: rec.industry, data: rec.demandByMarket.map((d) => d.value) }]} />
-              ) : (
-                <p className="text-xs-regular rh-tertiary rh-para">Regional demand by market is published by the sector team as part of the sector equity story; it appears here once it exists.</p>
-              )}
+            {rec.nationalFigures.length > 0 && (
+              <dl className="rh-factlist rh-factlist--4">
+                {rec.nationalFigures.map((f) => (
+                  <div key={f.label} className="rh-fact">
+                    <dt className="display-xs-semibold">{f.value}</dt>
+                    <dd className="text-sm-regular rh-muted">{f.label}<br /><SourceLine DS={DS} p={f} /></dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            {rec.demandByMarket ? (
+              <DS.LineChart type="bar" title="Regional demand by market" labels={rec.demandByMarket.map((d) => MARKETS.find((m) => m.code === d.market)?.name ?? d.market)} series={[{ name: rec.industry, data: rec.demandByMarket.map((d) => d.value) }]} />
+            ) : (
+              <p className="text-xs-regular rh-tertiary rh-para">Regional demand by market appears once the sector team publishes it as part of the sector equity story.</p>
+            )}
+            <div className="rh-actions">
+              <DS.Button hierarchy="primary" size="md" href={rec.sectorHref} iconTrailing="arrow-right">{rec.industry} sector page</DS.Button>
+              <DS.Button hierarchy="secondary-gray" size="md" href={`/opportunities?sector=${encodeURIComponent(rec.industry)}`} iconLeading="coins-stacked-01">Opportunities</DS.Button>
+              <DS.Button hierarchy="link-color" size="md" href="#companies" iconTrailing="arrow-right">Companies in this sector</DS.Button>
             </div>
-          </div>
+          </>
+        ) : (
+          <figure className="rh-ind-photo rh-ind-photo--wide"><img src={photo.src} alt={photo.alt} loading="lazy" /><figcaption className="text-sm-medium">Eleven sectors. Choose one above.</figcaption></figure>
         )}
+
         <div className="rh-green">
           <div className="rh-editorial-lead">
             <span className="text-xs-semibold rh-eyebrow">Industrial and green hub</span>
             <h3 className="display-xs-semibold rh-h3">From exporting hydrocarbons to exporting value</h3>
-            <p className="text-md-regular rh-muted rh-para">Downstream petrochemicals at Jubail and Yanbu, automotive at KAEC (Lucid, Ceer), defence manufacturing under SAMI, and the NEOM Green Hydrogen project supplying certified low-carbon feedstock that European buyers will require. For a regional manufacturer the point is supply security: energy-intensive processes next to competitively priced, increasingly low-carbon inputs.</p>
           </div>
-          <dl className="rh-factlist rh-factlist--3">
-            {GREEN_FIGURES.filter((f) => f.status !== 'unavailable').map((f) => (
+          <div className="rh-pillars">
+            {PILLARS.map((p) => (
+              <div key={p.title} className="rh-pillar">
+                <DS.FeaturedIcon icon={p.icon} color="brand" size="md" />
+                <span className="text-md-semibold rh-strong">{p.title}</span>
+                <span className="text-sm-regular rh-muted">{p.text}</span>
+              </div>
+            ))}
+          </div>
+          <dl className="rh-factlist rh-factlist--4">
+            {green.slice(0, 4).map((f) => (
               <div key={f.label} className="rh-fact">
                 <dt className="display-xs-semibold">{f.value}</dt>
                 <dd className="text-sm-regular rh-muted">{f.label}<br /><SourceLine DS={DS} p={f} /></dd>
               </div>
             ))}
           </dl>
-          {GREEN_FIGURES.filter((f) => f.status === 'unavailable').map((f) => (
-            <p key={f.label} className="text-xs-regular rh-tertiary rh-para">{f.label}: not shown until the {f.source} is confirmed by the {f.owner}. NEOM figures are design capacities reported by the developer; first ammonia deliveries are expected in early 2027.</p>
-          ))}
+          <p className="text-xs-regular rh-tertiary rh-para">NEOM figures are design capacities reported by the developer; first ammonia deliveries are expected in early 2027. NIDLP localisation figures appear once the Sector team confirms the annual report. For a regional manufacturer the point is supply security: energy-intensive processes beside competitively priced, increasingly low-carbon inputs.</p>
         </div>
       </div>
     </section>

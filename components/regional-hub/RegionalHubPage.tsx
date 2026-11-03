@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useDS } from '@/lib/ds';
 import type { HubContext } from './shared';
 import { HeroBand } from './HeroBand';
-import { CaseBuilderPanel, CaseFab } from './CaseBuilder';
+import { CaseBuilderPanel } from './CaseBuilder';
 import { SectionNav } from './SectionNav';
 import { ReachBand } from './ReachBand';
 import { ConnectivityBand } from './ConnectivityBand';
@@ -35,13 +35,6 @@ export function RegionalHubPage() {
   const [ctx, setCtx] = React.useState<HubContext>({ industry: null, markets: [], route: null });
   const [cookies, setCookies] = React.useState(false);
   const [caseOpen, setCaseOpen] = React.useState(false);
-  const [fab, setFab] = React.useState(false);
-  React.useEffect(() => {
-    const onScroll = () => setFab(window.scrollY > 700);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   React.useEffect(() => {
     try {
@@ -85,7 +78,6 @@ export function RegionalHubPage() {
       </main>
       <DS.Footer />
       <CaseBuilderPanel DS={DS} ctx={ctx} onChange={setCtx} open={caseOpen} onClose={() => setCaseOpen(false)} />
-      <CaseFab DS={DS} visible={fab && !caseOpen} onOpen={() => setCaseOpen(true)} />
       {cookies && (
         <div style={{ position: 'fixed', insetInline: 0, bottom: 0, zIndex: 50 }}>
           <DS.CookiesPopup onAccept={decide} onDecline={decide} onClose={decide} />
