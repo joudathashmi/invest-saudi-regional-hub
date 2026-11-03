@@ -4,7 +4,6 @@ import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { CONNECTIVITY_FIGURES, CORRIDORS, DIGITAL_FIGURES, DIGITAL_NODES, HUB_CITIES, LAND_PORTS, MARKETS, MODE_RELEVANCE, NODES, REACH_RINGS, SAUDI_CITIES, TREATIES, type Node } from '@/data/regional-hub';
 import { Globe, greatCircleKm, type GlobeArc, type GlobeLine, type GlobePoint, type GlobeView } from './Globe';
-import { STEP_PHOTOS } from './imagery';
 import { Reveal, Sideways, SourceLine, marketNames, type HubContext } from './shared';
 
 type Mode = 'air' | 'sea' | 'ground' | 'digital';
@@ -174,7 +173,6 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
           <div className="rh-story-steps">
             {STEPS.map((k) => (
               <div key={k} data-step={k} ref={(el) => { stepRefs.current[k] = el; }} className={step === k ? 'rh-step rh-step--on' : 'rh-step'}>
-                <img className="rh-step-photo" src={STEP_PHOTOS[k].src} alt={STEP_PHOTOS[k].alt} loading="lazy" />
                 <span className="text-sm-semibold rh-eyebrow">{STEP_META[k].label}</span>
                 <h3 className="display-sm-semibold rh-h3">{STEP_META[k].title}</h3>
                 <p className="text-md-regular rh-muted rh-para">{legendFor(k)}</p>
