@@ -19,7 +19,7 @@ export function ComparisonBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
     <section id="comparison" className="rh-band rh-glow-l" aria-labelledby="rh-compare">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
-          <span className="text-sm-semibold rh-eyebrow">08 · Compare</span>
+          <span className="text-sm-semibold rh-eyebrow">10 · Compare</span>
           <h2 id="rh-compare" className="display-md-semibold rh-h2">How Saudi Arabia compares as a hub</h2>
           <p className="text-lg-regular rh-muted rh-para">
             Against the UAE, Qatar, Egypt and Türkiye on the attributes that matter{routeTitle ? ` for the route "${routeTitle}"` : ''}. Where Saudi Arabia leads: the 30-year RHQ tax treatment, the SEZ and ILBZ regimes, and the reach of a 4-hour flight. Where others lead: the UAE on the Logistics Performance Index and port throughput, the UAE and Qatar on headline corporate tax rates. Three attributes have no sourced value yet and stay empty rather than estimated.

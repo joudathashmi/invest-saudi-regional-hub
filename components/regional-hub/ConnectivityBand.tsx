@@ -2,11 +2,11 @@
 
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
-import { PLATFORMS, CONNECTIVITY_FIGURES, CORRIDORS, DIGITAL_FIGURES, DIGITAL_NODES, HUB_CITIES, LAND_PORTS, MARKETS, MODE_RELEVANCE, NODES, REACH_RINGS, SAUDI_CITIES, TREATIES, type Node } from '@/data/regional-hub';
+import { AVIATION_FIGURES, COMPUTE_FIGURES, FREIGHT_FIGURES, FREIGHT_RELEVANCE, REACH, PLATFORMS, CONNECTIVITY_FIGURES, CORRIDORS, DIGITAL_FIGURES, DIGITAL_NODES, HUB_CITIES, LAND_PORTS, MARKETS, MODE_RELEVANCE, NODES, REACH_RINGS, SAUDI_CITIES, TREATIES, type Node } from '@/data/regional-hub';
 import { Globe, greatCircleKm, type GlobeArc, type GlobeLine, type GlobePoint, type GlobeView } from './Globe';
 import { Reveal, Sideways, SourceLine, marketNames, type HubContext } from './shared';
 
-type Mode = 'air' | 'sea' | 'ground' | 'digital';
+type Mode = 'air' | 'sea' | 'ground' | 'corridors' | 'digital';
 type Layer = 'all' | 'road' | 'rail' | 'ports';
 
 /* Estimated travel time from great-circle distance. Status "estimate" until the
@@ -31,12 +31,13 @@ const REGION_VIEW: GlobeView = { lat: 22, lon: 42, zoom: 1 };
 const SAUDI_VIEW: GlobeView = { lat: 24.2, lon: 45.5, zoom: 4.1 };
 const DIGITAL_VIEW: GlobeView = { lat: 24, lon: 44, zoom: 2.2 };
 const GROUND_VIEW: GlobeView = { lat: 26.5, lon: 48.5, zoom: 3.6 };
+const CORRIDOR_VIEW: GlobeView = { lat: 23, lon: 45, zoom: 1.9 };
 const NEIGHBOURS = ['784', '634', '414', '512', '400', '368', '887', '048'];
 
 /** Band 3: how strongly Saudi Arabia is connected, by air, sea and ground, on a real-world globe. */
 export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onChange?: (c: HubContext) => void }) {
   type Step = Mode | 'integrated';
-  const STEPS: Step[] = ['air', 'sea', 'ground', 'digital', 'integrated'];
+  const STEPS: Step[] = ['air', 'sea', 'ground', 'corridors', 'digital', 'integrated'];
   const [step, setStep] = React.useState<Step>('air');
   const [layer, setLayer] = React.useState<Layer>('all');
   const [view, setView] = React.useState<GlobeView>(REGION_VIEW);
@@ -62,7 +63,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
 
   const activate = (k: Step, scroll: boolean) => {
     setStep(k);
-    setView(k === 'integrated' ? SAUDI_VIEW : k === 'digital' ? DIGITAL_VIEW : k === 'ground' ? GROUND_VIEW : REGION_VIEW);
+    setView(k === 'integrated' ? SAUDI_VIEW : k === 'digital' ? DIGITAL_VIEW : k === 'ground' ? GROUND_VIEW : k === 'corridors' ? CORRIDOR_VIEW : REGION_VIEW);
     if (scroll) stepRefs.current[k]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
   const enterFocus = () => activate('integrated', true);
@@ -78,6 +79,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
   const regionPoints: GlobePoint[] = [
     ...(mode === 'air' ? CENTRES.map((c) => ({ id: c.id, name: c.city, lat: c.lat, lon: c.lon, kind: 'centre' as const, labelAt: (c.lon < 30 ? 'left' : 'right') as 'left' | 'right', title: `${c.city}, ${c.country}` })) : []),
     ...HUB_CITIES.map((h) => ({ ...h, kind: 'hub' as const, labelAt: (h.id === 'jed' ? 'left' : h.id === 'dmm' ? 'above' : 'below') as 'left' | 'above' | 'below' })),
+    ...(mode === 'corridors' ? NODES.filter((n) => ['jip', 'kap', 'dmm', 'jub'].includes(n.id)).map((n) => ({ id: n.id, name: '', title: n.name, lat: n.lat, lon: n.lon, kind: 'port' as const })) : []),
     ...(mode === 'sea' ? NODES.filter((n) => n.mode === 'sea').map((n) => ({ id: n.id, name: n.name.replace(' Port', ''), lat: n.lat, lon: n.lon, kind: 'port' as const })) : []),
     ...(mode === 'digital' ? DIGITAL_NODES.map((d) => ({ id: d.id, name: d.name, lat: d.lat, lon: d.lon, kind: (d.kind === 'landing' ? 'port' : 'airport') as 'port' | 'airport', pulse: true, title: `${d.name}: ${d.note}`, labelAt: (d.lon < 44 ? 'left' : 'right') as 'left' | 'right', sub: d.kind === 'landing' ? '(landing)' : d.kind === 'cloud' ? '(cloud)' : '(planned)' })) : []),
     ...MARKETS.map((m) => {
@@ -92,6 +94,15 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
       ...CENTRES.map((c) => { const km = greatCircleKm(riyadh, c); const h = flightHours(km); return { from: riyadh, to: c, vehicle: 'plane' as const, thin: true, dashed: true, hours: h, label: fmtH(h) }; }),
     ]
       : mode === 'ground' ? shown.filter((m) => ground.has(m.code)).map((m) => ({ from: riyadh, to: m, dashed: true, vehicle: 'truck' as const, label: fmtH(driveHours(greatCircleKm(riyadh, m))) }))
+        : mode === 'corridors' ? [
+          { from: { lat: 19.08, lon: 72.88 }, to: { lat: 24.5, lon: 58.5 }, dashed: true, vehicle: 'ship' as const, label: 'Asia to the Gulf' },
+          { from: { lat: 24.5, lon: 58.5 }, to: { lat: 26.3, lon: 56.4 }, dashed: true, thin: true },
+          { from: { lat: 26.3, lon: 56.4 }, to: { lat: 26.47, lon: 50.2 }, dashed: true, vehicle: 'ship' as const, label: 'Strait of Hormuz' },
+          { from: { lat: 21.47, lon: 39.17 }, to: { lat: 27.5, lon: 34.5 }, dashed: true, vehicle: 'ship' as const, label: 'Red Sea to Suez and Europe' },
+          { from: { lat: 27.5, lon: 34.5 }, to: { lat: 31.26, lon: 32.3 }, dashed: true, thin: true },
+          { from: { lat: 21.47, lon: 39.17 }, to: { lat: 13.0, lon: 42.8 }, dashed: true, vehicle: 'ship' as const, label: 'Red Sea to East Africa' },
+          { from: { lat: 13.0, lon: 42.8 }, to: { lat: -4.04, lon: 39.67 }, dashed: true, thin: true },
+        ]
         : mode === 'digital' ? [] : seaMarkets.map((m) => ({ from: m.lon < 44 ? { lat: 21.47, lon: 39.17 } : { lat: 26.47, lon: 50.2 }, to: m, dashed: true, vehicle: 'ship' as const }));
   const rings = mode === 'air' ? REACH_RINGS.map((r) => ({ lat: riyadh.lat, lon: riyadh.lon, km: r.km, label: r.label })) : [];
 
@@ -115,6 +126,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
     air: { label: 'Air', title: 'Half the world within an eight-hour flight' },
     sea: { label: 'Sea', title: 'Two coastlines, two trade systems' },
     ground: { label: 'Land', title: 'The GCC by road within a day' },
+    corridors: { label: 'Freight corridors', title: 'Gulf to Red Sea by rail, bypassing the Strait of Hormuz' },
     digital: { label: 'Digital', title: 'Landings on both coasts, cloud in the middle' },
     integrated: { label: 'Integrated network', title: 'How it joins up inside Saudi Arabia' },
   };
@@ -122,15 +134,17 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
     k === 'integrated' ? 'Roads in brand, operating rail dashed, planned rail dotted, ports (blue) and airports (orange) as points, border crossings as diamonds labelled with the neighbour they lead to. Hover any point for its name.'
     : k === 'air' ? 'Arcs from Riyadh to each selected market with estimated flight time (great-circle distance at about 850 km/h plus 30 minutes). Pulsing rings are the published 4-hour and 8-hour flight reach.'
     : k === 'sea' ? 'Red Sea ports serve Africa, Europe and the Levant; Arabian Gulf ports serve the GCC and Asia. Transit days per port pair are not yet published, so no time is shown.'
+    : k === 'corridors' ? 'Operating rail dashed, the planned Land Bridge dotted. Ships mark the sea legs the corridor joins: Asia into Dammam and Jubail, the Red Sea out to Suez, Europe and East Africa. Alignments are schematic until Saudi Arabia Railways publishes them.'
     : k === 'digital' ? 'Subsea landing cities on both coasts (blue), cloud and data-centre locations (orange). No cable routes are drawn: cable names, capacities and provider region status come from CST and the providers before they appear here.'
     : 'Road corridors to the GCC, Jordan and Iraq from Riyadh with estimated drive time (road distance taken as 1.25 times great-circle at 80 km/h).';
   const linksFor = (k: Step) =>
     k === 'air' ? [{ label: 'Riyadh logistics zone', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Corporate base route', href: '#routes', icon: 'building-07' }, { label: 'Logistics sector', href: '/sectors/logistics', icon: 'briefcase-01' }]
     : k === 'sea' ? [{ label: 'Zones beside ports', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Export route', href: '#routes', icon: 'tool-02' }, { label: 'Agreements and rules of origin', href: '#market-access', icon: 'globe-01' }]
     : k === 'ground' ? [{ label: 'Industrial cities', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Distribution route', href: '#routes', icon: 'truck-01' }, { label: 'GCC customs union', href: '#market-access', icon: 'globe-01' }]
+    : k === 'corridors' ? [{ label: 'Zones at both ends', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Export route', href: '#routes', icon: 'tool-02' }, { label: 'Logistics sector', href: '/sectors/logistics', icon: 'briefcase-01' }]
     : k === 'digital' ? [{ label: 'Cloud Computing SEZ', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Digital hub route', href: '#routes', icon: 'server-04' }, { label: 'ICT sector', href: '/sectors/ict', icon: 'briefcase-01' }]
     : [{ label: 'Where you can operate from', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Regions and cities', href: '/regions', icon: 'globe-01' }];
-  const rowsFor = (k: Step) => (k === 'integrated' ? NODES : k === 'digital' ? [] : NODES.filter((n) => (k === 'ground' ? n.mode === 'land' : n.mode === k)));
+  const rowsFor = (k: Step) => (k === 'integrated' ? NODES : k === 'digital' ? [] : k === 'corridors' ? NODES.filter((n) => n.id === 'land' || ['jip', 'kap', 'dmm', 'jub'].includes(n.id)) : NODES.filter((n) => (k === 'ground' ? n.mode === 'land' : n.mode === k)));
 
   return (
     <section id="connectivity" className="rh-band rh-glow-l" aria-labelledby="rh-connect">
@@ -153,7 +167,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                 points={focused ? focusPoints : regionPoints}
                 arcs={focused ? [] : regionArcs}
                 rings={focused ? [] : rings}
-                lines={focused ? focusLines : []}
+                lines={focused ? focusLines : mode === 'corridors' ? CORRIDORS.filter((c) => c.kind !== 'road').map((c) => ({ id: c.id, kind: c.kind, points: c.points, name: c.name })) : []}
                 selectedCountryIds={focused ? [] : selected.map((m) => m.countryId)}
                 neighbourCountryIds={focused ? NEIGHBOURS : []}
                 view={view}
@@ -238,7 +252,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                   </div>
                 ) : (
                   <dl className="rh-statline">
-                    {(k === 'digital' ? DIGITAL_FIGURES : CONNECTIVITY_FIGURES).map((f) => (
+                    {(k === 'digital' ? [...DIGITAL_FIGURES.slice(0, 2), ...COMPUTE_FIGURES.slice(0, 2)] : k === 'air' ? [REACH[0], REACH[1], ...AVIATION_FIGURES] : k === 'corridors' ? FREIGHT_FIGURES.filter((f) => f.status !== 'unavailable') : CONNECTIVITY_FIGURES).map((f) => (
                       <div key={f.label} className="rh-stat">
                         <dt className="display-xs-semibold">{f.value}</dt>
                         <dd className="text-sm-regular rh-muted">{f.label}<br /><SourceLine DS={DS} p={f} /></dd>
@@ -248,7 +262,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                 )}
                 {k !== 'integrated' && (
                   <div className="rh-relevance">
-                    {MODE_RELEVANCE[k].map((r) => (
+                    {(k === 'corridors' ? FREIGHT_RELEVANCE : MODE_RELEVANCE[k as keyof typeof MODE_RELEVANCE]).map((r) => (
                       <p key={r.who} className="text-md-regular rh-muted rh-para">
                         <b className="rh-strong">{r.who}.</b> {r.why}
                       </p>
@@ -258,7 +272,9 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                 <p className="text-xs-regular rh-tertiary rh-para">
                   {k === 'integrated'
                     ? 'Roads and rail are drawn as straight corridors between known cities and border posts, not surveyed alignments; distances and drive times are great-circle estimates until MoT, SAR, Mawani, GACA and ZATCA records replace them.'
-                    : k === 'air' ? 'Flight times are computed from distance, not schedules; the two rings are the published reach figures. GACA scheduled times per city pair replace the estimates once supplied.' : ''}
+                    : k === 'air' ? 'Flight times are computed from distance, not schedules; the two rings are the published reach figures. GACA scheduled times per city pair replace the estimates once supplied. King Salman International Airport capacity and Riyadh Air operations are press-reported and confirmed against GACA and the airline.'
+                    : k === 'corridors' ? 'Land Bridge delivery is the SAR statement of phased completion before 2034. Transit-time savings and port throughput are not shown until SAR and Mawani publish them; the 3 to 5 day saving in circulation is unverified.'
+                    : k === 'digital' ? 'Hyperscaler commitments are press-reported (Arab News, September 2025) and confirmed against CST and each provider before the Data team marks them verified.' : ''}
                 </p>
                 <Sideways DS={DS} items={linksFor(k)} />
                 {(rowsFor(k).length > 0 || k === 'digital') && (

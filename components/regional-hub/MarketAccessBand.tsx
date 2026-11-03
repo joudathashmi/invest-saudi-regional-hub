@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
-import { AGREEMENTS, MARKETS, TREATIES, type Agreement, type Treaty } from '@/data/regional-hub';
+import { AGREEMENTS, LEGAL_FOUNDATION, MARKETS, TREATIES, type Agreement, type Treaty } from '@/data/regional-hub';
 import { Reveal, SourceLine, type HubContext } from './shared';
 
 /** Band 4: market access. Agreement records filtered by the selected markets. */
@@ -70,6 +70,20 @@ export function MarketAccessBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             );
           })}
           {!ctx.markets.length && <span className="text-xs-regular rh-tertiary">Showing six markets. Set your markets in the regional case to see yours.</span>}
+        </div>
+        <div className="rh-legal">
+          <div className="rh-editorial-lead">
+            <span className="text-xs-semibold rh-eyebrow">The legal foundation beneath every route</span>
+            <p className="text-md-regular rh-muted rh-para">Agreements decide what crosses a border; these laws decide how a business is formed, contracts are enforced and disputes are settled once it is here.</p>
+          </div>
+          <dl className="rh-legal-grid">
+            {LEGAL_FOUNDATION.map((l) => (
+              <div key={l.id} className="rh-legal-item">
+                <dt className="text-md-semibold rh-strong">{l.name} <DS.Tag size="sm" color="success" dot>{l.since}</DS.Tag></dt>
+                <dd className="text-sm-regular rh-muted">{l.summary}<br /><SourceLine DS={DS} p={l} /></dd>
+              </div>
+            ))}
+          </dl>
         </div>
         <div className="rh-actions">
           <DS.Button hierarchy="link-gray" size="md" iconLeading={detail ? 'chevron-up' : 'chevron-down'} onClick={() => setDetail(!detail)}>

@@ -478,3 +478,93 @@ export const SAUDI_CITIES = [
   { id: 'tab', name: 'Tabuk', lat: 28.38, lon: 36.57 },
   { id: 'neom', name: 'NEOM', lat: 28.0, lon: 35.2 },
 ];
+
+/* ---------- Eight-pillar expansion (structural brief, 3 Nov 2026) ---------- */
+/* Figures checked against an official or primary source in this review. */
+const verified = (source: string, period: string, owner = 'Data Team'): Provenance => ({ source, period, updated: 'checked 3 Nov 2026', status: 'verified', owner });
+/* Figures reported in the press from a company or authority statement; the Data team confirms against the primary document. */
+const press = (source: string, period: string, owner = 'Data Team'): Provenance => ({ source, period, updated: 'press report, primary document to confirm', status: 'benchmark', owner });
+
+/* Pillar 1: freight corridors. */
+export const FREIGHT_FIGURES: Figure[] = [
+  { label: 'Land Bridge rail, Riyadh to Jeddah, delivery', value: 'Phased, before 2034', ...official('Saudi Arabia Railways statement, via Zawya', '2026') },
+  { label: 'Riyadh to Dammam rail (SAR East line)', value: 'Operating', ...official('Saudi Arabia Railways network', 'as published') },
+  { label: 'Land Bridge transit-time saving', value: PLACEHOLDER, ...pending('Saudi Arabia Railways', 'SAR, once the operating model is published; the 3 to 5 day figure in circulation is unverified') },
+  { label: 'Container throughput per port', value: PLACEHOLDER, ...pending('Mawani', 'Mawani annual statistics') },
+];
+export const FREIGHT_RELEVANCE: { who: string; why: string }[] = [
+  { who: 'Asia to Europe and Africa shippers', why: 'Cargo entering at Dammam or Jubail moves by rail to Riyadh today; once the Land Bridge operates it continues to Jeddah and King Abdullah Port without the sea passage around the peninsula or through the Strait of Hormuz.' },
+  { who: 'Manufacturers with two-coast supply chains', why: 'Feedstock from the Gulf and export from the Red Sea, or the reverse, on one rail network; plants in Jubail, Yanbu and KAEC sit at the ends of it.' },
+  { who: 'What this is not', why: 'A corridor is schematic until SAR publishes alignments and timetables; transit savings are not stated here until then.' },
+];
+
+/* Pillar 2: compute commitments (press-reported, to confirm with CST and each provider). */
+export const COMPUTE_FIGURES: Figure[] = [
+  { label: 'Amazon Web Services investment in Saudi Arabia', value: '$5.3B', ...press('Arab News, 13 Sept 2025', '2025') },
+  { label: 'Oracle investment pledge', value: '$14B', ...press('Arab News citing Bain and Company, 13 Sept 2025', '2025') },
+  { label: 'Equinix data centre, Jeddah', value: '$1B', ...press('Arab News, 13 Sept 2025', '2025') },
+  { label: 'Regional data-centre capacity', value: '1 GW to 3.3 GW', ...press('PwC via Arab News, 13 Sept 2025', '2025 to 2030') },
+];
+
+/* Pillar 3: capital markets. */
+export const CAPITAL_FIGURES: Figure[] = [
+  { label: 'Saudi Exchange market capitalisation', value: 'SAR 9.85T', ...verified('Saudi Exchange ownership data via Argaam', '31 Mar 2026') },
+  { label: 'Saudi Exchange market capitalisation, USD equivalent at the peg', value: '$2.6T', ...verified('Derived from SAR 9.85T at SAR 3.75 per USD', '31 Mar 2026') },
+  { label: 'Public Investment Fund assets under management', value: 'about $910B', ...press('PIF 2025 results, press reports', '2025') },
+  { label: 'FDI inflows growth', value: '24%', ...published('GASTAT', '2024') },
+  { label: 'Share of MENA venture deal value', value: PLACEHOLDER, ...pending('Data Team', 'MAGNiTT annual report') },
+];
+export const CAPITAL_RELEVANCE: { who: string; why: string }[] = [
+  { who: 'Regional companies raising capital', why: 'The deepest equity market in the region: listings, sukuk and bonds clear in Riyadh, and regional M&A is advised and financed from here.' },
+  { who: 'Suppliers to sovereign-backed programmes', why: 'The Public Investment Fund seeds sector champions (automotive, defence, hydrogen, housing, tourism) and the supply chains around them; qualifying as a supplier is a route into the region.' },
+  { who: 'Venture and private-equity funds', why: 'Global funds base regional deployment arms in Riyadh; the Saudi share of regional venture value appears here once MAGNiTT figures are confirmed.' },
+];
+
+/* Pillar 4: industrial and green hub. */
+export const GREEN_FIGURES: Figure[] = [
+  { label: 'NEOM green hydrogen output, design capacity', value: 'about 600 t/day', ...press('ACWA Power via SolarQuarter, 9 Jan 2026', 'design') },
+  { label: 'NEOM green ammonia output, design capacity', value: 'about 1.2 Mt/year', ...press('ACWA Power via SolarQuarter, 9 Jan 2026', 'design') },
+  { label: 'Renewables and electrolysers at NEOM', value: 'about 4 GW; 2.2 GW', ...press('ACWA Power via SolarQuarter, 9 Jan 2026', 'design') },
+  { label: 'NEOM construction status', value: 'about 90%', ...press('ACWA Power via SolarQuarter', 'Jan 2026') },
+  { label: 'Defence spending localisation target', value: '50% by 2030', ...official('General Authority for Military Industries, published target', 'Vision 2030') },
+  { label: 'NIDLP localisation figures', value: PLACEHOLDER, ...pending('Sector Team', 'NIDLP annual report') },
+];
+
+/* Pillar 5: legal foundation beneath market access. */
+export interface LegalRecord extends Provenance { id: string; name: string; since: string; summary: string }
+export const LEGAL_FOUNDATION: LegalRecord[] = [
+  { id: 'inv-law', name: 'Investment Law', since: 'In force 2025', summary: 'Equal treatment of foreign and domestic investors, a single registration with MISA in place of the former licence, and protection of investor rights.', ...official('MISA', 'in force 2025', 'Legal Team') },
+  { id: 'civil', name: 'Civil Transactions Law', since: 'In force 2023', summary: 'Codified contract and tort law, giving predictable rules on formation, performance and damages.', ...official('Ministry of Justice', 'in force 2023', 'Legal Team') },
+  { id: 'bankruptcy', name: 'Bankruptcy Law', since: 'In force 2018', summary: 'Protective settlement, financial restructuring and liquidation procedures for companies in difficulty.', ...official('Bankruptcy Commission', 'in force 2018', 'Legal Team') },
+  { id: 'courts', name: 'Commercial courts', since: 'Operating', summary: 'Specialised commercial courts and the Saudi Center for Commercial Arbitration for business disputes.', ...official('Ministry of Justice; SCCA', 'operating', 'Legal Team') },
+  { id: 'ip', name: 'Intellectual property', since: 'SAIP, established 2017', summary: 'One authority for patents, trademarks and copyright with enforcement powers.', ...official('Saudi Authority for Intellectual Property', 'operating', 'Legal Team') },
+];
+
+/* Pillar 6: aviation records for the air step. */
+export const AVIATION_FIGURES: Figure[] = [
+  { label: 'King Salman International Airport, Riyadh, designed capacity', value: '120M passengers by 2030', ...press('Arab News, 9 May 2025', 'target') },
+  { label: 'Riyadh Air commercial operations', value: 'Began June 2026', ...press('Aviation press, June 2026', '2026') },
+];
+
+/* Pillar 7: talent and living. */
+export const TALENT_LIVING: Figure[] = [
+  { label: 'Saudi nationals under 35', value: '70%', ...published('GASTAT', '2023') },
+  { label: 'Premium Residency categories', value: 'Investor, entrepreneur, specialised talent, property and more', ...official('Premium Residency Center', 'in force', 'Talent Team') },
+  { label: 'RHQ executive visas and Saudization grace period', value: 'Per programme rules', ...official('MISA RHQ programme', 'in force', 'RHQ Program team') },
+];
+export const LIVING_PROJECTS: { name: string; city: string; note: string }[] = [
+  { name: 'Diriyah', city: 'Riyadh', note: 'Heritage district, hospitality and culture' },
+  { name: 'Qiddiya', city: 'Riyadh', note: 'Entertainment and sports city' },
+  { name: 'ROSHN communities', city: 'Nationwide', note: 'Integrated residential neighbourhoods' },
+  { name: 'King Salman Park', city: 'Riyadh', note: 'Urban park at city scale' },
+  { name: 'Sports Boulevard', city: 'Riyadh', note: '135 km of cycling and walking routes' },
+];
+
+/* Pillar 8: soft power. */
+export const SOFT_POWER: Figure[] = [
+  { label: 'FIFA World Cup 2034 host', value: 'Saudi Arabia', ...verified('FIFA Congress decision', 'Dec 2024', 'Content Team') },
+  { label: 'Formula 1 Saudi Arabian Grand Prix', value: 'Jeddah, annual', ...official('Formula 1 calendar', 'annual', 'Content Team') },
+  { label: 'Esports World Cup', value: 'Riyadh, annual', ...official('Esports World Cup Foundation', 'annual', 'Content Team') },
+  { label: 'Giga-tourism destinations', value: 'Red Sea Global, Amaala, AlUla', ...official('PIF and the Royal Commission for AlUla', 'in development', 'Content Team') },
+  { label: 'International tourist arrivals', value: PLACEHOLDER, ...pending('Content Team', 'Ministry of Tourism statistics') },
+];

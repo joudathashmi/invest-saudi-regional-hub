@@ -27,7 +27,7 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
     <section id="companies" className="rh-band rh-glow-r" aria-labelledby="rh-companies">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
-          <span className="text-sm-semibold rh-eyebrow">07 · Who already does this</span>
+          <span className="text-sm-semibold rh-eyebrow">09 · Who already does this</span>
           <h2 id="rh-companies" className="display-md-semibold rh-h2">Running the region from Saudi Arabia</h2>
           <p className="text-lg-regular rh-muted rh-para">Exporters, logistics operators, service firms, digital platforms and regional headquarters that have publicly announced a Saudi base. Names come from public announcements; logos appear only with each company&rsquo;s consent.</p>
         </Reveal>

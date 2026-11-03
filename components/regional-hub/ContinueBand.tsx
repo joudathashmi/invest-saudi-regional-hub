@@ -23,7 +23,7 @@ export function ContinueBand({ DS, ctx, onEditCase }: { DS: DS; ctx: HubContext;
     <section id="continue" className="rh-band" aria-labelledby="rh-continue">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
-          <span className="text-sm-semibold rh-eyebrow">09 · Act</span>
+          <span className="text-sm-semibold rh-eyebrow">11 · Act</span>
           <h2 className="display-md-semibold rh-h2">Talent, living and next steps</h2>
           <p className="text-lg-regular rh-muted rh-para">Regional talent mobility, relocation and living in Saudi Arabia sit on their own pages. From here you can talk to an advisor with your case already attached.</p>
         </Reveal>

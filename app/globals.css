@@ -542,3 +542,28 @@
 .rh-legend-mark--airport { background: var(--utility-orange-500); }
 .rh-legend-mark--zone { background: var(--brand-500); border-radius: var(--radius-xs); }
 .rh-legend-diamond { display: inline-block; width: 9px; height: 9px; background: var(--utility-blue-500); border: 1px solid var(--base-white); transform: rotate(45deg); margin-inline: 5px; }
+
+/* Pillar bands: capital, talent, legal foundation, green hub. */
+.rh-factlist--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.rh-factlist--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 1023px) { .rh-factlist--4, .rh-factlist--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 639px) { .rh-factlist--4, .rh-factlist--3 { grid-template-columns: minmax(0, 1fr); } }
+.rh-talent-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--spacing-5xl); border-top: 1px solid var(--border-secondary); padding-top: var(--spacing-4xl); }
+@media (max-width: 1023px) { .rh-talent-grid { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-3xl); } }
+.rh-living { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-md); }
+.rh-soft { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--spacing-xl); }
+@media (max-width: 1023px) { .rh-soft { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 639px) { .rh-soft { grid-template-columns: minmax(0, 1fr); } }
+.rh-soft-tile { margin: 0; position: relative; aspect-ratio: 4 / 5; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-secondary); background: var(--rh-card); }
+.rh-soft-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.rh-soft-tile figcaption { position: absolute; inset-inline: 0; bottom: 0; padding: var(--spacing-xl); display: flex; flex-direction: column; gap: var(--spacing-xs); color: var(--base-white); background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--rh-canvas) 92%, transparent) 70%); padding-top: var(--spacing-6xl); }
+.rh-soft-tile figcaption .rh-eyebrow { color: var(--brand-400); }
+.rh-soft-tile figcaption .rh-foot { color: var(--gray-dark-mode-300); }
+.rh-legal { display: flex; flex-direction: column; gap: var(--spacing-2xl); padding: var(--spacing-3xl); border: 1px solid var(--border-secondary); border-radius: var(--radius-lg); background: var(--rh-card); }
+.rh-legal-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--spacing-2xl); margin: 0; }
+@media (max-width: 1023px) { .rh-legal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 639px) { .rh-legal-grid { grid-template-columns: minmax(0, 1fr); } }
+.rh-legal-item { display: flex; flex-direction: column; gap: var(--spacing-xs); }
+.rh-legal-item dt { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-xs); }
+.rh-legal-item dd { margin: 0; }
+.rh-green { display: flex; flex-direction: column; gap: var(--spacing-2xl); border-top: 1px solid var(--border-secondary); padding-top: var(--spacing-4xl); }

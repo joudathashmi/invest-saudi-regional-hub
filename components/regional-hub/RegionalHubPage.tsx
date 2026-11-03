@@ -15,6 +15,8 @@ import { IndustryBand } from './IndustryBand';
 import { CompaniesBand } from './CompaniesBand';
 import { ComparisonBand } from './ComparisonBand';
 import { ContinueBand } from './ContinueBand';
+import { CapitalBand } from './CapitalBand';
+import { TalentBand } from './TalentBand';
 
 /* The file's own navigation labels, as the design system README asks ("Regent & Cities" is the file's spelling). */
 const NAV = [
@@ -77,7 +79,9 @@ export function RegionalHubPage() {
         <MarketAccessBand DS={DS} ctx={ctx} />
         <PlatformsBand DS={DS} ctx={ctx} />
         <RoutesBand DS={DS} ctx={ctx} onChange={setCtx} />
+        <TalentBand DS={DS} />
         <IndustryBand DS={DS} ctx={ctx} onPick={(industry) => setCtx({ ...ctx, industry: ctx.industry === industry ? null : industry })} />
+        <CapitalBand DS={DS} ctx={ctx} />
         <CompaniesBand DS={DS} ctx={ctx} />
         <ComparisonBand DS={DS} ctx={ctx} />
         <div data-theme="light" className="rh-theme-light"><ContinueBand DS={DS} ctx={ctx} onEditCase={() => setCaseOpen(true)} /></div>

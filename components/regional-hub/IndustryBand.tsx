@@ -1,7 +1,7 @@
 'use client';
 
 import type { DS } from '@/lib/ds';
-import { INDUSTRIES, INDUSTRY_REGION, MARKETS } from '@/data/regional-hub';
+import { GREEN_FIGURES, INDUSTRIES, INDUSTRY_REGION, MARKETS } from '@/data/regional-hub';
 import { Reveal, Sideways, SourceLine, marketNames, type HubContext } from './shared';
 import { industryPhoto } from './imagery';
 
@@ -18,7 +18,7 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
     <section id="industry" className="rh-band rh-glow-l" aria-labelledby="rh-industry">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
-          <span className="text-sm-semibold rh-eyebrow">06 · Your industry</span>
+          <span className="text-sm-semibold rh-eyebrow">07 · Your industry</span>
           <h2 id="rh-industry" className="display-md-semibold rh-h2">{rec ? `${rec.industry} in the region` : 'Your industry in the region'}</h2>
           <p className="text-lg-regular rh-muted rh-para">{rec ? `How the sector looks across ${marketNames(ctx.markets)}, where Saudi Arabia stands in it, and how the connections above matter for it.` : 'Pick an industry to read how the sector looks across the region and where Saudi Arabia stands in it.'}</p>
         </Reveal>
@@ -68,6 +68,24 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
             </div>
           </div>
         )}
+        <div className="rh-green">
+          <div className="rh-editorial-lead">
+            <span className="text-xs-semibold rh-eyebrow">Industrial and green hub</span>
+            <h3 className="display-xs-semibold rh-h3">From exporting hydrocarbons to exporting value</h3>
+            <p className="text-md-regular rh-muted rh-para">Downstream petrochemicals at Jubail and Yanbu, automotive at KAEC (Lucid, Ceer), defence manufacturing under SAMI, and the NEOM Green Hydrogen project supplying certified low-carbon feedstock that European buyers will require. For a regional manufacturer the point is supply security: energy-intensive processes next to competitively priced, increasingly low-carbon inputs.</p>
+          </div>
+          <dl className="rh-factlist rh-factlist--3">
+            {GREEN_FIGURES.filter((f) => f.status !== 'unavailable').map((f) => (
+              <div key={f.label} className="rh-fact">
+                <dt className="display-xs-semibold">{f.value}</dt>
+                <dd className="text-sm-regular rh-muted">{f.label}<br /><SourceLine DS={DS} p={f} /></dd>
+              </div>
+            ))}
+          </dl>
+          {GREEN_FIGURES.filter((f) => f.status === 'unavailable').map((f) => (
+            <p key={f.label} className="text-xs-regular rh-tertiary rh-para">{f.label}: not shown until the {f.source} is confirmed by the {f.owner}. NEOM figures are design capacities reported by the developer; first ammonia deliveries are expected in early 2027.</p>
+          ))}
+        </div>
       </div>
     </section>
   );
