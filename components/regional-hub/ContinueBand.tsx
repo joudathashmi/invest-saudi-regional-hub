@@ -9,7 +9,7 @@ import { SourceLine, marketNames, type HubContext } from './shared';
  * context attached, the FAQ, and the circle-back links so the page never ends
  * in a dead end.
  */
-export function ContinueBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
+export function ContinueBand({ DS, ctx, onEditCase }: { DS: DS; ctx: HubContext; onEditCase: () => void }) {
   const routeTitle = ctx.route ? ROUTES.find((r) => r.id === ctx.route)?.title : null;
   const summary = [ctx.industry, routeTitle, ctx.markets.length ? marketNames(ctx.markets) : null].filter(Boolean).join(' · ');
   const query = new URLSearchParams({
@@ -22,15 +22,19 @@ export function ContinueBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   return (
     <section id="continue" className="rh-band" aria-labelledby="rh-continue">
       <div className="rh-container rh-stack">
-        <DS.SectionHeader title="Talent, living and next steps" supporting="Regional talent mobility, relocation and living in Saudi Arabia sit on their own pages. From here you can talk to an advisor with your case already attached." />
-        <div className="rh-grid rh-grid--4">
+        <div className="rh-editorial-lead">
+          <span className="text-sm-semibold rh-eyebrow">Act</span>
+          <h2 className="display-md-semibold rh-h2">Talent, living and next steps</h2>
+          <p className="text-lg-regular rh-muted rh-para">Regional talent mobility, relocation and living in Saudi Arabia sit on their own pages. From here you can talk to an advisor with your case already attached.</p>
+        </div>
+        <dl className="rh-statline">
           {TALENT_FIGURES.map((f) => (
-            <div key={f.label} className="rh-metric">
-              <DS.MetricItem label={f.label} value={f.value} />
-              <SourceLine DS={DS} p={f} />
+            <div key={f.label} className="rh-stat">
+              <dt className="display-xs-semibold">{f.value}</dt>
+              <dd className="text-sm-regular rh-muted">{f.label}<br /><SourceLine DS={DS} p={f} /></dd>
             </div>
           ))}
-        </div>
+        </dl>
         <div className="rh-grid rh-grid--2">
           <DS.InlineCTA
             title="Talk to an investment advisor"
@@ -44,8 +48,11 @@ export function ContinueBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
           <div className="rh-card">
             <DS.CardHeader title="Related pages" supporting="Continue sideways rather than back to the top." />
             <div className="rh-actions">
-              <DS.Button hierarchy="secondary-color" size="sm" href="#" iconLeading="bookmark">
-                Save my regional case to My Space
+              <DS.Button hierarchy="secondary-color" size="sm" iconLeading="bookmark" onClick={onEditCase}>
+                Edit my regional case
+              </DS.Button>
+              <DS.Button hierarchy="secondary-gray" size="sm" href="#" iconLeading="bookmark">
+                Save to My Space
               </DS.Button>
               <DS.Button hierarchy="secondary-gray" size="sm" href="/why-saudi/talent" iconLeading="users-01">
                 Talent and relocation
@@ -65,7 +72,7 @@ export function ContinueBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             </div>
           </div>
         </div>
-        <DS.SectionHeader title="Questions investors ask" divider={false} />
+        <h3 className="display-xs-semibold rh-h3">Questions investors ask</h3>
         <DS.FAQ items={FAQ_ITEMS} firstOpen />
       </div>
     </section>

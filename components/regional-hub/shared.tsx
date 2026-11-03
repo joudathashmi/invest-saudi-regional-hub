@@ -12,17 +12,25 @@ export interface HubContext {
 }
 
 /** Provenance line shown under every figure, composed from tokens and the Tag component. */
-export function SourceLine({ DS, p }: { DS: DS; p: Provenance }) {
+export function SourceLine({ DS, p, badge = false }: { DS: DS; p: Provenance; badge?: boolean }) {
   const color = p.status === 'verified' ? 'success' : p.status === 'published' ? 'blue' : p.status === 'benchmark' ? 'blue-light' : p.status === 'estimate' ? 'warning' : 'gray';
+  if (badge) {
+    return (
+      <div className="rh-source text-xs-regular">
+        <DS.Tag size="sm" color={color} dot>
+          {p.status}
+        </DS.Tag>
+        <span className="rh-source-text">
+          Source: {p.source}. Period: {p.period}. Updated: {p.updated}.
+        </span>
+      </div>
+    );
+  }
+  /* Footnote form: the status is a word, not a badge. */
   return (
-    <div className="rh-source text-xs-regular">
-      <DS.Tag size="sm" color={color} dot>
-        {p.status}
-      </DS.Tag>
-      <span className="rh-source-text">
-        Source: {p.source}. Period: {p.period}. Updated: {p.updated}.
-      </span>
-    </div>
+    <span className="rh-foot text-xs-regular">
+      {p.source} · {p.period} · {p.status}
+    </span>
   );
 }
 

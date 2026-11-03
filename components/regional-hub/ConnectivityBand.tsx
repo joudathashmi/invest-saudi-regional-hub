@@ -84,7 +84,7 @@ export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
     <section id="connectivity" className="rh-band" aria-labelledby="rh-connect">
       <div className="rh-container rh-stack">
         <DS.SectionHeader
-          title={focused ? 'Saudi Arabia: roads, rail, ports and borders' : 'How strongly Saudi Arabia is connected'}
+          title={focused ? 'Saudi Arabia: roads, rail, ports and borders' : 'Connected by air, land, sea and digital links'}
           supporting={focused ? 'The integrated network: ports, airports, roads, operating and planned rail, and the crossing to every neighbour. Drag to pan.' : `By air, sea, land and digital links to ${marketNames(ctx.markets)}. Transport links are one thing; market access is the section below. Click Saudi Arabia on the globe to open its national network.`}
           tabs={
             focused ? (
@@ -143,25 +143,25 @@ export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
                 />
               </div>
             ) : (
-              <div className="rh-grid rh-grid--2">
+              <dl className="rh-statline">
                 {(mode === 'digital' ? DIGITAL_FIGURES : CONNECTIVITY_FIGURES).map((f) => (
-                  <div key={f.label} className="rh-metric">
-                    <DS.MetricItem label={f.label} value={f.value} />
-                    <SourceLine DS={DS} p={f} />
+                  <div key={f.label} className="rh-stat">
+                    <dt className="display-xs-semibold">{f.value}</dt>
+                    <dd className="text-sm-regular rh-muted">{f.label}<br /><SourceLine DS={DS} p={f} /></dd>
                   </div>
                 ))}
-              </div>
+              </dl>
             )}
             {!focused && (
-              <div className="rh-card">
-                <DS.CardHeader title="Why this matters to your business" supporting={`${mode === 'air' ? 'Air' : mode === 'sea' ? 'Sea' : mode === 'ground' ? 'Land' : 'Digital'} connectivity, by business model.`} />
-                <ul className="rh-list text-sm-regular">
+              <div className="rh-stack" style={{ gap: 'var(--spacing-lg)' }}>
+                <span className="text-sm-semibold rh-eyebrow">Why it matters to your business</span>
+                <div className="rh-relevance">
                   {MODE_RELEVANCE[mode].map((r) => (
-                    <li key={r.who}>
-                      <b className="rh-muted">{r.who}.</b> {r.why}
-                    </li>
+                    <p key={r.who} className="text-md-regular rh-muted rh-para">
+                      <b className="rh-strong">{r.who}.</b> {r.why}
+                    </p>
                   ))}
-                </ul>
+                </div>
                 <Sideways
                   DS={DS}
                   items={
@@ -176,18 +176,16 @@ export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
                 />
               </div>
             )}
-            {focused ? (
-              <DS.Alert color="warning" title="Schematic geometry">
-                Roads and rail are drawn as straight corridors between known cities and border posts, not surveyed alignments. Distances and drive times are great-circle estimates. MoT, SAR, Mawani, GACA and ZATCA records replace them.
-              </DS.Alert>
-            ) : mode === 'air' ? (
-              <DS.Alert color="gray" title="Flight times on the globe are estimates">
-                They are computed from distance, not from schedules. The published reach figures are the two rings. GACA scheduled flight times per city pair replace the estimates once supplied.
-              </DS.Alert>
-            ) : null}
+            <p className="text-xs-regular rh-tertiary" style={{ margin: 0 }}>
+              {focused
+                ? 'Roads and rail are drawn as straight corridors between known cities and border posts, not surveyed alignments; distances and drive times are great-circle estimates until MoT, SAR, Mawani, GACA and ZATCA records replace them.'
+                : mode === 'air'
+                  ? 'Flight times are computed from distance, not schedules; the two rings are the published reach figures. GACA scheduled times per city pair replace the estimates once supplied.'
+                  : ''}
+            </p>
             <div className="rh-actions">
-              <DS.Button hierarchy="secondary-gray" size="md" iconLeading={details ? 'chevron-up' : 'chevron-down'} onClick={() => setDetails(!details)}>
-                {details ? 'Hide node details' : 'Show node details'}
+              <DS.Button hierarchy="link-gray" size="md" iconLeading={details ? 'chevron-up' : 'chevron-down'} onClick={() => setDetails(!details)}>
+                {details ? 'Hide the records' : 'Open the records'}
               </DS.Button>
               <DS.Button hierarchy="link-color" size="md" href="/regions" iconTrailing="arrow-right">
                 Regions and cities
@@ -204,7 +202,7 @@ export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
                 { key: 'name', title: 'Location' },
                 { key: 'kind', title: 'Type', render: (d: (typeof DIGITAL_NODES)[number]) => (d.kind === 'landing' ? 'Subsea landing city' : d.kind === 'cloud' ? 'Cloud region' : 'Data centre, planned') },
                 { key: 'note', title: 'Note' },
-                { key: 'status', title: 'Data status', render: (d: (typeof DIGITAL_NODES)[number]) => <SourceLine DS={DS} p={d} /> },
+                { key: 'status', title: 'Data status', render: (d: (typeof DIGITAL_NODES)[number]) => <SourceLine DS={DS} p={d} badge /> },
               ]}
               rows={DIGITAL_NODES}
             />
@@ -220,7 +218,7 @@ export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
                 { key: 'location', title: 'Location' },
                 { key: 'capacity', title: 'Capacity' },
                 { key: 'transit', title: 'Transit to your markets' },
-                { key: 'status', title: 'Data status', render: (r: Node) => <SourceLine DS={DS} p={r} /> },
+                { key: 'status', title: 'Data status', render: (r: Node) => <SourceLine DS={DS} p={r} badge /> },
               ]}
               rows={rows}
             />

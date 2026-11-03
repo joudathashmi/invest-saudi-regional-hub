@@ -21,7 +21,7 @@ import worldTopo from 'world-atlas/countries-110m.json';
  */
 
 export type LatLon = { lat: number; lon: number };
-export interface GlobePoint extends LatLon { id: string; name: string; selected?: boolean; kind?: 'hub' | 'market' | 'port' | 'airport' | 'city' | 'border'; labelAt?: 'right' | 'left' | 'above' | 'below'; sub?: string; title?: string }
+export interface GlobePoint extends LatLon { id: string; name: string; selected?: boolean; kind?: 'hub' | 'market' | 'port' | 'airport' | 'city' | 'border' | 'centre'; labelAt?: 'right' | 'left' | 'above' | 'below'; sub?: string; title?: string }
 export interface GlobeArc { from: LatLon; to: LatLon; dashed?: boolean }
 export interface GlobeRing extends LatLon { km: number; label: string }
 export interface GlobeLine { id: string; kind: 'road' | 'rail' | 'rail-planned'; points: [number, number][]; name: string }
@@ -49,11 +49,11 @@ export interface GlobeView { lat: number; lon: number; zoom: number }
 
 export function Globe({
   points, arcs, rings, lines = [], size = 720, homeCountryId = '682', selectedCountryIds = [], neighbourCountryIds = [],
-  view, onViewChange, onHomeClick, focused = false,
+  view, onViewChange, onHomeClick, focused = false, autoRotate = false, showFoot = true,
 }: {
   points: GlobePoint[]; arcs: GlobeArc[]; rings: GlobeRing[]; lines?: GlobeLine[]; size?: number;
   homeCountryId?: string; selectedCountryIds?: string[]; neighbourCountryIds?: string[];
-  view: GlobeView; onViewChange: (v: GlobeView) => void; onHomeClick?: () => void; focused?: boolean;
+  view: GlobeView; onViewChange: (v: GlobeView) => void; onHomeClick?: () => void; focused?: boolean; autoRotate?: boolean; showFoot?: boolean;
 }) {
   const [cur, setCur] = React.useState<GlobeView>(view);
   const [hiRes, setHiRes] = React.useState<Countries | null>(countries50);
@@ -81,13 +81,25 @@ export function Globe({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view.lat, view.lon, view.zoom]);
 
+  /* Slow drift for the hero (about one degree every two seconds); stops on the first drag and under reduced motion. */
+  const [drifting, setDrifting] = React.useState(autoRotate);
+  React.useEffect(() => {
+    if (!drifting) return;
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) { setDrifting(false); return; }
+    let raf = 0; let last = performance.now();
+    const tick = (t: number) => { const dt = (t - last) / 1000; last = t; setCur((c) => ({ ...c, lon: c.lon + dt * 0.5 })); raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [drifting]);
+
   const projection = React.useMemo(() => geoOrthographic().translate([size / 2, size / 2]).scale(R * cur.zoom).rotate([-cur.lon, -cur.lat]).clipAngle(90), [size, R, cur]);
   const path = React.useMemo(() => geoPath(projection), [projection]);
   const sel = new Set(selectedCountryIds), nb = new Set(neighbourCountryIds);
   const visible = (lon: number, lat: number) => geoDistance([lon, lat], [cur.lon, cur.lat]) < Math.PI / 2;
   const onScreen = (q: [number, number] | null) => !!q && q[0] > -40 && q[0] < size + 40 && q[1] > -40 && q[1] < size + 40;
 
-  const onDown = (e: React.PointerEvent) => { drag.current = { x: e.clientX, y: e.clientY, v: cur, moved: false }; };
+  const onDown = (e: React.PointerEvent) => { setDrifting(false); drag.current = { x: e.clientX, y: e.clientY, v: cur, moved: false }; };
   const onMove = (e: React.PointerEvent) => {
     if (!drag.current) return;
     const dx = e.clientX - drag.current.x, dy = e.clientY - drag.current.y;
@@ -188,7 +200,7 @@ export function Globe({
             const kind = p.kind ?? 'market';
             const cls = `rh-globe-pt rh-globe-pt--${kind}${p.selected ? ' rh-globe-pt--on' : ''}`;
             const show = (kind !== 'market' || p.selected) && p.name !== '';
-            const r = kind === 'hub' ? 5 : kind === 'city' ? 3.5 : kind === 'border' ? 4 : p.selected ? 4.5 : 3;
+            const r = kind === 'hub' ? 5 : kind === 'city' ? 3.5 : kind === 'border' ? 4 : kind === 'centre' ? 3.5 : p.selected ? 4.5 : 3;
             return (
               <g key={p.id} transform={`translate(${q![0].toFixed(1)} ${q![1].toFixed(1)})`}>
                 {kind === 'hub' && <circle r={10} className="rh-globe-pt-halo" />}
@@ -209,9 +221,9 @@ export function Globe({
           })}
         </g>
       </svg>
-      <div className="rh-globe-foot text-xs-regular">
+      {showFoot && <div className="rh-globe-foot text-xs-regular">
         <span>{hover ?? (focused ? `Corridors are schematic, drawn between known cities and border posts. Boundaries: Natural Earth 1:${hiRes ? '50' : '110'}m. Drag to pan.` : (rings.length ? `Dotted rings: ${rings.map((r) => r.label).join(' and ')}. ` : '') + 'Click Saudi Arabia for its logistics network. Boundaries: Natural Earth 1:110m.')}</span>
-      </div>
+      </div>}
     </div>
   );
 }

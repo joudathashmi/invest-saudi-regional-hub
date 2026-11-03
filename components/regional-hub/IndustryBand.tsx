@@ -5,10 +5,10 @@ import { INDUSTRIES, INDUSTRY_REGION, MARKETS } from '@/data/regional-hub';
 import { Sideways, SourceLine, marketNames, type HubContext } from './shared';
 
 /**
- * Band 7: your industry in the region. A short regional read, Saudi's position,
- * the national figures already published, and the regional-demand chart when the
- * sector team has published it. With no industry selected, the band shows the
- * industry list so the page never ends in an empty state.
+ * Evaluate, continued. Your industry in the region as an editorial read:
+ * the region, Saudi's place in it, and how connectivity matters, with the
+ * published national figures set in type beside the text. Industry chips
+ * select when none is chosen.
  */
 export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onPick: (industry: string) => void }) {
   const rec = ctx.industry ? INDUSTRY_REGION[ctx.industry] : null;
@@ -16,71 +16,53 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
   return (
     <section id="industry" className="rh-band" aria-labelledby="rh-industry">
       <div className="rh-container rh-stack">
-        <DS.SectionHeader
-          title={rec ? `${rec.industry} in the region` : 'Your industry in the region'}
-          supporting={rec ? `How the sector looks across ${marketNames(ctx.markets)}, and where Saudi Arabia stands in it.` : 'Pick an industry to see how the sector looks across the region and where Saudi Arabia stands in it.'}
-          actions={
-            rec ? (
-              <DS.Button hierarchy="secondary-gray" size="md" href={rec.sectorHref} iconTrailing="arrow-right">
-                Open the sector page
-              </DS.Button>
-            ) : undefined
-          }
-        />
-        {!rec ? (
-          <div className="rh-chips">
-            {INDUSTRIES.map((i) => (
-              <DS.Chip key={i} size="lg" icon="briefcase-01" onClick={() => onPick(i)}>
-                {i}
-              </DS.Chip>
-            ))}
-          </div>
-        ) : (
-          <div className="rh-grid rh-grid--2">
-            <div className="rh-stack" style={{ gap: 'var(--spacing-2xl)' }}>
-              <div className="rh-card">
-                <DS.CardHeader title="The region" supporting={rec.summary} />
-              </div>
-              <div className="rh-card">
-                <DS.CardHeader title="Where Saudi Arabia stands" supporting={rec.saudiPosition} />
-              </div>
-              <div className="rh-card">
-                <DS.CardHeader title="How connectivity matters here" supporting={rec.connectivity} />
-                <Sideways DS={DS} items={[{ label: 'See the network', href: '#connectivity', icon: 'route' }, { label: 'Market access for your markets', href: '#market-access', icon: 'globe-01' }]} />
-              </div>
+        <div className="rh-editorial-lead">
+          <span className="text-sm-semibold rh-eyebrow">Your industry</span>
+          <h2 id="rh-industry" className="display-md-semibold rh-h2">{rec ? `${rec.industry} in the region` : 'Your industry in the region'}</h2>
+          <p className="text-lg-regular rh-muted rh-para">{rec ? `How the sector looks across ${marketNames(ctx.markets)}, where Saudi Arabia stands in it, and how the connections above matter for it.` : 'Pick an industry to read how the sector looks across the region and where Saudi Arabia stands in it.'}</p>
+        </div>
+        <div className="rh-chips">
+          {INDUSTRIES.map((i) => (
+            <DS.Chip key={i} size="md" selected={ctx.industry === i} onClick={() => onPick(i)}>
+              {i}
+            </DS.Chip>
+          ))}
+        </div>
+        {rec && (
+          <div className="rh-industry">
+            <div className="rh-industry-text">
+              <p className="text-md-regular rh-para"><span className="rh-strong">The region.</span> {rec.summary}</p>
+              <p className="text-md-regular rh-para"><span className="rh-strong">Where Saudi Arabia stands.</span> {rec.saudiPosition}</p>
+              <p className="text-md-regular rh-para"><span className="rh-strong">How connectivity matters here.</span> {rec.connectivity}</p>
+              <SourceLine DS={DS} p={rec} />
               <Sideways
                 DS={DS}
                 items={[
+                  { label: 'Sector page', href: rec.sectorHref, icon: 'briefcase-01' },
                   { label: 'Opportunities in this sector', href: `/opportunities?sector=${encodeURIComponent(rec.industry)}`, icon: 'coins-stacked-01' },
                   { label: 'Companies already here', href: '#companies', icon: 'users-01' },
-                  { label: 'Platforms for this sector', href: '#platforms', icon: 'marker-pin-01' },
+                  { label: 'See the network', href: '#connectivity', icon: 'route' },
                 ]}
               />
             </div>
-            <div className="rh-stack" style={{ gap: 'var(--spacing-2xl)' }}>
-              {rec.nationalFigures.length > 0 && (
-                <div className="rh-grid rh-grid--2">
+            <div className="rh-industry-aside">
+              {rec.nationalFigures.length > 0 ? (
+                <dl className="rh-factlist rh-factlist--col">
                   {rec.nationalFigures.map((f) => (
-                    <div key={f.label} className="rh-metric">
-                      <DS.MetricItem label={f.label} value={f.value} />
-                      <SourceLine DS={DS} p={f} />
+                    <div key={f.label} className="rh-fact">
+                      <dt className="display-xs-semibold">{f.value}</dt>
+                      <dd className="text-sm-regular rh-muted">{f.label}<br /><SourceLine DS={DS} p={f} /></dd>
                     </div>
                   ))}
-                </div>
+                </dl>
+              ) : (
+                <p className="text-sm-regular rh-tertiary rh-para">National figures for this sector are published on the sector page.</p>
               )}
               {rec.demandByMarket ? (
-                <DS.LineChart
-                  type="bar"
-                  title="Regional demand by market"
-                  labels={rec.demandByMarket.map((d) => MARKETS.find((m) => m.code === d.market)?.name ?? d.market)}
-                  series={[{ name: rec.industry, data: rec.demandByMarket.map((d) => d.value) }]}
-                />
+                <DS.LineChart type="bar" title="Regional demand by market" labels={rec.demandByMarket.map((d) => MARKETS.find((m) => m.code === d.market)?.name ?? d.market)} series={[{ name: rec.industry, data: rec.demandByMarket.map((d) => d.value) }]} />
               ) : (
-                <DS.Alert color="gray" title="Regional demand by market: not yet published">
-                  The sector team publishes market-size and growth per country as part of the sector equity story. Until then this band shows the national figures and the qualitative read above.
-                </DS.Alert>
+                <p className="text-xs-regular rh-tertiary rh-para">Regional demand by market is published by the sector team as part of the sector equity story; it appears here once it exists.</p>
               )}
-              <SourceLine DS={DS} p={rec} />
             </div>
           </div>
         )}

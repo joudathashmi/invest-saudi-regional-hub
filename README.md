@@ -11,7 +11,11 @@ Route: `/why-saudi/regional-hub`. Built on the Invest Saudi design system V1.0, 
 - Bands alternate the system's two themes: dark (the default) and light, set with `data-theme="light"` on alternate bands so every token flips; no component is restyled. Hero, Reach, Market access, Routes, Companies and Continue are dark; Router, Connectivity, Platforms, Industry and Comparison are light.
 - Page shell as the system README requires: `Header` (with `DigitalStamp` and `SubHeader`), content, `Footer` (with contact band and `FeedbackBanner`), `CookiesPopup` on first visit. Dark theme, `lang="en" dir="ltr"`, IBM Plex Sans Arabic from the system stylesheet.
 
-## 2. Bands And The Components Behind Them
+## 2. Experience Hierarchy (Visual Refinement, Nov 2026)
+
+Inspire (hero with the globe as the visual) → Understand (anchor market, editorial figure) → Explore (connectivity globe with Air, Land, Sea, Digital and the integrated network; platforms as a location strip) → Evaluate (market access summary with details on demand; routes as tabs; industry editorial; companies showcase; comparison on demand) → Act (talent, advisor, FAQ). The regional case builder is a guided three-step slide-out (`CaseBuilder.tsx`) opened from the hero CTA, a persistent button after scrolling, the case strip under the hero, and the Act band; it sets the same shared context as before. Provenance is a footnote line everywhere except inside detail tables, where it keeps the status badge.
+
+## 2a. Bands And The Components Behind Them
 
 | # | Band | File | Design-system components used |
 |---|---|---|---|
