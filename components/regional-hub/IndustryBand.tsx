@@ -44,6 +44,10 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
               <div className="rh-card">
                 <DS.CardHeader title="Where Saudi Arabia stands" supporting={rec.saudiPosition} />
               </div>
+              <div className="rh-card">
+                <DS.CardHeader title="How connectivity matters here" supporting={rec.connectivity} />
+                <Sideways DS={DS} items={[{ label: 'See the network', href: '#connectivity', icon: 'route' }, { label: 'Market access for your markets', href: '#market-access', icon: 'globe-01' }]} />
+              </div>
               <Sideways
                 DS={DS}
                 items={[

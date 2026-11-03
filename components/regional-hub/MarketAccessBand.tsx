@@ -32,7 +32,7 @@ export function MarketAccessBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
       <div className="rh-container rh-stack">
         <DS.SectionHeader
           title="What you can sell into, and on what terms"
-          supporting="Agreements in force, customs regimes and tax treaties for the markets you selected. Rules of origin decide whether goods made in Saudi Arabia qualify."
+          supporting="Proximity, transport links and market access are three different things. This section covers the third: the agreements and treaties in force for the markets you selected. Rules of origin decide whether goods made in Saudi Arabia qualify, and each market's regulator decides licensed activities."
           actions={
             <DS.Button hierarchy="secondary-gray" size="md" href="/why-saudi/laws-and-regulations" iconTrailing="arrow-right">
               Laws and regulations

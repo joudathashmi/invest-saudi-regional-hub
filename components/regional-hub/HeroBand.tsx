@@ -20,8 +20,9 @@ export function HeroBand({ DS, image }: { DS: DS; image?: string }) {
           <span className="text-sm-semibold rh-hero-eyebrow">Why Saudi</span>
           <h1 id="rh-title" className="display-lg-semibold rh-hero-title">Run the Middle East and Africa from Saudi Arabia</h1>
           <p className="text-xl-regular rh-hero-lead">
-            One base reaches half the world&rsquo;s population within eight hours, every GCC market by road, and Africa, Asia and Europe by two coastlines. Choose how you want to operate and this page shows the reach, the connections, the market access and the route that fit.
+            An anchor market in its own right, with half the world&rsquo;s population within an eight-hour flight, every GCC market by road, and Africa, Asia and Europe by two coastlines. Choose how you want to operate and this page shows the domestic base, the connections, the market access and the route that fit.
           </p>
+          <p className="text-md-medium rh-hero-prop">Build in Saudi Arabia. Connect to regional markets. Scale globally.</p>
           <div className="rh-actions">
             <DS.Button hierarchy="primary" size="xl" href="#router" iconTrailing="arrow-right">
               Build my regional case

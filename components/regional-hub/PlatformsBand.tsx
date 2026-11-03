@@ -37,6 +37,14 @@ export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
                   ))}
                 </ul>
                 <div className="rh-chips">
+                  <span className="text-xs-medium rh-tertiary">Connected to</span>
+                  {p.connectedTo.map((c) => (
+                    <DS.Tag key={c} size="sm" color="blue-light" type="pill">
+                      {c}
+                    </DS.Tag>
+                  ))}
+                </div>
+                <div className="rh-chips">
                   {p.routes.map((r) => (
                     <DS.Tag key={r} size="sm" type="sector">
                       {ROUTES.find((x) => x.id === r)?.title}
@@ -48,6 +56,7 @@ export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
                   DS={DS}
                   items={[
                     { label: 'Zone page', href: p.href, icon: 'marker-pin-01' },
+                    { label: 'See it on the network', href: '#connectivity', icon: 'route' },
                     { label: 'Incentives here', href: `/how-to-invest/incentives?zone=${p.id}`, icon: 'coins-stacked-01' },
                     { label: 'Opportunities here', href: `/opportunities?zone=${p.id}`, icon: 'briefcase-01' },
                   ]}

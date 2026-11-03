@@ -85,6 +85,7 @@ export const MARKETS: Market[] = [
 export type RouteId = 'export' | 'logistics' | 'services' | 'digital' | 'corporate';
 
 export interface Route {
+  connectivity: string;
   id: RouteId;
   title: string;
   meta: string;
@@ -102,6 +103,7 @@ export interface Route {
 export const ROUTES: Route[] = [
   {
     id: 'export',
+    connectivity: 'Sea for Europe, Africa and Asia; road for the GCC; rail where the plant sits on the SAR network.',
     title: 'Export and manufacturing base',
     meta: 'Make in Saudi, sell to the region',
     description: 'Produce in an industrial city or economic zone and ship under GCC and GAFTA rules of origin.',
@@ -120,6 +122,7 @@ export const ROUTES: Route[] = [
   },
   {
     id: 'logistics',
+    connectivity: 'Air cargo at Riyadh, Jeddah and Dammam; container ports on both coasts; GCC road corridors; bonded zones at each.',
     title: 'Distribution and logistics hub',
     meta: 'Store, re-export and serve the region',
     description: 'Operate from a bonded or special logistics zone with duty deferral on goods in transit.',
@@ -138,6 +141,7 @@ export const ROUTES: Route[] = [
   },
   {
     id: 'services',
+    connectivity: 'Air connectivity for people; digital connectivity for delivery; data residency per market.',
     title: 'Services and finance centre',
     meta: 'Professional, financial and shared services',
     description: 'Run regional finance, advisory, engineering or shared-service operations from Riyadh or the financial district.',
@@ -156,6 +160,7 @@ export const ROUTES: Route[] = [
   },
   {
     id: 'digital',
+    connectivity: 'Subsea landings on both coasts, national fibre, cloud regions in Riyadh and Dammam.',
     title: 'Digital and data hub',
     meta: 'Cloud, data centres and regional platforms',
     description: 'Host and serve regional digital services from the cloud computing zone and data-centre sites.',
@@ -174,6 +179,7 @@ export const ROUTES: Route[] = [
   },
   {
     id: 'corporate',
+    connectivity: 'Flights to every regional capital; the same digital backbone for shared services.',
     title: 'Corporate base (Regional Headquarters)',
     meta: 'Direct and manage the region from Saudi',
     description: 'License a regional headquarters that directs your subsidiaries across the Middle East and North Africa.',
@@ -222,7 +228,55 @@ export const CONNECTIVITY_FIGURES: Figure[] = [
   { label: 'Internet penetration', value: '99.7%', ...published('CITC', 'as shown on the live site') },
 ];
 
-/* Band 3: connectivity nodes. */
+/* Anchor market: domestic figures already on the live site. */
+export const DOMESTIC: Figure[] = [
+  { label: 'Real GDP growth, 2024', value: '2.7%', ...published('GASTAT', '2024') },
+  { label: 'FDI inflows growth, 2024', value: '24%', ...published('GASTAT', '2024') },
+];
+
+/* Digital connectivity: landing cities and data-centre locations. Cable names and
+ * capacities are not listed until CST supplies them; cities are landing points
+ * commonly reported for Red Sea and Gulf systems, status benchmark. */
+export interface DigitalNode extends Provenance { id: string; name: string; kind: 'landing' | 'datacentre' | 'cloud'; lat: number; lon: number; note: string }
+export const DIGITAL_NODES: DigitalNode[] = [
+  { id: 'd-jed', name: 'Jeddah', kind: 'landing', lat: 21.54, lon: 39.17, note: 'Red Sea subsea landing city (Europe to Asia systems)', ...benchmark('CST; submarine cable registries', 'to confirm cable list') },
+  { id: 'd-ynb', name: 'Yanbu', kind: 'landing', lat: 24.09, lon: 38.06, note: 'Red Sea subsea landing city', ...benchmark('CST; submarine cable registries', 'to confirm cable list') },
+  { id: 'd-khb', name: 'Al Khobar', kind: 'landing', lat: 26.28, lon: 50.21, note: 'Arabian Gulf subsea landing city (Gulf systems)', ...benchmark('CST; submarine cable registries', 'to confirm cable list') },
+  { id: 'd-ruh', name: 'Riyadh', kind: 'cloud', lat: 24.71, lon: 46.68, note: 'Cloud Computing SEZ seat; hyperscale regions announced or operating', ...benchmark('ECZA; provider announcements', 'to confirm per provider') },
+  { id: 'd-dmm', name: 'Dammam', kind: 'cloud', lat: 26.43, lon: 50.10, note: 'Hyperscale cloud region (announced)', ...benchmark('Provider announcements', 'to confirm per provider') },
+  { id: 'd-neom', name: 'NEOM', kind: 'datacentre', lat: 28.0, lon: 35.2, note: 'Data-centre and landing projects, planned', ...benchmark('NEOM announcements', 'planned, not operating') },
+];
+export const DIGITAL_FIGURES: Figure[] = [
+  { label: 'National 5G coverage', value: '100%', ...published('CITC', 'as shown on the live site') },
+  { label: 'Internet penetration', value: '99.7%', ...published('CITC', 'as shown on the live site') },
+  { label: 'G20 digital economy ranking', value: '2nd', ...published('CST', '2024') },
+  { label: 'Digital economy valuation', value: '$132B', ...published('Vision 2030', '2025') },
+];
+
+/* Why each mode matters, by business model. Links go to existing entities. */
+export const MODE_RELEVANCE: Record<'air' | 'sea' | 'ground' | 'digital', { who: string; why: string }[]> = {
+  air: [
+    { who: 'Regional headquarters and professional services', why: 'Executives reach every GCC capital in under two hours and most of the region within four, from three international airports.' },
+    { who: 'High-value and time-sensitive exports', why: 'Air cargo from Riyadh, Jeddah and Dammam serves pharmaceuticals, electronics and e-commerce; the Riyadh logistics zone sits beside the airport.' },
+    { who: 'What is planned, not operating', why: 'King Salman International Airport in Riyadh and the new national carrier are development programmes; capacity figures are not used until published.' },
+  ],
+  sea: [
+    { who: 'Manufacturers and exporters', why: 'Red Sea ports face Europe, Africa and the Suez route; Gulf ports face the GCC and Asia. A plant at KAEC, Jazan, Jubail or Yanbu sits beside a port.' },
+    { who: 'Importers and distributors', why: 'Container terminals at Jeddah and Dammam feed the domestic market and re-export through bonded zones.' },
+    { who: 'What this is not', why: 'A port does not confer preferential access; that comes from the agreements in the market-access section and from each market’s regulator.' },
+  ],
+  ground: [
+    { who: 'Consumer goods and food', why: 'Trucks reach Kuwait, Bahrain, Qatar, the UAE and Jordan from Riyadh or Dammam within a day, inside the GCC customs union for GCC-origin goods.' },
+    { who: 'Industrial supply chains', why: 'Operating rail links Riyadh with Dammam and the north; the Landbridge and GCC Railway are planned and shown dotted.' },
+    { who: 'Regional distribution', why: 'Inland logistics at the Riyadh zone and MODON cities serve the GCC by road without a sea leg.' },
+  ],
+  digital: [
+    { who: 'Cloud, AI and data businesses', why: 'Subsea systems land on both coasts and hyperscale regions operate or are announced in Riyadh and Dammam; the Cloud Computing SEZ licenses data-centre activity.' },
+    { who: 'Financial and professional services', why: 'National 5G and near-universal internet support regional service delivery from Saudi offices; data residency rules decide what can be served cross-border.' },
+    { who: 'What to verify', why: 'Cable names, capacities and each provider’s live region status are confirmed with CST and the providers before they appear here.' },
+  ],
+};
+
 export interface Node extends Provenance { id: string; name: string; mode: 'sea' | 'air' | 'land'; location: string; capacity: string; transit: string; lat: number; lon: number }
 export const NODES: Node[] = [
   { id: 'jip', name: 'Jeddah Islamic Port', mode: 'sea', location: 'Jeddah, Red Sea', lat: 21.47, lon: 39.17, capacity: PLACEHOLDER, transit: PLACEHOLDER, ...pending('Mawani', 'Mawani port statistics') },
@@ -268,7 +322,7 @@ export const TREATIES: Treaty[] = [
 ];
 
 /* Band 5: platforms to operate from. */
-export interface Platform extends Provenance { id: string; name: string; kind: 'Special Economic Zone' | 'Logistics zone' | 'Industrial city' | 'Economic city'; location: string; permits: string[]; authority: string; routes: RouteId[]; href: string }
+export interface Platform extends Provenance { id: string; name: string; kind: 'Special Economic Zone' | 'Logistics zone' | 'Industrial city' | 'Economic city'; location: string; permits: string[]; authority: string; routes: RouteId[]; href: string; connectedTo: string[] }
 export const SEZ_INCENTIVES = [
   '5% corporate income tax for up to 20 years',
   '0% withholding tax on repatriation of profits to a foreign country',
@@ -277,32 +331,32 @@ export const SEZ_INCENTIVES = [
   'Flexible Saudization and expatriate fee relief during the first five years',
 ];
 export const PLATFORMS: Platform[] = [
-  { id: 'kaec-sez', name: 'King Abdullah Economic City SEZ', kind: 'Special Economic Zone', location: 'Rabigh, Makkah Province, on the Red Sea beside King Abdullah Port', permits: ['Automotive, advanced manufacturing, consumer goods, ICT and medtech', 'Port-side manufacturing for export to Africa and Europe', ...SEZ_INCENTIVES.slice(0, 2)], authority: 'ECZA', routes: ['export', 'logistics'], href: 'https://investsaudi.sa', ...published('ECZA, as shown on the live site', 'launched April 2023') },
-  { id: 'jazan-sez', name: 'Jazan SEZ', kind: 'Special Economic Zone', location: 'Jazan, south-west coast, beside Jazan City for Primary and Downstream Industries', permits: ['Food processing, metals conversion and logistics', 'Red Sea port access to East Africa', ...SEZ_INCENTIVES.slice(0, 2)], authority: 'ECZA', routes: ['export', 'logistics'], href: 'https://investsaudi.sa', ...published('ECZA, as shown on the live site', 'launched April 2023') },
-  { id: 'rak-sez', name: 'Ras Al-Khair SEZ', kind: 'Special Economic Zone', location: 'Eastern Province, Arabian Gulf', permits: ['Shipbuilding, maritime industries and offshore rigs', 'Industrial port and the King Salman maritime complex', ...SEZ_INCENTIVES.slice(0, 2)], authority: 'ECZA', routes: ['export'], href: 'https://investsaudi.sa', ...published('ECZA, as shown on the live site', 'launched April 2023') },
-  { id: 'cloud-sez', name: 'Cloud Computing SEZ', kind: 'Special Economic Zone', location: 'Riyadh (KACST Innovation Tower) with data centres anywhere in the Kingdom', permits: ['Cloud services and data-centre operations', 'Data residency framework under CST', 'SEZ tax regime for cloud activities'], authority: 'ECZA with CST', routes: ['digital'], href: 'https://investsaudi.sa', ...published('ECZA, as shown on the live site', 'launched April 2023') },
-  { id: 'ilbz', name: 'Riyadh Integrated Special Logistics Zone', kind: 'Logistics zone', location: 'King Khalid International Airport, Riyadh', permits: ['Bonded storage, re-export and light value-added assembly', '0% corporate income tax on qualifying activities for 50 years', 'Customs and VAT suspension inside the zone'], authority: 'GACA', routes: ['logistics', 'digital'], href: 'https://investsaudi.sa', ...official('GACA ILBZ rules', 'operating since 2022') },
-  { id: 'modon', name: 'Industrial cities (MODON)', kind: 'Industrial city', location: '39+ cities nationwide', permits: ['Serviced industrial land at published annual rates', 'Factory licensing and ready-built units', 'Utilities, logistics and worker housing services'], authority: 'MODON', routes: ['export'], href: 'https://investsaudi.sa', ...published('MODON', '2024') },
-  { id: 'rcjy', name: 'Jubail and Yanbu industrial cities', kind: 'Industrial city', location: 'Jubail (Arabian Gulf) and Yanbu (Red Sea)', permits: ['Petrochemicals, chemicals and energy-intensive industry', 'Deep-water industrial ports on both coasts', 'Feedstock and utilities at industrial tariffs'], authority: 'Royal Commission for Jubail and Yanbu', routes: ['export'], href: 'https://investsaudi.sa', ...benchmark('RCJY', 'as published') },
+  { id: 'kaec-sez', name: 'King Abdullah Economic City SEZ', kind: 'Special Economic Zone', location: 'Rabigh, Makkah Province, on the Red Sea beside King Abdullah Port', permits: ['Automotive, advanced manufacturing, consumer goods, ICT and medtech', 'Port-side manufacturing for export to Africa and Europe', ...SEZ_INCENTIVES.slice(0, 2)], authority: 'ECZA', routes: ['export', 'logistics'], href: 'https://investsaudi.sa', connectedTo: ['King Abdullah Port (sea)', 'Haramain rail', 'Jeddah airport, about 1 hour by road'], ...published('ECZA, as shown on the live site', 'launched April 2023') },
+  { id: 'jazan-sez', name: 'Jazan SEZ', kind: 'Special Economic Zone', location: 'Jazan, south-west coast, beside Jazan City for Primary and Downstream Industries', permits: ['Food processing, metals conversion and logistics', 'Red Sea port access to East Africa', ...SEZ_INCENTIVES.slice(0, 2)], authority: 'ECZA', routes: ['export', 'logistics'], href: 'https://investsaudi.sa', connectedTo: ['Jazan port (sea)', 'Jazan airport', 'Al Tuwal crossing to Yemen'], ...published('ECZA, as shown on the live site', 'launched April 2023') },
+  { id: 'rak-sez', name: 'Ras Al-Khair SEZ', kind: 'Special Economic Zone', location: 'Eastern Province, Arabian Gulf', permits: ['Shipbuilding, maritime industries and offshore rigs', 'Industrial port and the King Salman maritime complex', ...SEZ_INCENTIVES.slice(0, 2)], authority: 'ECZA', routes: ['export'], href: 'https://investsaudi.sa', connectedTo: ['Ras Al-Khair industrial port (sea)', 'Jubail and Dammam by road'], ...published('ECZA, as shown on the live site', 'launched April 2023') },
+  { id: 'cloud-sez', name: 'Cloud Computing SEZ', kind: 'Special Economic Zone', location: 'Riyadh (KACST Innovation Tower) with data centres anywhere in the Kingdom', permits: ['Cloud services and data-centre operations', 'Data residency framework under CST', 'SEZ tax regime for cloud activities'], authority: 'ECZA with CST', routes: ['digital'], href: 'https://investsaudi.sa', connectedTo: ['Riyadh cloud regions', 'Subsea landings at Jeddah and Al Khobar via national fibre'], ...published('ECZA, as shown on the live site', 'launched April 2023') },
+  { id: 'ilbz', name: 'Riyadh Integrated Special Logistics Zone', kind: 'Logistics zone', location: 'King Khalid International Airport, Riyadh', permits: ['Bonded storage, re-export and light value-added assembly', '0% corporate income tax on qualifying activities for 50 years', 'Customs and VAT suspension inside the zone'], authority: 'GACA', routes: ['logistics', 'digital'], href: 'https://investsaudi.sa', connectedTo: ['King Khalid International Airport (air cargo)', 'Riyadh to Dammam expressway', 'SAR East line'], ...official('GACA ILBZ rules', 'operating since 2022') },
+  { id: 'modon', name: 'Industrial cities (MODON)', kind: 'Industrial city', location: '39+ cities nationwide', permits: ['Serviced industrial land at published annual rates', 'Factory licensing and ready-built units', 'Utilities, logistics and worker housing services'], authority: 'MODON', routes: ['export'], href: 'https://investsaudi.sa', connectedTo: ['Nearest port and airport per city', 'National highway network'], ...published('MODON', '2024') },
+  { id: 'rcjy', name: 'Jubail and Yanbu industrial cities', kind: 'Industrial city', location: 'Jubail (Arabian Gulf) and Yanbu (Red Sea)', permits: ['Petrochemicals, chemicals and energy-intensive industry', 'Deep-water industrial ports on both coasts', 'Feedstock and utilities at industrial tariffs'], authority: 'Royal Commission for Jubail and Yanbu', routes: ['export'], href: 'https://investsaudi.sa', connectedTo: ['Jubail Commercial Port and King Fahd Industrial Port (sea)', 'Yanbu Commercial Port (sea)', 'SAR East line at Jubail'], ...benchmark('RCJY', 'as published') },
 ];
 
 /* Band 7: industry in the region. Served only when the sector team has
  * published the regional layer for the selected industry. */
-export interface IndustryRegion extends Provenance { industry: string; summary: string; saudiPosition: string; nationalFigures: Figure[]; demandByMarket?: { market: string; value: number }[]; sectorHref: string }
+export interface IndustryRegion extends Provenance { industry: string; summary: string; saudiPosition: string; connectivity: string; nationalFigures: Figure[]; demandByMarket?: { market: string; value: number }[]; sectorHref: string }
 const sectorPage = (i: string) => `/sectors/${i.toLowerCase().replace(/\s+and\s+/g, '-').replace(/\s+/g, '-')}`;
 const nf = (label: string, value: string, cited: string, period: string): Figure => ({ label, value, ...published(cited, period) });
 export const INDUSTRY_REGION: Record<string, IndustryRegion> = {
-  'Advanced Manufacturing': { industry: 'Advanced Manufacturing', summary: 'Regional demand for machinery, vehicles, electrical equipment and building products is met mostly by imports from Asia and Europe. A Saudi plant serves the GCC duty-free and GAFTA markets under rules of origin.', saudiPosition: 'The largest industrial base in the region, with NIDLP localisation programmes in automotive, defence and renewables equipment.', nationalFigures: [nf('Industrial cities nationwide', '39+', 'MODON', '2024'), nf('Localization target in priority programmes', '70%', 'NIDLP, GAMI, MCIT', 'as shown on the live site')], sectorHref: sectorPage('Advanced Manufacturing'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
-  Chemicals: { industry: 'Chemicals', summary: 'The Gulf is a net exporter of basic chemicals and a net importer of specialty and performance chemicals; downstream conversion for the region is the open space.', saudiPosition: 'Home to the largest petrochemical complexes in the region at Jubail and Yanbu, with feedstock at industrial tariffs.', nationalFigures: [nf('Gas feedstock price', '$2.15/MMBtu', 'Invest Saudi energy page', 'as shown on the live site')], sectorHref: sectorPage('Chemicals'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
-  Energy: { industry: 'Energy', summary: 'Every market on this page is adding renewable capacity and grid infrastructure; Saudi projects are the largest single pipeline in the region for turbines, panels, cables and storage.', saudiPosition: 'The regional reference market for utility-scale solar and wind procurement at record tariffs.', nationalFigures: [nf('Renewable capacity delivered in 5 years', '64 GW', 'Invest Saudi energy page', 'as shown on the live site'), nf('Renewables targeted by 2030', '130 GW', 'Invest Saudi energy page', 'as shown on the live site'), nf('Electricity from renewables by 2030', '50%', 'Ministry of Energy', 'as shown on the live site')], sectorHref: sectorPage('Energy'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
-  'Financial Services': { industry: 'Financial Services', summary: 'Regional banking, asset management and fintech serve a fast-growing banked population across the GCC, Egypt and Pakistan; licensing is national, so a regional base needs a regulator that moves quickly.', saudiPosition: 'The largest capital market in the region (Tadawul) and a financial district (KAFD) built for regional headquarters.', nationalFigures: [nf('Largest economy in MENA', '$1.2T+', 'World Bank', 'as shown on the live site')], sectorHref: sectorPage('Financial Services'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
-  'Food and Agriculture': { industry: 'Food and Agriculture', summary: 'The GCC imports most of its food; processing, cold-chain and halal certification from a Saudi base reach the Gulf by road within a day and the Red Sea markets by sea.', saudiPosition: 'The largest food market in the GCC and a regional exporter of dairy, poultry and processed foods.', nationalFigures: [], sectorHref: sectorPage('Food and Agriculture'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
-  'Healthcare and Life Sciences': { industry: 'Healthcare and Life Sciences', summary: 'Pharmaceuticals and medical devices are imported across the region; local manufacturing with SFDA registration opens the GCC through mutual recognition.', saudiPosition: 'The largest healthcare market in the region, with the Health Sector Transformation Program and NUPCO procurement as demand anchors.', nationalFigures: [], sectorHref: sectorPage('Healthcare and Life Sciences'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
-  ICT: { industry: 'ICT', summary: 'Cloud, data centres and digital services for the Middle East and North Africa are consolidating in a few hubs; data residency rules in each market decide where regional platforms sit.', saudiPosition: 'The largest ICT market in the region by spend, with hyperscale cloud regions and the Cloud Computing SEZ.', nationalFigures: [nf('Digital economy valuation', '$132B', 'Vision 2030', '2025'), nf('G20 digital economy ranking', '2nd', 'CST', '2024'), nf('National 5G coverage', '100%', 'CITC', 'as shown on the live site')], sectorHref: sectorPage('ICT'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
-  Logistics: { industry: 'Logistics', summary: 'Trade between Asia, Europe and Africa crosses the region by sea; the hubs compete on port capacity, customs speed and re-export regimes.', saudiPosition: 'Two coastlines, the Landbridge programme and 59 planned logistics zones under the National Transport and Logistics Strategy.', nationalFigures: [nf('Logistics Performance Index rank', '38th', 'World Bank', '2023'), nf('Planned logistics zones by 2030', '59', 'Invest Saudi', 'as shown on the live site')], sectorHref: sectorPage('Logistics'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
-  'Mining and Metals': { industry: 'Mining and Metals', summary: 'Regional demand for steel, aluminium, copper and phosphate products tracks construction and energy investment; the Arabian Shield is the largest under-explored mineral belt in the region.', saudiPosition: 'A national mining strategy targeting the sector as the third pillar of industry, with Ma’aden as the anchor.', nationalFigures: [], sectorHref: sectorPage('Mining and Metals'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
-  'Real Estate': { industry: 'Real Estate', summary: 'Giga-projects and housing programmes make Saudi Arabia the largest construction market in the region; regional contractors and suppliers base here to serve it.', saudiPosition: 'Giga-projects (NEOM, Qiddiya, Red Sea, Diriyah, ROSHN) and a national housing programme.', nationalFigures: [], sectorHref: sectorPage('Real Estate'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
-  Tourism: { industry: 'Tourism', summary: 'Religious, leisure and business travel across the region grows with air connectivity; hotel and experience operators run regional portfolios from one base.', saudiPosition: 'Target of 150 million visits by 2030, with Red Sea and Diriyah destinations under construction.', nationalFigures: [], sectorHref: sectorPage('Tourism'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
+  'Advanced Manufacturing': { industry: 'Advanced Manufacturing', summary: 'Regional demand for machinery, vehicles, electrical equipment and building products is met mostly by imports from Asia and Europe. A Saudi plant serves the GCC duty-free and GAFTA markets under rules of origin.', saudiPosition: 'The largest industrial base in the region, with NIDLP localisation programmes in automotive, defence and renewables equipment.', connectivity: 'Produce here, then export by sea from KAEC, Jubail or Yanbu and by road to the GCC. Check rules of origin per market before pricing the route.', nationalFigures: [nf('Industrial cities nationwide', '39+', 'MODON', '2024'), nf('Localization target in priority programmes', '70%', 'NIDLP, GAMI, MCIT', 'as shown on the live site')], sectorHref: sectorPage('Advanced Manufacturing'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
+  Chemicals: { industry: 'Chemicals', summary: 'The Gulf is a net exporter of basic chemicals and a net importer of specialty and performance chemicals; downstream conversion for the region is the open space.', saudiPosition: 'Home to the largest petrochemical complexes in the region at Jubail and Yanbu, with feedstock at industrial tariffs.', connectivity: 'Jubail and Yanbu ship from their own industrial ports; downstream converters can sit in the SEZs beside them.', nationalFigures: [nf('Gas feedstock price', '$2.15/MMBtu', 'Invest Saudi energy page', 'as shown on the live site')], sectorHref: sectorPage('Chemicals'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
+  Energy: { industry: 'Energy', summary: 'Every market on this page is adding renewable capacity and grid infrastructure; Saudi projects are the largest single pipeline in the region for turbines, panels, cables and storage.', saudiPosition: 'The regional reference market for utility-scale solar and wind procurement at record tariffs.', connectivity: 'Equipment moves by sea into Jubail, Dammam and Jeddah; project sites are served by the national highway network.', nationalFigures: [nf('Renewable capacity delivered in 5 years', '64 GW', 'Invest Saudi energy page', 'as shown on the live site'), nf('Renewables targeted by 2030', '130 GW', 'Invest Saudi energy page', 'as shown on the live site'), nf('Electricity from renewables by 2030', '50%', 'Ministry of Energy', 'as shown on the live site')], sectorHref: sectorPage('Energy'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
+  'Financial Services': { industry: 'Financial Services', summary: 'Regional banking, asset management and fintech serve a fast-growing banked population across the GCC, Egypt and Pakistan; licensing is national, so a regional base needs a regulator that moves quickly.', saudiPosition: 'The largest capital market in the region (Tadawul) and a financial district (KAFD) built for regional headquarters.', connectivity: 'Serve Saudi demand from Riyadh and reach regional clients by air within hours; cross-border services depend on each market’s regulator, not on distance.', nationalFigures: [nf('Largest economy in MENA', '$1.2T+', 'World Bank', 'as shown on the live site')], sectorHref: sectorPage('Financial Services'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
+  'Food and Agriculture': { industry: 'Food and Agriculture', summary: 'The GCC imports most of its food; processing, cold-chain and halal certification from a Saudi base reach the Gulf by road within a day and the Red Sea markets by sea.', saudiPosition: 'The largest food market in the GCC and a regional exporter of dairy, poultry and processed foods.', connectivity: 'Road corridors put the GCC within a day; cold-chain and halal certification travel with the goods.', nationalFigures: [], sectorHref: sectorPage('Food and Agriculture'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
+  'Healthcare and Life Sciences': { industry: 'Healthcare and Life Sciences', summary: 'Pharmaceuticals and medical devices are imported across the region; local manufacturing with SFDA registration opens the GCC through mutual recognition.', saudiPosition: 'The largest healthcare market in the region, with the Health Sector Transformation Program and NUPCO procurement as demand anchors.', connectivity: 'Manufacture with SFDA registration, distribute by air cargo for time-sensitive products and by road across the GCC.', nationalFigures: [], sectorHref: sectorPage('Healthcare and Life Sciences'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
+  ICT: { industry: 'ICT', summary: 'Cloud, data centres and digital services for the Middle East and North Africa are consolidating in a few hubs; data residency rules in each market decide where regional platforms sit.', saudiPosition: 'The largest ICT market in the region by spend, with hyperscale cloud regions and the Cloud Computing SEZ.', connectivity: 'Cloud regions and subsea landings support regional platforms; data residency rules in each market decide what is served from Saudi Arabia.', nationalFigures: [nf('Digital economy valuation', '$132B', 'Vision 2030', '2025'), nf('G20 digital economy ranking', '2nd', 'CST', '2024'), nf('National 5G coverage', '100%', 'CITC', 'as shown on the live site')], sectorHref: sectorPage('ICT'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
+  Logistics: { industry: 'Logistics', summary: 'Trade between Asia, Europe and Africa crosses the region by sea; the hubs compete on port capacity, customs speed and re-export regimes.', saudiPosition: 'Two coastlines, the Landbridge programme and 59 planned logistics zones under the National Transport and Logistics Strategy.', connectivity: 'Ports on two coasts, three cargo airports, GCC road corridors and bonded zones; the integrated view on the globe shows how they join.', nationalFigures: [nf('Logistics Performance Index rank', '38th', 'World Bank', '2023'), nf('Planned logistics zones by 2030', '59', 'Invest Saudi', 'as shown on the live site')], sectorHref: sectorPage('Logistics'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
+  'Mining and Metals': { industry: 'Mining and Metals', summary: 'Regional demand for steel, aluminium, copper and phosphate products tracks construction and energy investment; the Arabian Shield is the largest under-explored mineral belt in the region.', saudiPosition: 'A national mining strategy targeting the sector as the third pillar of industry, with Ma’aden as the anchor.', connectivity: 'Ras Al-Khair and Jubail ports export concentrates and metals; the SAR North line carries phosphate and bauxite to the coast.', nationalFigures: [], sectorHref: sectorPage('Mining and Metals'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
+  'Real Estate': { industry: 'Real Estate', summary: 'Giga-projects and housing programmes make Saudi Arabia the largest construction market in the region; regional contractors and suppliers base here to serve it.', saudiPosition: 'Giga-projects (NEOM, Qiddiya, Red Sea, Diriyah, ROSHN) and a national housing programme.', connectivity: 'Materials arrive by sea and road; giga-project sites sit on the highway network and planned rail.', nationalFigures: [], sectorHref: sectorPage('Real Estate'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
+  Tourism: { industry: 'Tourism', summary: 'Religious, leisure and business travel across the region grows with air connectivity; hotel and experience operators run regional portfolios from one base.', saudiPosition: 'Target of 150 million visits by 2030, with Red Sea and Diriyah destinations under construction.', connectivity: 'Air connectivity drives arrivals; Red Sea and Riyadh airports and the planned King Salman airport are the capacity story.', nationalFigures: [], sectorHref: sectorPage('Tourism'), ...benchmark('Sector team narrative', 'regional demand figures pending') },
 };
 
 /* Band 8: companies serving the region from Saudi. Logos need consent per

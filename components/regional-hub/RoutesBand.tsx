@@ -47,6 +47,8 @@ export function RoutesBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onC
                   ))}
                 </ul>
                 <SourceLine DS={DS} p={selected.provenance} />
+                <span className="text-sm-medium rh-muted">Connectivity that matters for this route</span>
+                <p className="text-sm-regular rh-muted" style={{ margin: 0 }}>{selected.connectivity}</p>
               </div>
               <div className="rh-stack" style={{ gap: 'var(--spacing-md)' }}>
                 <span className="text-sm-medium rh-muted">Next step</span>
