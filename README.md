@@ -17,6 +17,10 @@ Inspire (hero with the globe as the visual) → Understand (anchor market, edito
 
 Scroll-driven moments (all off under prefers-reduced-motion and non-pinned below 1024px): the connectivity globe is pinned while five steps (Air, Sea, Land, Digital, Integrated network) scroll past and drive its mode and view; the route path lights its steps as their text scrolls into view; the anchor-market figure rolls up with the system NumberTicker on first view; the platform strip highlights the item in view.
 
+### Imagery and atmosphere
+
+No stock or generated photography is used. Imagery on the page is drawn from the geography itself: the hero globe, the connectivity globe, and a `MiniMap` tile per location (Natural Earth 1:50m coastline and borders with a marker). Backdrops are procedural SVG drawn in `currentColor` so they follow each band's theme: a fine grid and brand glow behind the hero globe, contour lines on the anchor-market band, corridor lines on the routes band, a soft brand wash on the companies band. Editorial leads fade and rise on first view (`Reveal`). Brand photography can be added later through the `image` slot on the hero and a per-platform image; the map tiles remain the fallback.
+
 ## 2a. Bands And The Components Behind Them
 
 | # | Band | File | Design-system components used |

@@ -2,7 +2,7 @@
 
 import type { DS } from '@/lib/ds';
 import { INDUSTRIES, INDUSTRY_REGION, MARKETS } from '@/data/regional-hub';
-import { Sideways, SourceLine, marketNames, type HubContext } from './shared';
+import { Reveal, Sideways, SourceLine, marketNames, type HubContext } from './shared';
 
 /**
  * Evaluate, continued. Your industry in the region as an editorial read:
@@ -16,11 +16,11 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
   return (
     <section id="industry" className="rh-band" aria-labelledby="rh-industry">
       <div className="rh-container rh-stack">
-        <div className="rh-editorial-lead">
+        <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">Your industry</span>
           <h2 id="rh-industry" className="display-md-semibold rh-h2">{rec ? `${rec.industry} in the region` : 'Your industry in the region'}</h2>
           <p className="text-lg-regular rh-muted rh-para">{rec ? `How the sector looks across ${marketNames(ctx.markets)}, where Saudi Arabia stands in it, and how the connections above matter for it.` : 'Pick an industry to read how the sector looks across the region and where Saudi Arabia stands in it.'}</p>
-        </div>
+        </Reveal>
         <div className="rh-chips">
           {INDUSTRIES.map((i) => (
             <DS.Chip key={i} size="md" selected={ctx.industry === i} onClick={() => onPick(i)}>

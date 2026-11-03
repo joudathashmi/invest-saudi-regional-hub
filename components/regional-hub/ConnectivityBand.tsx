@@ -4,7 +4,7 @@ import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { CONNECTIVITY_FIGURES, CORRIDORS, DIGITAL_FIGURES, DIGITAL_NODES, HUB_CITIES, LAND_PORTS, MARKETS, MODE_RELEVANCE, NODES, REACH_RINGS, SAUDI_CITIES, type Node } from '@/data/regional-hub';
 import { Globe, greatCircleKm, type GlobeArc, type GlobeLine, type GlobePoint, type GlobeView } from './Globe';
-import { Sideways, SourceLine, marketNames, type HubContext } from './shared';
+import { Reveal, Sideways, SourceLine, marketNames, type HubContext } from './shared';
 
 type Mode = 'air' | 'sea' | 'ground' | 'digital';
 type Layer = 'all' | 'road' | 'rail' | 'ports';
@@ -117,7 +117,7 @@ export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   return (
     <section id="connectivity" className="rh-band" aria-labelledby="rh-connect">
       <div className="rh-container rh-stack">
-        <div className="rh-editorial-lead">
+        <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">Explore</span>
           <h2 id="rh-connect" className="display-md-semibold rh-h2">Connected by air, land, sea and digital links</h2>
           <p className="text-lg-regular rh-muted rh-para">Scroll, and the globe changes with the story: how {marketNames(ctx.markets)} are reached from here, mode by mode, then how the network joins up inside Saudi Arabia. Transport links are one thing; market access is the section after this.</p>
@@ -127,7 +127,7 @@ export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             value={step}
             onChange={(v: string) => activate(v as Step, true)}
           />
-        </div>
+        </Reveal>
         <div className="rh-story">
           <div className="rh-story-visual">
             <div className="rh-globe-wrap">

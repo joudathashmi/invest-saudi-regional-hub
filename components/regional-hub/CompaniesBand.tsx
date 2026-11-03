@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { COMPANIES, ROUTES, type RouteId } from '@/data/regional-hub';
-import { SourceLine, type HubContext } from './shared';
+import { Reveal, SourceLine, type HubContext } from './shared';
 
 /**
  * Showcase. One featured story told large, then the rest grouped by what they
@@ -24,11 +24,11 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   return (
     <section id="companies" className="rh-band" aria-labelledby="rh-companies">
       <div className="rh-container rh-stack">
-        <div className="rh-editorial-lead">
+        <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">Who already does this</span>
           <h2 id="rh-companies" className="display-md-semibold rh-h2">Running the region from Saudi Arabia</h2>
           <p className="text-lg-regular rh-muted rh-para">Exporters, logistics operators, service firms, digital platforms and regional headquarters that have publicly announced a Saudi base. Names come from public announcements; logos appear only with each company&rsquo;s consent.</p>
-        </div>
+        </Reveal>
 
         <article className="rh-feature">
           <div className="rh-feature-mark" aria-hidden="true">

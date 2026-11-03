@@ -227,3 +227,33 @@ export function Globe({
     </div>
   );
 }
+
+/**
+ * MiniMap: a non-interactive map tile centred on one location, drawn from the
+ * same Natural Earth geometry (1:50m, loaded on demand). Used as the image of
+ * a zone or port: real coastline and borders, a marker, nothing invented.
+ */
+export function MiniMap({ lat, lon, zoom = 18, size = 420, label }: { lat: number; lon: number; zoom?: number; size?: number; label?: string }) {
+  const [hi, setHi] = React.useState<Countries | null>(countries50);
+  React.useEffect(() => { if (!hi) load50().then(setHi).catch(() => undefined); }, [hi]);
+  const R = size / 2;
+  const projection = React.useMemo(() => geoOrthographic().translate([size / 2, size / 2]).scale(R * zoom).rotate([-lon, -lat]).clipAngle(90), [size, R, zoom, lat, lon]);
+  const path = React.useMemo(() => geoPath(projection), [projection]);
+  const data = hi ?? COUNTRIES_110;
+  const q = projection([lon, lat]);
+  return (
+    <svg className="rh-minimap" viewBox={`0 0 ${size} ${size}`} role="img" aria-label={label ? `Map of ${label}` : 'Map'}>
+      <rect width={size} height={size} className="rh-minimap-sea" />
+      <g className="rh-minimap-land">
+        {data.features.map((f) => <path key={String(f.id)} d={path(f) ?? ''} className={String(f.id) === '682' ? 'rh-minimap-country rh-minimap-country--home' : 'rh-minimap-country'} />)}
+      </g>
+      <path d={path(GRATICULE) ?? ''} className="rh-minimap-grat" />
+      {q && (
+        <g transform={`translate(${q[0]} ${q[1]})`}>
+          <circle r={14} className="rh-minimap-halo" />
+          <circle r={5} className="rh-minimap-pin" />
+        </g>
+      )}
+    </svg>
+  );
+}

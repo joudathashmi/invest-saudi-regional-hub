@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { CONNECTIVITY_FIGURES, DOMESTIC, REACH } from '@/data/regional-hub';
-import { SourceLine, marketNames, type HubContext } from './shared';
+import { Reveal, SourceLine, marketNames, type HubContext } from './shared';
 
 /**
  * Understand. The anchor market as an editorial statement: one large figure
@@ -25,13 +25,13 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   return (
     <section id="reach" className="rh-band" aria-labelledby="rh-reach">
       <div className="rh-container rh-editorial">
-        <div className="rh-editorial-lead">
+        <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">Understand</span>
           <h2 id="rh-reach" className="display-md-semibold rh-h2">An anchor market before it is a hub</h2>
           <p className="text-lg-regular rh-muted rh-para">
             Investors come for Saudi demand first. The region is served from that base, not instead of it. What follows is the domestic economy, then the logistics base and digital backbone a hub needs to serve {marketNames(ctx.markets)}.
           </p>
-        </div>
+        </Reveal>
         <div className="rh-editorial-figure" ref={figRef}>
           <span className="rh-bignum" aria-label={lead.value}>
             <DS.NumberTicker value={seen ? '1.2' : '0.0'} prefix="$" suffix="T+" />

@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import type { Provenance, RouteId } from '@/data/regional-hub';
 import { MARKETS } from '@/data/regional-hub';
@@ -50,4 +51,18 @@ export function Sideways({ DS, items }: { DS: DS; items: { label: string; href: 
 export function marketNames(codes: string[]): string {
   const names = MARKETS.filter((m) => codes.includes(m.code)).map((m) => m.name);
   return names.length ? names.join(', ') : 'your selected markets';
+}
+
+/** Reveal: adds `rh-in` when the element first enters the viewport (fade and rise; none under reduced motion). */
+export function Reveal({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  const ref = React.useRef<HTMLDivElement | null>(null);
+  const [on, setOn] = React.useState(false);
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined') { setOn(true); return; }
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { setOn(true); io.disconnect(); } }, { threshold: 0.2 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return <div ref={ref} className={`rh-reveal ${on ? 'rh-in' : ''} ${className}`.trim()}>{children}</div>;
 }

@@ -2,7 +2,7 @@
 
 import type { DS } from '@/lib/ds';
 import { FAQ_ITEMS, ROUTES, TALENT_FIGURES } from '@/data/regional-hub';
-import { SourceLine, marketNames, type HubContext } from './shared';
+import { Reveal, SourceLine, marketNames, type HubContext } from './shared';
 
 /**
  * Band 10: talent, living and continue. Talk to an advisor with the declared
@@ -22,11 +22,11 @@ export function ContinueBand({ DS, ctx, onEditCase }: { DS: DS; ctx: HubContext;
   return (
     <section id="continue" className="rh-band" aria-labelledby="rh-continue">
       <div className="rh-container rh-stack">
-        <div className="rh-editorial-lead">
+        <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">Act</span>
           <h2 className="display-md-semibold rh-h2">Talent, living and next steps</h2>
           <p className="text-lg-regular rh-muted rh-para">Regional talent mobility, relocation and living in Saudi Arabia sit on their own pages. From here you can talk to an advisor with your case already attached.</p>
-        </div>
+        </Reveal>
         <dl className="rh-statline">
           {TALENT_FIGURES.map((f) => (
             <div key={f.label} className="rh-stat">

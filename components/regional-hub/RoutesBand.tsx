@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { ROUTES, type RouteId } from '@/data/regional-hub';
-import { Sideways, SourceLine, type HubContext } from './shared';
+import { Reveal, Sideways, SourceLine, type HubContext } from './shared';
 
 /**
  * Evaluate. Five ways to run the region from here, as tabs with the path drawn
@@ -27,11 +27,11 @@ export function RoutesBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onC
   return (
     <section id="routes" className="rh-band" aria-labelledby="rh-routes">
       <div className="rh-container rh-stack">
-        <div className="rh-editorial-lead">
+        <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">Evaluate</span>
           <h2 id="rh-routes" className="display-md-semibold rh-h2">How you can run the region from here</h2>
           <p className="text-lg-regular rh-muted rh-para">Five routes, each with its licence, the incentives that may apply, the connectivity it depends on, and the order of steps. A regional headquarters is one of the five, not the only one.</p>
-        </div>
+        </Reveal>
         <DS.Tabs
           type="underline"
           items={ROUTES.map((r) => ({ label: r.title.replace(' (Regional Headquarters)', ''), value: r.id }))}
