@@ -24,6 +24,13 @@ const ITEMS = [
 
 export function SectionNav({ DS }: { DS: DS }) {
   const [active, setActive] = React.useState('reach');
+  const [shown, setShown] = React.useState(false);
+  React.useEffect(() => {
+    const onScroll = () => setShown(window.scrollY > Math.max(320, window.innerHeight * 0.6));
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
   React.useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') return;
     const io = new IntersectionObserver(
@@ -35,8 +42,9 @@ export function SectionNav({ DS }: { DS: DS }) {
   }, []);
   const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   return (
-    <div className="rh-nav" role="navigation" aria-label="Page sections">
-      <div className="rh-container rh-nav-in">
+    <div className={shown ? 'rh-nav rh-nav--show' : 'rh-nav'} role="navigation" aria-label="Page sections">
+      <div className="rh-nav-in">
+        <span className="rh-nav-pos text-xs-semibold" aria-live="polite">{String(ITEMS.findIndex((it) => it.id === active) + 1).padStart(2, '0')} / {ITEMS.length}</span>
         <div className="rh-nav-tabs">
           <DS.Tabs type="underline" items={ITEMS.map((it, i) => ({ label: `${String(i + 1).padStart(2, '0')}  ${it.label}`, value: it.id }))} value={active} onChange={go} />
         </div>

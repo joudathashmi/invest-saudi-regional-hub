@@ -70,19 +70,19 @@ export function RegionalHubPage() {
     <div className="rh-page">
       <DS.Header links={NAV as never} homeHref="/" />
       <main>
-        {/* Dark throughout, as the homepage; the closing Act band is light, like the homepage's Talk to Us. */}
+        {/* Light and dark alternate band by band so each stage reads as its own chapter. */}
         <HeroBand DS={DS} onBuildCase={() => setCaseOpen(true)} />
         <SectionNav DS={DS} />
         <CaseStrip DS={DS} ctx={ctx} onEdit={() => setCaseOpen(true)} />
         <div data-theme="light" className="rh-theme-light"><ReachBand DS={DS} ctx={ctx} /></div>
         <ConnectivityBand DS={DS} ctx={ctx} onChange={setCtx} />
-        <MarketAccessBand DS={DS} ctx={ctx} />
+        <div data-theme="light" className="rh-theme-light"><MarketAccessBand DS={DS} ctx={ctx} /></div>
         <PlatformsBand DS={DS} ctx={ctx} />
-        <RoutesBand DS={DS} ctx={ctx} onChange={setCtx} />
+        <div data-theme="light" className="rh-theme-light"><RoutesBand DS={DS} ctx={ctx} onChange={setCtx} /></div>
         <TalentBand DS={DS} />
-        <IndustryBand DS={DS} ctx={ctx} onPick={(industry) => setCtx({ ...ctx, industry: ctx.industry === industry ? null : industry })} />
+        <div data-theme="light" className="rh-theme-light"><IndustryBand DS={DS} ctx={ctx} onPick={(industry) => setCtx({ ...ctx, industry: ctx.industry === industry ? null : industry })} /></div>
         <CapitalBand DS={DS} ctx={ctx} />
-        <CompaniesBand DS={DS} ctx={ctx} />
+        <div data-theme="light" className="rh-theme-light"><CompaniesBand DS={DS} ctx={ctx} /></div>
         <ComparisonBand DS={DS} ctx={ctx} />
         <div data-theme="light" className="rh-theme-light"><ContinueBand DS={DS} ctx={ctx} onEditCase={() => setCaseOpen(true)} /></div>
       </main>
