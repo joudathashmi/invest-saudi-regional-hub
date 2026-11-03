@@ -12,12 +12,25 @@ type Layer = 'all' | 'road' | 'rail' | 'ports';
 /* Estimated travel time from great-circle distance. Status "estimate" until the
  * owning authority publishes a figure per pair. */
 const flightHours = (km: number) => km / 850 + 0.5;
+/* Global economic centres beyond the regional market list, for the air step: continent, city, coordinates.
+ * Times are estimates from great-circle distance; they explain reach, they are not schedules. */
+const CENTRES = [
+  { id: 'c-lon', city: 'London', country: 'United Kingdom', continent: 'Europe', lat: 51.5, lon: -0.12 },
+  { id: 'c-fra', city: 'Frankfurt', country: 'Germany', continent: 'Europe', lat: 50.11, lon: 8.68 },
+  { id: 'c-par', city: 'Paris', country: 'France', continent: 'Europe', lat: 48.86, lon: 2.35 },
+  { id: 'c-jnb', city: 'Johannesburg', country: 'South Africa', continent: 'Africa', lat: -26.2, lon: 28.04 },
+  { id: 'c-del', city: 'Delhi', country: 'India', continent: 'Asia', lat: 28.61, lon: 77.21 },
+  { id: 'c-sin', city: 'Singapore', country: 'Singapore', continent: 'Asia', lat: 1.35, lon: 103.82 },
+  { id: 'c-sha', city: 'Shanghai', country: 'China', continent: 'Asia', lat: 31.23, lon: 121.47 },
+  { id: 'c-nyc', city: 'New York', country: 'United States', continent: 'Americas', lat: 40.71, lon: -74.01 },
+];
 const driveHours = (km: number) => (km * 1.25) / 80;
 const fmtH = (h: number) => (h < 1 ? `${Math.round(h * 60)} min` : `${h.toFixed(1).replace(/\.0$/, '')} h`);
 
 const REGION_VIEW: GlobeView = { lat: 22, lon: 42, zoom: 1 };
 const SAUDI_VIEW: GlobeView = { lat: 24, lon: 45, zoom: 3.4 };
 const DIGITAL_VIEW: GlobeView = { lat: 24, lon: 44, zoom: 2.2 };
+const GROUND_VIEW: GlobeView = { lat: 26.5, lon: 48.5, zoom: 3.6 };
 const NEIGHBOURS = ['784', '634', '414', '512', '400', '368', '887', '048'];
 
 /** Band 3: how strongly Saudi Arabia is connected, by air, sea and ground, on a real-world globe. */
@@ -49,7 +62,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
 
   const activate = (k: Step, scroll: boolean) => {
     setStep(k);
-    setView(k === 'integrated' ? SAUDI_VIEW : k === 'digital' ? DIGITAL_VIEW : REGION_VIEW);
+    setView(k === 'integrated' ? SAUDI_VIEW : k === 'digital' ? DIGITAL_VIEW : k === 'ground' ? GROUND_VIEW : REGION_VIEW);
     if (scroll) stepRefs.current[k]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
   const enterFocus = () => activate('integrated', true);
@@ -63,19 +76,23 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
 
   /* Region view: hubs, markets, arcs, rings. */
   const regionPoints: GlobePoint[] = [
+    ...(mode === 'air' ? CENTRES.map((c) => ({ id: c.id, name: c.city, lat: c.lat, lon: c.lon, kind: 'centre' as const, labelAt: (c.lon < 30 ? 'left' : 'right') as 'left' | 'right', title: `${c.city}, ${c.country}` })) : []),
     ...HUB_CITIES.map((h) => ({ ...h, kind: 'hub' as const, labelAt: (h.id === 'jed' ? 'left' : h.id === 'dmm' ? 'above' : 'below') as 'left' | 'above' | 'below' })),
     ...(mode === 'sea' ? NODES.filter((n) => n.mode === 'sea').map((n) => ({ id: n.id, name: n.name.replace(' Port', ''), lat: n.lat, lon: n.lon, kind: 'port' as const })) : []),
-    ...(mode === 'digital' ? DIGITAL_NODES.map((d) => ({ id: d.id, name: d.name, lat: d.lat, lon: d.lon, kind: (d.kind === 'landing' ? 'port' : 'airport') as 'port' | 'airport', title: `${d.name}: ${d.note}`, labelAt: (d.lon < 44 ? 'left' : 'right') as 'left' | 'right', sub: d.kind === 'landing' ? '(landing)' : d.kind === 'cloud' ? '(cloud)' : '(planned)' })) : []),
+    ...(mode === 'digital' ? DIGITAL_NODES.map((d) => ({ id: d.id, name: d.name, lat: d.lat, lon: d.lon, kind: (d.kind === 'landing' ? 'port' : 'airport') as 'port' | 'airport', pulse: true, title: `${d.name}: ${d.note}`, labelAt: (d.lon < 44 ? 'left' : 'right') as 'left' | 'right', sub: d.kind === 'landing' ? '(landing)' : d.kind === 'cloud' ? '(cloud)' : '(planned)' })) : []),
     ...MARKETS.map((m) => {
       const on = ctx.markets.includes(m.code);
-      const t = mode === 'air' && greatCircleKm(riyadh, m) <= 2000 ? ` · ${fmtH(flightHours(greatCircleKm(riyadh, m)))}` : mode === 'ground' && ground.has(m.code) ? ` · ${fmtH(driveHours(greatCircleKm(riyadh, m)))}` : '';
-      return { id: m.code, name: on ? m.city + t : m.city, lat: m.lat, lon: m.lon, kind: 'market' as const, selected: on, labelAt: (m.lon < riyadh.lon - 8 ? 'left' : 'right') as 'left' | 'right' };
+      const t = mode === 'air' && on && greatCircleKm(riyadh, m) <= 2000 ? ` · ${fmtH(flightHours(greatCircleKm(riyadh, m)))}` : mode === 'ground' && ground.has(m.code) ? ` · ${fmtH(driveHours(greatCircleKm(riyadh, m)))}` : '';
+      return { id: m.code, name: on ? m.city + t : m.city, lat: m.lat, lon: m.lon, kind: 'market' as const, selected: on || (mode === 'air' && shown.includes(m)) || (mode === 'ground' && ground.has(m.code)), pulse: mode === 'digital' ? false : undefined, labelAt: (m.lon < riyadh.lon - 8 ? 'left' : 'right') as 'left' | 'right' };
     }),
   ];
   const regionArcs: GlobeArc[] =
-    mode === 'air' ? shown.map((m) => { const km = greatCircleKm(riyadh, m); const h = flightHours(km); return { from: riyadh, to: m, plane: true, hours: h, label: km > 2000 ? fmtH(h) : undefined }; })
-      : mode === 'ground' ? shown.filter((m) => ground.has(m.code)).map((m) => ({ from: riyadh, to: m, dashed: true }))
-        : mode === 'digital' ? [] : seaMarkets.map((m) => ({ from: m.lon < 44 ? { lat: 21.47, lon: 39.17 } : { lat: 26.47, lon: 50.2 }, to: m, dashed: true }));
+    mode === 'air' ? [
+      ...shown.map((m) => { const km = greatCircleKm(riyadh, m); const h = flightHours(km); return { from: riyadh, to: m, vehicle: 'plane' as const, hours: h, label: km > 2000 ? fmtH(h) : undefined }; }),
+      ...CENTRES.map((c) => { const km = greatCircleKm(riyadh, c); const h = flightHours(km); return { from: riyadh, to: c, vehicle: 'plane' as const, thin: true, dashed: true, hours: h, label: fmtH(h) }; }),
+    ]
+      : mode === 'ground' ? shown.filter((m) => ground.has(m.code)).map((m) => ({ from: riyadh, to: m, dashed: true, vehicle: 'truck' as const, label: fmtH(driveHours(greatCircleKm(riyadh, m))) }))
+        : mode === 'digital' ? [] : seaMarkets.map((m) => ({ from: m.lon < 44 ? { lat: 21.47, lon: 39.17 } : { lat: 26.47, lon: 50.2 }, to: m, dashed: true, vehicle: 'ship' as const }));
   const rings = mode === 'air' ? REACH_RINGS.map((r) => ({ lat: riyadh.lat, lon: riyadh.lon, km: r.km, label: r.label })) : [];
 
   /* Focus view: national logistics layer. */
@@ -161,6 +178,23 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                 }}
               />
             </div>
+            {!focused && mode === 'air' && (
+              <div className="rh-reach-panel">
+                {(['Within 4 hours', 'Within 8 hours', 'Beyond 8 hours'] as const).map((band) => {
+                  const all = [...MARKETS.map((m) => ({ city: m.city, country: m.name, continent: m.group === 'South Asia and Türkiye' ? 'Asia' : m.group.includes('Africa') ? 'Africa' : 'Middle East', h: flightHours(greatCircleKm(riyadh, m)) })), ...CENTRES.map((c) => ({ city: c.city, country: c.country, continent: c.continent, h: flightHours(greatCircleKm(riyadh, c)) }))];
+                  const rows = all.filter((x) => (band === 'Within 4 hours' ? x.h <= 4 : band === 'Within 8 hours' ? x.h > 4 && x.h <= 8 : x.h > 8)).sort((a, b) => a.h - b.h);
+                  const continents = Array.from(new Set(rows.map((r) => r.continent)));
+                  return (
+                    <div key={band} className="rh-reach-col">
+                      <span className="text-xs-semibold rh-eyebrow">{band}</span>
+                      <span className="text-sm-medium rh-reach-cont">{continents.join(' · ')}</span>
+                      <span className="text-xs-regular rh-muted">{rows.map((r) => `${r.city} ${fmtH(r.h)}`).join(' · ')}</span>
+                    </div>
+                  );
+                })}
+                <span className="text-xs-regular rh-tertiary rh-reach-note">Estimated flight times from Riyadh (great-circle distance at about 850 km/h plus 30 minutes), not schedules. The 4-hour and 8-hour rings are the published reach figures.</span>
+              </div>
+            )}
             {focused && (
               <DS.Tabs
                 type="button-gray"

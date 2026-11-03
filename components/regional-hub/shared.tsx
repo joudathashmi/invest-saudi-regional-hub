@@ -83,3 +83,22 @@ export function Chapter({ parts, photo }: { parts: (string | { dim: string })[];
     </div>
   );
 }
+
+/** Count-up for a figure string such as "$1.2T+", "2.7%", "38th" or "59": the number animates, prefix and suffix stay. */
+export function CountUp({ value, run = true, ms = 1100 }: { value: string; run?: boolean; ms?: number }) {
+  const m = React.useMemo(() => value.match(/^([^0-9]*)([0-9][0-9,]*\.?[0-9]*)(.*)$/), [value]);
+  const target = m ? parseFloat(m[2].replace(/,/g, '')) : NaN;
+  const decimals = m && m[2].includes('.') ? m[2].split('.')[1].length : 0;
+  const [n, setN] = React.useState(0);
+  React.useEffect(() => {
+    if (Number.isNaN(target)) return;
+    if (!run) { setN(0); return; }
+    let raf = 0; const t0 = performance.now();
+    const tick = (t: number) => { const k = Math.min(1, (t - t0) / ms); const e = 1 - Math.pow(1 - k, 3); setN(target * e); if (k < 1) raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [run, target, ms]);
+  if (!m || Number.isNaN(target)) return <>{value}</>;
+  const shown = (run ? n : target).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  return <>{m[1]}{shown}{m[3]}</>;
+}

@@ -21,10 +21,12 @@ import worldTopo from 'world-atlas/countries-110m.json';
  */
 
 export type LatLon = { lat: number; lon: number };
-export interface GlobePoint extends LatLon { id: string; name: string; selected?: boolean; kind?: 'hub' | 'market' | 'port' | 'airport' | 'city' | 'border' | 'centre'; labelAt?: 'right' | 'left' | 'above' | 'below'; sub?: string; title?: string }
-export interface GlobeArc { from: LatLon; to: LatLon; dashed?: boolean; label?: string; plane?: boolean; hours?: number }
+export interface GlobePoint extends LatLon { id: string; name: string; selected?: boolean; pulse?: boolean; kind?: 'hub' | 'market' | 'port' | 'airport' | 'city' | 'border' | 'centre'; labelAt?: 'right' | 'left' | 'above' | 'below'; sub?: string; title?: string }
+export interface GlobeArc { from: LatLon; to: LatLon; dashed?: boolean; label?: string; plane?: boolean; vehicle?: 'plane' | 'ship' | 'truck'; hours?: number; thin?: boolean }
 
 /* Small aircraft silhouette pointing along +x; moved along the arc with SMIL animateMotion. */
+const SHIP = 'M-9,-1 L9,-1 L6,3 L-7,3 Z M-4,-5 L3,-5 L3,-1 L-4,-1 Z M0,-8 L1,-8 L1,-5 L0,-5 Z';
+const TRUCK = 'M-9,-4 L2,-4 L2,3 L-9,3 Z M2,-2 L7,-2 L9,1 L9,3 L2,3 Z M-6,5 a1.6,1.6 0 1,0 0.01,0 Z M5,5 a1.6,1.6 0 1,0 0.01,0 Z';
 const PLANE = 'M-7,-1.2 L1.5,-1.2 L5.5,-4.5 L7.5,-4.5 L4.5,-0.3 L7.5,3.9 L5.5,3.9 L1.5,0.6 L-7,0.6 L-8.5,2.6 L-9.5,2.6 L-8,-0.3 L-9.5,-3.2 L-8.5,-3.2 L-7,-1.2 Z';
 export interface GlobeRing extends LatLon { km: number; label: string }
 export interface GlobeLine { id: string; kind: 'road' | 'rail' | 'rail-planned'; points: [number, number][]; name: string }
@@ -204,15 +206,17 @@ export function Globe({
             const interp = geoInterpolate([a.from.lon, a.from.lat], [a.to.lon, a.to.lat]);
             const midLL = interp(0.66);
             const mid = visible(midLL[0], midLL[1]) ? projection(midLL) : null;
-            const dur = Math.max(4, (a.hours ?? 4) * 1.8);
+            const vehicle = a.vehicle ?? (a.plane ? 'plane' : undefined);
+            const dur = vehicle === 'ship' ? 14 : vehicle === 'truck' ? 9 : Math.max(4, (a.hours ?? 4) * 1.8);
+            const shape = vehicle === 'ship' ? SHIP : vehicle === 'truck' ? TRUCK : PLANE;
             return (
-              <g key={i} className={a.plane ? 'rh-globe-arcg rh-globe-arcg--air' : 'rh-globe-arcg'}>
-                {a.plane && <path d={d} className="rh-globe-arc-glow" />}
-                <path id={id} d={d} pathLength={1} className={a.dashed ? 'rh-globe-arc rh-globe-arc--dashed' : a.plane ? 'rh-globe-arc rh-globe-arc--air' : 'rh-globe-arc'} />
-                {a.plane && !reduced && (
-                  <g className="rh-globe-plane">
-                    <path d={PLANE} transform="scale(1.5)" />
-                    <animateMotion dur={`${dur}s`} repeatCount="indefinite" rotate="auto" begin={`${(i * 0.7) % 3}s`} calcMode="linear">
+              <g key={i} className={vehicle ? `rh-globe-arcg rh-globe-arcg--${vehicle}` : 'rh-globe-arcg'}>
+                {vehicle && !a.thin && <path d={d} className="rh-globe-arc-glow" />}
+                <path id={id} d={d} pathLength={1} className={`rh-globe-arc${a.dashed ? ' rh-globe-arc--dashed' : ''}${vehicle ? ' rh-globe-arc--air' : ''}${a.thin ? ' rh-globe-arc--thin' : ''}`} />
+                {vehicle && !reduced && (
+                  <g className={`rh-globe-plane rh-globe-vehicle--${vehicle}`}>
+                    <path d={shape} transform={vehicle === 'plane' ? 'scale(1.5)' : 'scale(1.2)'} />
+                    <animateMotion dur={`${dur}s`} repeatCount="indefinite" rotate={vehicle === 'ship' ? '0' : 'auto'} begin={`${(i * 0.7) % 3}s`} calcMode="linear">
                       <mpath href={`#${id}`} />
                     </animateMotion>
                   </g>
@@ -246,6 +250,7 @@ export function Globe({
                 onPointerUp={() => { if (onPointClick && kind === 'market' && drag.current && !drag.current.moved) onPointClick(p); }}
               >
                 {kind === 'hub' && <circle r={10} className="rh-globe-pt-halo" />}
+                {p.pulse && !reduced && <><circle r={14} className="rh-globe-pt-pulse" /><circle r={14} className="rh-globe-pt-pulse rh-globe-pt-pulse--2" /></>}
                 {kind === 'border' ? <rect x={-4} y={-4} width={8} height={8} transform="rotate(45)" className={cls}><title>{p.title ?? p.name}</title></rect> : <circle r={r} className={cls}><title>{p.title ?? p.name}</title></circle>}
                 {show && (
                   <text

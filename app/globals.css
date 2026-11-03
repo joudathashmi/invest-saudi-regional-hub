@@ -456,3 +456,44 @@
 .rh-globe-pill text { fill: var(--rh-accent); font-size: 11px; }
 .rh-globe-arcs { pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .rh-globe-arc--air { animation: none; } }
+
+/* Lighter palette on the globe: mint arcs and pills, softer home fill, white vehicles. */
+.rh-page { --rh-mint: #bdfff4; --rh-mint-2: #7ff0e2; }
+#connectivity .rh-globe-country--home, #connectivity .rh-globe-country.rh-globe-country--home:hover { fill: color-mix(in srgb, var(--rh-mint-2) 55%, var(--rh-tile)); }
+#connectivity .rh-globe-country--on { fill: color-mix(in srgb, var(--rh-mint-2) 22%, var(--rh-tile)); }
+.rh-globe-arc--air { stroke: var(--rh-mint); opacity: 0.85; }
+.rh-globe-arc--thin { stroke-width: 0.9; opacity: 0.45; }
+.rh-globe-arc-glow { stroke: var(--rh-mint-2); opacity: 0.14; }
+.rh-globe-pill rect { stroke: var(--rh-mint-2); fill: color-mix(in srgb, var(--rh-canvas) 90%, transparent); }
+.rh-globe-pill text { fill: var(--rh-mint); }
+.rh-globe-plane path { filter: drop-shadow(0 0 4px var(--rh-mint-2)); }
+.rh-globe-vehicle--ship path { fill: var(--rh-mint); stroke: var(--rh-canvas); }
+.rh-globe-vehicle--truck path { fill: var(--base-white); stroke: var(--rh-canvas); }
+.rh-globe-rings path { stroke: var(--rh-mint-2); opacity: 0.6; }
+.rh-globe-pulse-ring { stroke: var(--rh-mint-2); }
+.rh-globe-pt--centre { fill: var(--rh-mint); stroke: var(--rh-canvas); }
+.rh-globe-pt--on { fill: var(--rh-mint); }
+@keyframes rh-pt-pulse { 0% { transform: scale(0.2); opacity: 0.7; } 100% { transform: scale(1); opacity: 0; } }
+.rh-globe-pt-pulse { fill: none; stroke: var(--rh-mint-2); stroke-width: 1.2; transform-origin: 0 0; animation: rh-pt-pulse 2.8s ease-out infinite; }
+.rh-globe-pt-pulse--2 { animation-delay: 1.4s; }
+
+/* Reach panel under the globe (air step). */
+.rh-reach-panel { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--spacing-xl); padding: var(--spacing-2xl); border: 1px solid var(--border-secondary); border-radius: var(--radius-lg); background: var(--rh-card); }
+.rh-reach-col { display: flex; flex-direction: column; gap: var(--spacing-xs); min-width: 0; }
+.rh-reach-cont { color: var(--text-primary); }
+.rh-reach-note { grid-column: 1 / -1; }
+@media (max-width: 639px) { .rh-reach-panel { grid-template-columns: minmax(0, 1fr); } }
+
+/* Understand: auto-advancing reasons with a progress bar, photo card that crossfades and rises. */
+.rh-reason { position: relative; flex-direction: row; align-items: flex-start; gap: var(--spacing-lg); overflow: hidden; }
+.rh-reason-idx { color: var(--text-quaternary); padding-top: 3px; min-width: 22px; }
+.rh-reason--on .rh-reason-idx { color: var(--rh-accent); }
+.rh-reason-body { display: flex; flex-direction: column; gap: var(--spacing-xxs); min-width: 0; }
+.rh-reason-bar { position: absolute; left: 0; bottom: 0; height: 2px; width: 0; background: var(--rh-accent); }
+@keyframes rh-bar { from { width: 0; } to { width: 100%; } }
+.rh-reason-bar--run { animation-name: rh-bar; animation-timing-function: linear; animation-fill-mode: forwards; }
+.rh-reason-photo { opacity: 0.32; mask-image: linear-gradient(180deg, #000 0%, transparent 85%); -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 85%); }
+.rh-reason-in { display: flex; flex-direction: column; gap: var(--spacing-xl); }
+@keyframes rh-card-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.rh-reason-card { animation: rh-card-in 500ms ease both; }
+@media (prefers-reduced-motion: reduce) { .rh-reason-card { animation: none; } .rh-reason-bar--run { animation: none; } }
