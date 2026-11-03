@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
-import { CONNECTIVITY_FIGURES, CORRIDORS, DIGITAL_FIGURES, DIGITAL_NODES, HUB_CITIES, LAND_PORTS, MARKETS, MODE_RELEVANCE, NODES, REACH_RINGS, SAUDI_CITIES, TREATIES, type Node } from '@/data/regional-hub';
+import { PLATFORMS, CONNECTIVITY_FIGURES, CORRIDORS, DIGITAL_FIGURES, DIGITAL_NODES, HUB_CITIES, LAND_PORTS, MARKETS, MODE_RELEVANCE, NODES, REACH_RINGS, SAUDI_CITIES, TREATIES, type Node } from '@/data/regional-hub';
 import { Globe, greatCircleKm, type GlobeArc, type GlobeLine, type GlobePoint, type GlobeView } from './Globe';
 import { Reveal, Sideways, SourceLine, marketNames, type HubContext } from './shared';
 
@@ -28,7 +28,7 @@ const driveHours = (km: number) => (km * 1.25) / 80;
 const fmtH = (h: number) => (h < 1 ? `${Math.round(h * 60)} min` : `${h.toFixed(1).replace(/\.0$/, '')} h`);
 
 const REGION_VIEW: GlobeView = { lat: 22, lon: 42, zoom: 1 };
-const SAUDI_VIEW: GlobeView = { lat: 24, lon: 45, zoom: 3.4 };
+const SAUDI_VIEW: GlobeView = { lat: 24.2, lon: 45.5, zoom: 4.1 };
 const DIGITAL_VIEW: GlobeView = { lat: 24, lon: 44, zoom: 2.2 };
 const GROUND_VIEW: GlobeView = { lat: 26.5, lon: 48.5, zoom: 3.6 };
 const NEIGHBOURS = ['784', '634', '414', '512', '400', '368', '887', '048'];
@@ -103,6 +103,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
   const focusPoints: GlobePoint[] = [
     ...SAUDI_CITIES.map((c) => ({ ...c, kind: (c.id === 'ruh' ? 'hub' : 'city') as 'hub' | 'city', labelAt: cityLabel[c.id] ?? 'right', title: c.name, name: portsOnly && !['ruh', 'jed', 'dmm'].includes(c.id) ? '' : c.name })),
     ...(showPorts ? NODES.filter((n) => n.mode === 'sea').map((n) => ({ id: n.id, name: portsOnly ? n.name.replace(' Port', '') : '', lat: n.lat, lon: n.lon, kind: 'port' as const, title: n.name, labelAt: (n.id === 'jub' || n.id === 'dmm' ? 'right' : 'left') as 'left' | 'right', sub: portsOnly ? '(port)' : undefined })) : []),
+    ...(showPorts ? PLATFORMS.filter((z) => z.id !== 'modon' && z.id !== 'rcjy').map((z) => ({ id: `z-${z.id}`, name: portsOnly ? z.name.replace(' SEZ', '').replace('Riyadh Integrated Special Logistics Zone', 'Riyadh ILBZ').replace('King Abdullah Economic City', 'KAEC').replace('Cloud Computing', 'Cloud') : '', lat: z.lat - (z.id === 'cloud-sez' ? 0.75 : z.id === 'ilbz' ? -0.35 : 0.55), lon: z.lon - (z.id === 'cloud-sez' ? 1.0 : z.id === 'ilbz' ? -0.5 : 0.55), kind: 'zone' as const, title: `${z.name} (${z.kind})`, labelAt: (z.id === 'rak-sez' || z.id === 'cloud-sez' ? 'left' : 'below') as 'left' | 'below', sub: portsOnly ? '(zone)' : undefined })) : []),
     ...(showPorts ? NODES.filter((n) => n.mode === 'air').map((n) => ({ id: n.id, name: portsOnly ? n.name.replace(' International Airport', '') : '', lat: n.lat + 0.35, lon: n.lon + 0.35, kind: 'airport' as const, title: n.name, labelAt: (n.id === 'jed' ? 'left' : 'right') as 'left' | 'right', sub: portsOnly ? '(airport)' : undefined })) : []),
     ...(showRoad || showRail ? LAND_PORTS.map((b) => ({ id: b.id, name: `${b.name} → ${b.neighbour}`, lat: b.lat, lon: b.lon, kind: 'border' as const, labelAt: (['lp-haditha', 'lp-tuwal'].includes(b.id) ? 'left' : ['lp-arar', 'lp-khafji'].includes(b.id) ? 'above' : ['lp-wadiah', 'lp-batha'].includes(b.id) ? 'below' : 'right') as 'left' | 'above' | 'right' | 'below' })) : []),
   ];
@@ -151,7 +152,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
               <Globe
                 points={focused ? focusPoints : regionPoints}
                 arcs={focused ? [] : regionArcs}
-                rings={rings}
+                rings={focused ? [] : rings}
                 lines={focused ? focusLines : []}
                 selectedCountryIds={focused ? [] : selected.map((m) => m.countryId)}
                 neighbourCountryIds={focused ? NEIGHBOURS : []}
@@ -202,6 +203,17 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                 value={layer}
                 onChange={(v: string) => setLayer(v as Layer)}
               />
+            )}
+            {focused && (
+              <ul className="rh-legend" aria-label="Map legend">
+                <li><span className="rh-legend-line rh-legend-line--road" /> Road corridor</li>
+                <li><span className="rh-legend-line rh-legend-line--rail" /> Rail, operating</li>
+                <li><span className="rh-legend-line rh-legend-line--rail-planned" /> Rail, planned</li>
+                <li><span className="rh-legend-mark rh-legend-mark--port"><DS.Icon name="anchor" size={12} /></span> Seaport</li>
+                <li><span className="rh-legend-mark rh-legend-mark--airport"><DS.Icon name="plane" size={12} /></span> Airport</li>
+                <li><span className="rh-legend-mark rh-legend-mark--zone"><DS.Icon name="building-07" size={12} /></span> Economic zone</li>
+                <li><span className="rh-legend-diamond" /> Border crossing</li>
+              </ul>
             )}
           </div>
           <div className="rh-story-steps">

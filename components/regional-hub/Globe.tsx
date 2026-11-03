@@ -21,10 +21,12 @@ import worldTopo from 'world-atlas/countries-110m.json';
  */
 
 export type LatLon = { lat: number; lon: number };
-export interface GlobePoint extends LatLon { id: string; name: string; selected?: boolean; pulse?: boolean; kind?: 'hub' | 'market' | 'port' | 'airport' | 'city' | 'border' | 'centre'; labelAt?: 'right' | 'left' | 'above' | 'below'; sub?: string; title?: string }
+export interface GlobePoint extends LatLon { id: string; name: string; selected?: boolean; pulse?: boolean; kind?: 'hub' | 'market' | 'port' | 'airport' | 'city' | 'border' | 'centre' | 'zone'; labelAt?: 'right' | 'left' | 'above' | 'below'; sub?: string; title?: string }
 export interface GlobeArc { from: LatLon; to: LatLon; dashed?: boolean; label?: string; plane?: boolean; vehicle?: 'plane' | 'ship' | 'truck'; hours?: number; thin?: boolean }
 
 /* Small aircraft silhouette pointing along +x; moved along the arc with SMIL animateMotion. */
+const ANCHOR = 'M0,-6.5 a2,2 0 1,0 0.01,0 M0,-4.5 L0,6.5 M-4.5,0.5 L4.5,0.5 M-6.5,2.5 a6.5,5.5 0 0,0 13,0';
+const FACTORY = 'M-7,6 L-7,-1.5 L-2.5,1 L-2.5,-1.5 L2,1 L2,-1.5 L6.5,1 L6.5,-6.5 L4,-6.5 L4,-3 L2,-3 L2,-6.5 L-0.5,-6.5 L-0.5,-3 L-2.5,-3 Z';
 const SHIP = 'M-9,-1 L9,-1 L6,3 L-7,3 Z M-4,-5 L3,-5 L3,-1 L-4,-1 Z M0,-8 L1,-8 L1,-5 L0,-5 Z';
 const TRUCK = 'M-9,-4 L2,-4 L2,3 L-9,3 Z M2,-2 L7,-2 L9,1 L9,3 L2,3 Z M-6,5 a1.6,1.6 0 1,0 0.01,0 Z M5,5 a1.6,1.6 0 1,0 0.01,0 Z';
 const PLANE = 'M-7,-1.2 L1.5,-1.2 L5.5,-4.5 L7.5,-4.5 L4.5,-0.3 L7.5,3.9 L5.5,3.9 L1.5,0.6 L-7,0.6 L-8.5,2.6 L-9.5,2.6 L-8,-0.3 L-9.5,-3.2 L-8.5,-3.2 L-7,-1.2 Z';
@@ -251,11 +253,18 @@ export function Globe({
               >
                 {kind === 'hub' && <circle r={10} className="rh-globe-pt-halo" />}
                 {p.pulse && !reduced && <><circle r={14} className="rh-globe-pt-pulse" /><circle r={14} className="rh-globe-pt-pulse rh-globe-pt-pulse--2" /></>}
-                {kind === 'border' ? <rect x={-4} y={-4} width={8} height={8} transform="rotate(45)" className={cls}><title>{p.title ?? p.name}</title></rect> : <circle r={r} className={cls}><title>{p.title ?? p.name}</title></circle>}
+                {kind === 'border' ? <rect x={-4} y={-4} width={8} height={8} transform="rotate(45)" className={cls}><title>{p.title ?? p.name}</title></rect>
+                  : focused && (kind === 'port' || kind === 'airport' || kind === 'zone') ? (
+                    <g className={`rh-glyph rh-glyph--${kind}`}>
+                      {kind === 'zone' ? <rect x={-7.5} y={-7.5} width={15} height={15} rx={3.5} /> : <circle r={7.5} />}
+                      {kind === 'port' ? <path d={ANCHOR} transform="scale(0.8)" className="rh-glyph-stroke" /> : kind === 'airport' ? <path d={PLANE} transform="scale(0.7) rotate(-45)" className="rh-glyph-fill" /> : <path d={FACTORY} transform="scale(0.8)" className="rh-glyph-fill" />}
+                      <title>{p.title ?? p.name}</title>
+                    </g>
+                  ) : <circle r={r} className={cls}><title>{p.title ?? p.name}</title></circle>}
                 {show && (
                   <text
-                    x={p.labelAt === 'left' ? -9 : p.labelAt === 'above' || p.labelAt === 'below' ? 0 : 9}
-                    y={p.labelAt === 'above' ? -10 : p.labelAt === 'below' ? 16 : 4}
+                    x={p.labelAt === 'left' ? (focused && kind !== 'city' && kind !== 'hub' ? -13 : -9) : p.labelAt === 'above' || p.labelAt === 'below' ? 0 : (focused && kind !== 'city' && kind !== 'hub' ? 13 : 9)}
+                    y={p.labelAt === 'above' ? (focused && kind !== 'city' && kind !== 'hub' ? -13 : -10) : p.labelAt === 'below' ? (focused && kind !== 'city' && kind !== 'hub' ? 20 : 16) : 4}
                     textAnchor={p.labelAt === 'left' ? 'end' : p.labelAt === 'above' || p.labelAt === 'below' ? 'middle' : 'start'}
                     className={kind === 'hub' ? 'text-sm-semibold rh-globe-label rh-globe-label--hub' : 'text-xs-medium rh-globe-label'}
                   >

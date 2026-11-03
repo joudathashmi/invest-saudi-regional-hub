@@ -524,3 +524,21 @@
 .rh-reason-dots span { height: 4px; width: 28px; border-radius: var(--radius-full); background: var(--utility-brand-200); }
 .rh-reason-dots span.rh-on { background: var(--brand-500); }
 .rh-page:not(.rh-theme-light) .rh-reason-dots span { background: var(--rh-tile); }
+
+/* Integrated network: icon markers and legend. */
+.rh-glyph--port circle { fill: var(--utility-blue-500); stroke: var(--rh-canvas); stroke-width: 1.5; }
+.rh-glyph--airport circle { fill: var(--utility-orange-500); stroke: var(--rh-canvas); stroke-width: 1.5; }
+.rh-glyph--zone rect { fill: var(--brand-500); stroke: var(--rh-canvas); stroke-width: 1.5; }
+.rh-glyph .rh-glyph-stroke { fill: none; stroke: var(--base-white); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.rh-glyph .rh-glyph-fill { fill: var(--base-white); stroke: none; }
+.rh-globe-pt--zone { fill: var(--brand-500); }
+.rh-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--spacing-md) var(--spacing-2xl); color: var(--text-secondary); font-size: 12px; line-height: 16px; }
+.rh-legend li { display: inline-flex; align-items: center; gap: var(--spacing-sm); }
+.rh-legend-line { display: inline-block; width: 22px; height: 0; border-top: 2px solid var(--utility-brand-600); }
+.rh-legend-line--rail { border-top: 2px dashed var(--utility-blue-500); }
+.rh-legend-line--rail-planned { border-top: 2px dotted var(--utility-blue-400); }
+.rh-legend-mark { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: var(--radius-full); color: var(--base-white); }
+.rh-legend-mark--port { background: var(--utility-blue-500); }
+.rh-legend-mark--airport { background: var(--utility-orange-500); }
+.rh-legend-mark--zone { background: var(--brand-500); border-radius: var(--radius-xs); }
+.rh-legend-diamond { display: inline-block; width: 9px; height: 9px; background: var(--utility-blue-500); border: 1px solid var(--base-white); transform: rotate(45deg); margin-inline: 5px; }
