@@ -22,7 +22,10 @@ import worldTopo from 'world-atlas/countries-110m.json';
 
 export type LatLon = { lat: number; lon: number };
 export interface GlobePoint extends LatLon { id: string; name: string; selected?: boolean; kind?: 'hub' | 'market' | 'port' | 'airport' | 'city' | 'border' | 'centre'; labelAt?: 'right' | 'left' | 'above' | 'below'; sub?: string; title?: string }
-export interface GlobeArc { from: LatLon; to: LatLon; dashed?: boolean }
+export interface GlobeArc { from: LatLon; to: LatLon; dashed?: boolean; label?: string; plane?: boolean; hours?: number }
+
+/* Small aircraft silhouette pointing along +x; moved along the arc with SMIL animateMotion. */
+const PLANE = 'M-7,-1.2 L1.5,-1.2 L5.5,-4.5 L7.5,-4.5 L4.5,-0.3 L7.5,3.9 L5.5,3.9 L1.5,0.6 L-7,0.6 L-8.5,2.6 L-9.5,2.6 L-8,-0.3 L-9.5,-3.2 L-8.5,-3.2 L-7,-1.2 Z';
 export interface GlobeRing extends LatLon { km: number; label: string }
 export interface GlobeLine { id: string; kind: 'road' | 'rail' | 'rail-planned'; points: [number, number][]; name: string }
 
@@ -61,6 +64,9 @@ export function Globe({
   const COUNTRIES = focused && hiRes ? hiRes : COUNTRIES_110;
   const [hover, setHover] = React.useState<string | null>(null);
   const [hoverPt, setHoverPt] = React.useState<{ p: GlobePoint; x: number; y: number } | null>(null);
+  const [reduced, setReduced] = React.useState(false);
+  React.useEffect(() => { try { setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch { /* no matchMedia */ } }, []);
+  const uid = React.useId().replace(/[^a-zA-Z0-9]/g, '');
   const drag = React.useRef<{ x: number; y: number; v: GlobeView; moved: boolean } | null>(null);
   const anim = React.useRef<number | null>(null);
   const R = size / 2 - 12;
@@ -191,7 +197,35 @@ export function Globe({
           {lines.map((l) => <path key={l.id} d={linePath(l)} className={`rh-globe-line rh-globe-line--${l.kind}`}><title>{l.name}</title></path>)}
         </g>
         <g className="rh-globe-arcs">
-          {arcs.map((a, i) => <path key={i} d={arcPath(a)} className={a.dashed ? 'rh-globe-arc rh-globe-arc--dashed' : 'rh-globe-arc'} />)}
+          {arcs.map((a, i) => {
+            const d = arcPath(a);
+            if (!d) return null;
+            const id = `rh-arc-${uid}-${i}`;
+            const interp = geoInterpolate([a.from.lon, a.from.lat], [a.to.lon, a.to.lat]);
+            const midLL = interp(0.66);
+            const mid = visible(midLL[0], midLL[1]) ? projection(midLL) : null;
+            const dur = Math.max(4, (a.hours ?? 4) * 1.8);
+            return (
+              <g key={i} className={a.plane ? 'rh-globe-arcg rh-globe-arcg--air' : 'rh-globe-arcg'}>
+                {a.plane && <path d={d} className="rh-globe-arc-glow" />}
+                <path id={id} d={d} pathLength={1} className={a.dashed ? 'rh-globe-arc rh-globe-arc--dashed' : a.plane ? 'rh-globe-arc rh-globe-arc--air' : 'rh-globe-arc'} />
+                {a.plane && !reduced && (
+                  <g className="rh-globe-plane">
+                    <path d={PLANE} transform="scale(1.5)" />
+                    <animateMotion dur={`${dur}s`} repeatCount="indefinite" rotate="auto" begin={`${(i * 0.7) % 3}s`} calcMode="linear">
+                      <mpath href={`#${id}`} />
+                    </animateMotion>
+                  </g>
+                )}
+                {a.label && mid && onScreen(mid) && (
+                  <g className="rh-globe-pill" transform={`translate(${mid[0].toFixed(1)} ${mid[1].toFixed(1)})`}>
+                    <rect x={-(a.label.length * 3.6 + 8)} y={-9} width={a.label.length * 7.2 + 16} height={18} rx={9} />
+                    <text y={4} textAnchor="middle" className="text-xs-semibold">{a.label}</text>
+                  </g>
+                )}
+              </g>
+            );
+          })}
         </g>
         <g className="rh-globe-points">
           {points.map((p) => {
