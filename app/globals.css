@@ -660,3 +660,10 @@
 .rh-step3-text .rh-eyebrow { color: var(--brand-400); }
 .rh-step3-text .text-sm-regular { color: var(--gray-dark-mode-200); }
 .rh-step3-cta { display: inline-flex; align-items: center; gap: var(--spacing-xs); color: var(--brand-300); margin-top: var(--spacing-xs); }
+
+/* Company marks: white plate so dark and coloured logos both read on either theme. */
+.rh-logo { display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px; background: #ffffff; border: 1px solid var(--border-secondary); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm); max-width: 100%; }
+.rh-logo img { max-height: 100%; max-width: 140px; width: auto; height: auto; object-fit: contain; display: block; }
+.rh-logo--icon { padding: 8px; }
+.rh-logo--icon img { max-width: 100%; }
+.rh-statement-logo .rh-logo { margin-bottom: 0; }

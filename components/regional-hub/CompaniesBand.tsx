@@ -5,6 +5,7 @@ import type { DS } from '@/lib/ds';
 import { COMPANIES, ROUTES, type RouteId } from '@/data/regional-hub';
 import { Reveal, SourceLine, type HubContext } from './shared';
 import { FEATURE_PHOTO } from './imagery';
+import { Logo } from './Logo';
 
 /**
  * 09 Companies. One featured story over a photograph, then a wall of
@@ -32,6 +33,7 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
           <img src={FEATURE_PHOTO.src} alt={FEATURE_PHOTO.alt} loading="lazy" />
           <figcaption>
             <span className="text-xs-semibold rh-eyebrow">{routeTitle(story.route)} · {story.industry}</span>
+            <span className="rh-statement-logo"><Logo name={story.name} mono={mono(story.name)} size={44} /></span>
             <span className="display-sm-semibold">{story.name}</span>
             <span className="text-lg-regular">{story.story} Based in {story.base}.</span>
             <SourceLine DS={DS} p={story} />
@@ -48,13 +50,13 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
         <div className="rh-wall" role="list">
           {list.map((c) => (
             <button key={c.id} type="button" role="listitem" className={matches(c) ? 'rh-wall-tile' : 'rh-wall-tile rh-wall-tile--dim'} onClick={() => setDetail(c)}>
-              <span className="rh-wall-mono display-xs-semibold" aria-hidden="true">{mono(c.name)}</span>
+              <Logo name={c.name} mono={mono(c.name)} />
               <span className="text-md-semibold rh-wall-name">{c.name}</span>
               <span className="text-xs-regular rh-muted">{c.industry}</span>
             </button>
           ))}
         </div>
-        <p className="text-xs-regular rh-tertiary rh-para">Names from public announcements; a company&rsquo;s logo and fuller story appear once it consents. Tiles outside your current case are dimmed, not hidden.</p>
+        <p className="text-xs-regular rh-tertiary rh-para">Names from public announcements. Marks are loaded from public sources for this prototype and are each company&rsquo;s trademark; production use needs the company&rsquo;s consent and the brand team&rsquo;s files. Tiles outside your current case are dimmed, not hidden.</p>
       </div>
       {detail && (
         <DS.SlideoutMenu title={detail.name} description={`${routeTitle(detail.route)} · ${detail.industry}`} open width={480} onClose={() => setDetail(null)} actions={<DS.Button hierarchy="secondary-gray" size="md" onClick={() => setDetail(null)}>Close</DS.Button>}>
