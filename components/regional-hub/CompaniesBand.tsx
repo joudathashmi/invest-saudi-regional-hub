@@ -7,107 +7,62 @@ import { Reveal, SourceLine, type HubContext } from './shared';
 import { FEATURE_PHOTO } from './imagery';
 
 /**
- * Showcase. One featured story told large, then the rest grouped by what they
- * do from Saudi Arabia, as a showcase row rather than a directory. Names are
- * from public announcements; logos appear only with consent, so the monogram
- * stands in. The filter and the full list stay available behind a control.
+ * 09 Companies. One featured story over a photograph, then a wall of
+ * monogram tiles grouped by how each company operates from here. Every tile
+ * opens the record. Names are from public announcements; logos only with consent.
  */
 export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
-  const [showAll, setShowAll] = React.useState(false);
-  const [active, setActive] = React.useState<string[]>([]);
   const [detail, setDetail] = React.useState<(typeof COMPANIES)[number] | null>(null);
+  const [filter, setFilter] = React.useState<RouteId | 'all'>('all');
   const routeTitle = (id: RouteId) => ROUTES.find((r) => r.id === id)?.title.replace(' (Regional Headquarters)', '') ?? id;
   const matches = (c: (typeof COMPANIES)[number]) => (!ctx.route || c.route === ctx.route) && (!ctx.industry || c.industry === ctx.industry);
   const story = COMPANIES.find((c) => c.story && matches(c)) ?? COMPANIES.find((c) => c.story && (!ctx.route || c.route === ctx.route)) ?? COMPANIES.find((c) => c.story)!;
-  const groups: { id: RouteId; title: string }[] = ROUTES.map((r) => ({ id: r.id, title: r.title.replace(' (Regional Headquarters)', '') }));
   const mono = (n: string) => n.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase();
-  const list = COMPANIES.filter((c) => matches(c) && (!active.length || active.includes(routeTitle(c.route)) || active.includes(c.industry)));
+  const list = COMPANIES.filter((c) => filter === 'all' || c.route === filter);
+  const counts = ROUTES.map((r) => ({ id: r.id, title: routeTitle(r.id), n: COMPANIES.filter((c) => c.route === r.id).length })).filter((x) => x.n > 0);
 
   return (
-    <section id="companies" className="rh-band rh-glow-r" aria-labelledby="rh-companies">
+    <section id="companies" className="rh-band" aria-labelledby="rh-companies">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">09 · Who already does this</span>
-          <h2 id="rh-companies" className="display-md-semibold rh-h2">Running the region from Saudi Arabia</h2>
-          <p className="text-lg-regular rh-muted rh-para">Exporters, logistics operators, service firms, digital platforms and regional headquarters that have publicly announced a Saudi base. Names come from public announcements; logos appear only with each company&rsquo;s consent.</p>
+          <h2 id="rh-companies" className="display-md-semibold rh-h2">{COMPANIES.length} companies running the region from here</h2>
         </Reveal>
-
-        <article className="rh-feature">
-          <div className="rh-feature-media">
-            <img src={FEATURE_PHOTO.src} alt={FEATURE_PHOTO.alt} loading="lazy" />
-            <span className="rh-feature-mark rh-feature-mark--badge" aria-hidden="true"><span className="display-xs-semibold">{mono(story.name)}</span></span>
-          </div>
-          <div className="rh-feature-text">
-            <span className="text-xs-medium rh-eyebrow">{routeTitle(story.route)} · {story.industry}</span>
-            <h3 className="display-sm-semibold rh-h3">{story.name}</h3>
-            <p className="text-lg-regular rh-muted rh-para">{story.story} Based in {story.base}.</p>
+        <figure className="rh-statement rh-statement--split">
+          <img src={FEATURE_PHOTO.src} alt={FEATURE_PHOTO.alt} loading="lazy" />
+          <figcaption>
+            <span className="text-xs-semibold rh-eyebrow">{routeTitle(story.route)} · {story.industry}</span>
+            <span className="display-sm-semibold">{story.name}</span>
+            <span className="text-lg-regular">{story.story} Based in {story.base}.</span>
             <SourceLine DS={DS} p={story} />
-            <div className="rh-actions">
-              <DS.Button hierarchy="secondary-gray" size="md" href="/why-saudi/success-stories" iconTrailing="arrow-right">Read the story</DS.Button>
-              <DS.Button hierarchy="link-color" size="md" href="#industry" iconTrailing="arrow-right">Same sector</DS.Button>
-            </div>
-          </div>
-        </article>
-
-        <div className="rh-showcase">
-          {groups.map((g) => {
-            const names = COMPANIES.filter((c) => c.route === g.id);
-            if (!names.length) return null;
-            return (
-              <div key={g.id} className="rh-showcase-group">
-                <span className="text-xs-medium rh-eyebrow">{g.title}</span>
-                <div className="rh-showcase-row">
-                  {names.map((c) => (
-                    <button key={c.id} type="button" className="rh-showcase-name" onClick={() => setDetail(c)}>
-                      <span className="rh-showcase-mono text-xs-semibold" aria-hidden="true">{mono(c.name)}</span>
-                      <span className="text-md-medium">{c.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+            <span className="rh-actions">
+              <DS.Button hierarchy="primary" size="md" onClick={() => setDetail(story)} iconTrailing="arrow-right">Open the record</DS.Button>
+              <DS.Button hierarchy="link-color" size="md" href="/why-saudi/success-stories" iconTrailing="arrow-right">All success stories</DS.Button>
+            </span>
+          </figcaption>
+        </figure>
+        <div className="rh-chips">
+          <DS.Chip size="md" selected={filter === 'all'} onClick={() => setFilter('all')}>All · {COMPANIES.length}</DS.Chip>
+          {counts.map((c) => <DS.Chip key={c.id} size="md" selected={filter === c.id} onClick={() => setFilter(c.id)}>{c.title} · {c.n}</DS.Chip>)}
         </div>
-
-        <div className="rh-actions">
-          <DS.Button hierarchy="link-gray" size="md" iconLeading={showAll ? 'chevron-up' : 'chevron-down'} onClick={() => setShowAll(!showAll)}>
-            {showAll ? 'Hide the full list and filters' : 'Open the full list and filters'}
-          </DS.Button>
-          <DS.Button hierarchy="link-color" size="md" href="/why-saudi/success-stories" iconTrailing="arrow-right">All success stories</DS.Button>
+        <div className="rh-wall" role="list">
+          {list.map((c) => (
+            <button key={c.id} type="button" role="listitem" className={matches(c) ? 'rh-wall-tile' : 'rh-wall-tile rh-wall-tile--dim'} onClick={() => setDetail(c)}>
+              <span className="rh-wall-mono display-xs-semibold" aria-hidden="true">{mono(c.name)}</span>
+              <span className="text-md-semibold rh-wall-name">{c.name}</span>
+              <span className="text-xs-regular rh-muted">{c.industry}</span>
+            </button>
+          ))}
         </div>
-        {showAll && (
-          <div className="rh-stack">
-            <DS.FilterPanel
-              label="Filter"
-              defaultOpen={false}
-              groups={[{ title: 'Route', options: groups.map((g) => g.title) }, { title: 'Industry', options: Array.from(new Set(COMPANIES.map((c) => c.industry))) }]}
-              active={active}
-              onRemove={(v: string) => setActive(active.filter((x) => x !== v))}
-            />
-            <div className="rh-table-wrap">
-              <DS.Table
-                columns={[
-                  { key: 'name', title: 'Company' },
-                  { key: 'industry', title: 'Industry' },
-                  { key: 'route', title: 'How they operate', render: (c: (typeof COMPANIES)[number]) => routeTitle(c.route) },
-                  { key: 'base', title: 'Saudi base' },
-                  { key: 'prov', title: 'Data status', render: (c: (typeof COMPANIES)[number]) => <SourceLine DS={DS} p={c} badge /> },
-                ]}
-                rows={list}
-              />
-            </div>
-          </div>
-        )}
+        <p className="text-xs-regular rh-tertiary rh-para">Names from public announcements; a company&rsquo;s logo and fuller story appear once it consents. Tiles outside your current case are dimmed, not hidden.</p>
       </div>
       {detail && (
         <DS.SlideoutMenu title={detail.name} description={`${routeTitle(detail.route)} · ${detail.industry}`} open width={480} onClose={() => setDetail(null)} actions={<DS.Button hierarchy="secondary-gray" size="md" onClick={() => setDetail(null)}>Close</DS.Button>}>
           <div className="rh-stack" style={{ gap: 'var(--spacing-xl)' }}>
-            <div className="rh-feature-mark" aria-hidden="true" style={{ maxWidth: 120 }}><span className="display-sm-semibold">{mono(detail.name)}</span></div>
             <p className="text-md-regular rh-para"><span className="rh-strong">Saudi base.</span> {detail.base}.</p>
             {detail.story && <p className="text-md-regular rh-para"><span className="rh-strong">What they do from here.</span> {detail.story}</p>}
             <p className="text-md-regular rh-para"><span className="rh-strong">How they operate.</span> {routeTitle(detail.route)}.</p>
             <SourceLine DS={DS} p={detail} badge />
-            <p className="text-xs-regular rh-tertiary rh-para">Name from a public announcement. The company&rsquo;s logo and a fuller story appear once the company consents.</p>
             <div className="rh-actions">
               <DS.Button hierarchy="secondary-gray" size="md" href={`/sectors/${detail.industry.toLowerCase().replace(/\s+and\s+/g, '-').replace(/\s+/g, '-')}`} iconTrailing="arrow-right">Sector page</DS.Button>
               <DS.Button hierarchy="link-color" size="md" href="#routes" iconTrailing="arrow-right" onClick={() => setDetail(null)}>Same route</DS.Button>
