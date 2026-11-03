@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useDS } from '@/lib/ds';
 import type { HubContext } from './shared';
 import { HeroBand } from './HeroBand';
-import { CaseBuilderPanel, CaseFab, CaseStrip } from './CaseBuilder';
+import { CaseBuilderPanel, CaseFab } from './CaseBuilder';
 import { SectionNav } from './SectionNav';
 import { ReachBand } from './ReachBand';
 import { ConnectivityBand } from './ConnectivityBand';
@@ -73,7 +73,6 @@ export function RegionalHubPage() {
         {/* Light and dark alternate band by band so each stage reads as its own chapter. */}
         <HeroBand DS={DS} onBuildCase={() => setCaseOpen(true)} />
         <SectionNav DS={DS} />
-        <CaseStrip DS={DS} ctx={ctx} onEdit={() => setCaseOpen(true)} />
         <div data-theme="light" className="rh-theme-light"><ReachBand DS={DS} ctx={ctx} /></div>
         <ConnectivityBand DS={DS} ctx={ctx} onChange={setCtx} />
         <div data-theme="light" className="rh-theme-light"><MarketAccessBand DS={DS} ctx={ctx} /></div>
