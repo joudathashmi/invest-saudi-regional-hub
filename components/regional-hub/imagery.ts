@@ -7,7 +7,7 @@
  */
 export interface Photo { src: string; alt: string }
 
-export const HERO_PHOTO: Photo = { src: '/img/hero-riyadh.jpg', alt: 'King Abdullah Financial District, Riyadh, at dusk' };
+export const HERO_PHOTO: Photo = { src: '/img/riyadh-aerial.jpg', alt: 'Riyadh from the air: King Salman Park and the King Abdullah Financial District skyline' };
 
 export const PLATFORM_PHOTOS: Record<string, Photo> = {
   'kaec-sez': { src: '/img/kaec.jpg', alt: 'King Abdullah Port and the economic city from the air' },
