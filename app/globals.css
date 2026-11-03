@@ -1,0 +1,165 @@
+/* Design system files, imported unchanged. Order matters: tokens first. */
+@import '../vendor/invest-saudi-ds/tokens.css';
+@import '../vendor/invest-saudi-ds/bundle.css';
+
+/*
+ * Page layout for the regional hub page. Layout only: every colour, size,
+ * space, radius and shadow below is a design-system token. No component is
+ * restyled here.
+ */
+
+.rh-page { min-height: 100vh; background: var(--bg-primary); color: var(--text-primary); overflow-x: clip; }
+
+.rh-container {
+  max-width: var(--container-max-width-desktop);
+  margin-inline: auto;
+  padding-inline: var(--container-padding-desktop);
+}
+@media (max-width: 767px) {
+  .rh-container { padding-inline: var(--container-padding-mobile); }
+}
+
+.rh-band { padding-block: var(--spacing-7xl); background: var(--bg-primary); color: var(--text-primary); }
+.rh-band--alt { background: var(--bg-secondary); }
+.rh-band--first { padding-block-start: var(--spacing-4xl); }
+
+.rh-stack { display: flex; flex-direction: column; gap: var(--spacing-4xl); }
+.rh-row { display: flex; flex-wrap: wrap; gap: var(--spacing-xl); align-items: center; }
+.rh-actions { display: flex; flex-wrap: wrap; gap: var(--spacing-lg); }
+
+.rh-grid { display: grid; gap: var(--spacing-3xl); }
+.rh-grid--5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.rh-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.rh-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.rh-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 1023px) {
+  .rh-grid--5, .rh-grid--4, .rh-grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 639px) {
+  .rh-grid--5, .rh-grid--4, .rh-grid--3, .rh-grid--2 { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Card shell for composed previews (platform, company): card tokens from the README. */
+.rh-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-3xl);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+}
+.rh-card--primary { background: var(--bg-primary); }
+
+/* Router card: the declared selection that sets the shared filter context. */
+.rh-router {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3xl);
+  padding: var(--spacing-4xl);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+.rh-router-field { display: flex; flex-direction: column; gap: var(--spacing-md); }
+.rh-router-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: var(--spacing-3xl); }
+@media (max-width: 1023px) { .rh-router-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* Provenance line under every figure (data governance standard: source, period, updated, status). */
+.rh-source { color: var(--text-tertiary); display: flex; flex-wrap: wrap; gap: var(--spacing-md); align-items: center; }
+.rh-source-text { color: var(--text-tertiary); }
+.rh-muted { color: var(--text-secondary); }
+.rh-tertiary { color: var(--text-tertiary); }
+.rh-lead { max-width: var(--paragraph-max-width); color: var(--text-secondary); margin: 0; }
+
+.rh-metric { display: flex; flex-direction: column; gap: var(--spacing-md); }
+.rh-metric > .is-metric { width: 100%; }
+
+.rh-chips { display: flex; flex-wrap: wrap; gap: var(--spacing-md); }
+.rh-routes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-xl); }
+@media (max-width: 639px) { .rh-routes { grid-template-columns: minmax(0, 1fr); } }
+
+.rh-sideways { display: flex; flex-wrap: wrap; gap: var(--spacing-md); }
+.rh-list { margin: 0; padding-inline-start: var(--spacing-2xl); color: var(--text-secondary); display: flex; flex-direction: column; gap: var(--spacing-xs); }
+
+.rh-table-wrap { overflow-x: auto; }
+
+/* Same control, two widths: the joined ButtonGroup does not wrap, so narrow screens get the Select. */
+.rh-narrow { display: none; }
+@media (max-width: 1023px) { .rh-wide { display: none; } .rh-narrow { display: block; } }
+
+/* Globe (composed candidate component): every colour is a token. */
+.rh-globe-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--spacing-4xl); align-items: start; }
+@media (max-width: 1023px) { .rh-globe-layout { grid-template-columns: minmax(0, 1fr); } }
+.rh-globe-wrap { background: var(--bg-secondary); border: 1px solid var(--border-secondary); border-radius: var(--radius-xl); padding: var(--spacing-xl); }
+.rh-globe-box { display: flex; flex-direction: column; gap: var(--spacing-md); }
+.rh-globe { width: 100%; height: auto; display: block; touch-action: none; cursor: grab; user-select: none; outline: none; }
+.rh-globe:focus-visible { box-shadow: var(--focus-ring); border-radius: var(--radius-full); }
+.rh-globe:active { cursor: grabbing; }
+.rh-globe-sphere { fill: var(--bg-primary); stroke: var(--border-primary); stroke-width: 1; }
+.rh-globe-grat { fill: none; stroke: var(--border-secondary); stroke-width: 0.5; opacity: 0.7; }
+.rh-globe-country { fill: var(--bg-quaternary); stroke: var(--bg-primary); stroke-width: 0.6; stroke-linejoin: round; transition: fill 150ms; }
+.rh-globe-country:hover { fill: var(--bg-active); }
+.rh-globe-country.rh-globe-country--home:hover { fill: var(--utility-brand-400); }
+.rh-globe-country.rh-globe-country--on:hover { fill: var(--utility-brand-300); }
+.rh-globe-country.rh-globe-country--nb:hover { fill: var(--bg-quaternary); }
+.rh-globe-country--on { fill: var(--utility-brand-200); }
+.rh-globe-country--on:hover { fill: var(--utility-brand-300); }
+.rh-globe-country--home { fill: var(--utility-brand-500); }
+.rh-globe-rings path { fill: none; stroke: var(--utility-brand-300); stroke-width: 1.5; stroke-dasharray: 4 5; }
+.rh-globe-ringlabel { fill: var(--text-brand-primary); paint-order: stroke; stroke: var(--bg-primary); stroke-width: 3; }
+.rh-globe-arc { fill: none; stroke: var(--fg-brand-primary); stroke-width: 1.5; stroke-linecap: round; }
+.rh-globe-arc--dashed { stroke: var(--utility-blue-500); stroke-dasharray: 5 4; }
+.rh-globe-pt { fill: var(--fg-quaternary); stroke: var(--bg-primary); stroke-width: 1; }
+.rh-globe-pt--on { fill: var(--fg-brand-primary); stroke: var(--bg-primary); stroke-width: 1.5; }
+.rh-globe-pt--hub { fill: var(--base-white); stroke: var(--utility-brand-700); stroke-width: 2; }
+.rh-globe-pt-halo { fill: var(--utility-brand-500); opacity: 0.35; }
+.rh-globe-pt--port { fill: var(--utility-blue-500); }
+.rh-globe-label { fill: var(--text-primary); paint-order: stroke; stroke: var(--bg-primary); stroke-width: 3.5; stroke-linejoin: round; }
+.rh-globe-label--hub { fill: var(--text-primary); }
+.rh-globe-foot { display: flex; justify-content: space-between; gap: var(--spacing-md); color: var(--text-tertiary); padding-inline: var(--spacing-xs); }
+.rh-globe-reset { background: none; border: 0; padding: 0; color: var(--text-brand-primary); cursor: pointer; font-family: var(--font-body); }
+
+/* Ring pulse and focus-view layers. Motion is functional (shows reach) and stops under reduced motion. */
+@keyframes rh-ring-march { to { stroke-dashoffset: -18; } }
+@keyframes rh-pulse { 0% { transform: scale(0.05); opacity: 0.55; } 100% { transform: scale(1); opacity: 0; } }
+.rh-globe-rings path { animation: rh-ring-march 1.6s linear infinite; }
+.rh-globe-pulse-ring { fill: none; stroke: var(--utility-brand-400); stroke-width: 1.5; transform-origin: 0 0; animation: rh-pulse 4.8s ease-out infinite; }
+.rh-globe-pulse-ring--2 { animation-delay: 2.4s; }
+@media (prefers-reduced-motion: reduce) { .rh-globe-rings path, .rh-globe-pulse-ring { animation: none; } .rh-globe-pulse-ring { opacity: 0; } }
+.rh-globe-country--home { cursor: pointer; }
+.rh-globe-box--focus .rh-globe-country--home, .rh-globe-box--focus .rh-globe-country.rh-globe-country--home:hover { fill: var(--utility-brand-100); cursor: grab; }
+.rh-globe-country--nb { fill: var(--bg-active); }
+.rh-globe-line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.rh-globe-line--road { stroke: var(--utility-brand-600); stroke-width: 2; }
+.rh-globe-line--rail { stroke: var(--utility-blue-500); stroke-width: 2; stroke-dasharray: 6 3; }
+.rh-globe-line--rail-planned { stroke: var(--utility-blue-400); stroke-width: 1.5; stroke-dasharray: 2 4; }
+.rh-globe-pt--city { fill: var(--base-white); stroke: var(--utility-brand-700); stroke-width: 1.5; }
+.rh-globe-pt--airport { fill: var(--utility-orange-500); stroke: var(--bg-primary); stroke-width: 1; }
+.rh-globe-pt--border { fill: var(--utility-blue-500); stroke: var(--base-white); stroke-width: 1.2; }
+.rh-globe-sub { fill: var(--text-tertiary); font-weight: 400; }
+.rh-globe-box--focus .rh-globe-label { font-size: 11px; }
+.rh-globe-points, .rh-globe-arcs, .rh-globe-rings, .rh-globe-lines, .rh-globe-grat { pointer-events: none; }
+.rh-globe-box--focus .rh-globe-points { pointer-events: auto; }
+.rh-globe-box--focus .rh-globe-points text { pointer-events: none; }
+
+/* Hero: full-width band in the live-site pattern; gradient from brand tokens, photo optional. */
+.rh-hero {
+  background-color: var(--bg-primary);
+  background-image: radial-gradient(ellipse 60% 80% at 88% 20%, var(--utility-brand-900) 0%, transparent 65%);
+  background-size: cover; background-position: center;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-secondary);
+}
+.rh-hero-in { display: flex; flex-direction: column; gap: var(--spacing-5xl); padding-block: var(--spacing-5xl) var(--spacing-7xl); }
+.rh-hero-text { display: flex; flex-direction: column; gap: var(--spacing-2xl); max-width: 820px; }
+.rh-hero-eyebrow { color: var(--text-brand-primary); letter-spacing: 0.04em; text-transform: uppercase; }
+.rh-hero-title { margin: 0; color: var(--text-primary); text-wrap: balance; }
+.rh-hero-lead { margin: 0; color: var(--text-secondary); max-width: var(--paragraph-max-width); }
+.rh-hero-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--spacing-3xl); border-top: 1px solid var(--border-secondary); padding-top: var(--spacing-4xl); }
+@media (max-width: 767px) { .rh-hero-strip { grid-template-columns: minmax(0, 1fr); } .rh-hero-title { font-size: 36px; line-height: 44px; } }
+.rh-hero-stat { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+.rh-hero-stat-value { color: var(--text-primary); }
+.rh-hero-stat-label { color: var(--text-secondary); }
+.rh-theme-light { background: var(--bg-primary); color: var(--text-primary); color-scheme: light; }

@@ -1,0 +1,674 @@
+{
+ "v": 3,
+ "assetGroups": {
+  "Giga projects": {
+   "files": {
+    "neom.svg": {
+     "blob": "97b4ff5e8fd5236cf842c9ba5346c733",
+     "name": "neom.svg",
+     "size": 100679,
+     "type": "image/svg+xml"
+    },
+    "new-murabba.svg": {
+     "blob": "69fb0d17ec8766504c84b498740eb80a",
+     "name": "new-murabba.svg",
+     "size": 2594,
+     "type": "image/svg+xml"
+    },
+    "qiddiya-city.svg": {
+     "blob": "b9a9dd01d3223b2f938c49aa74582787",
+     "name": "qiddiya-city.svg",
+     "size": 5602,
+     "type": "image/svg+xml"
+    },
+    "red-sea-global.svg": {
+     "blob": "1d4e5fcdfacfd5a30edf75bab437d352",
+     "name": "red-sea-global.svg",
+     "size": 7386,
+     "type": "image/svg+xml"
+    },
+    "roshn-group.svg": {
+     "blob": "e8f8ead2db389287bdede3e778170172",
+     "name": "roshn-group.svg",
+     "size": 10305,
+     "type": "image/svg+xml"
+    }
+   },
+   "name": "Giga projects",
+   "order": [
+    "red-sea-global.svg",
+    "qiddiya-city.svg",
+    "roshn-group.svg",
+    "new-murabba.svg",
+    "neom.svg"
+   ],
+   "tile": "s"
+  },
+  "Government entities": {
+   "files": {
+    "fsdp-on-dark.svg": {
+     "blob": "274b3962c99d38eedac12cdb9dc3e1fd",
+     "name": "fsdp-on-dark.svg",
+     "size": 30624,
+     "type": "image/svg+xml"
+    },
+    "fsdp-on-light.svg": {
+     "blob": "7776865e2628be87fed3f2ac9716495e",
+     "name": "fsdp-on-light.svg",
+     "size": 30624,
+     "type": "image/svg+xml"
+    },
+    "fsp-on-dark.svg": {
+     "blob": "0a7391795fd830bd1aed9aeb67c10428",
+     "name": "fsp-on-dark.svg",
+     "size": 28875,
+     "type": "image/svg+xml"
+    },
+    "fsp-on-light.svg": {
+     "blob": "92efa4143584dccb25828800b871f384",
+     "name": "fsp-on-light.svg",
+     "size": 28875,
+     "type": "image/svg+xml"
+    },
+    "hcdp-on-dark.svg": {
+     "blob": "34cdc83922f91fd962714f325a5576b1",
+     "name": "hcdp-on-dark.svg",
+     "size": 21849,
+     "type": "image/svg+xml"
+    },
+    "hcdp-on-light.svg": {
+     "blob": "5721b578dbebcca41437047dcb5a27c5",
+     "name": "hcdp-on-light.svg",
+     "size": 21849,
+     "type": "image/svg+xml"
+    },
+    "hp-on-dark.svg": {
+     "blob": "ad917b3bd0d437330e2513e7b21e2fba",
+     "name": "hp-on-dark.svg",
+     "size": 20756,
+     "type": "image/svg+xml"
+    },
+    "hp-on-light.svg": {
+     "blob": "6b2c8db356fbf65a2acb7750fa7cfb3a",
+     "name": "hp-on-light.svg",
+     "size": 20756,
+     "type": "image/svg+xml"
+    },
+    "hrsd-on-dark.svg": {
+     "blob": "b16470948d84d5cc4dd70557deb242c6",
+     "name": "hrsd-on-dark.svg",
+     "size": 12397,
+     "type": "image/svg+xml"
+    },
+    "hrsd-on-light.svg": {
+     "blob": "0c88ccb6029a8888272118f18df50947",
+     "name": "hrsd-on-light.svg",
+     "size": 12397,
+     "type": "image/svg+xml"
+    },
+    "hstp-on-dark.svg": {
+     "blob": "efff7b215fb8a632d59ba35e0062b08d",
+     "name": "hstp-on-dark.svg",
+     "size": 29751,
+     "type": "image/svg+xml"
+    },
+    "hstp-on-light.svg": {
+     "blob": "1629ba5f4e368a3ee31155dc099f0832",
+     "name": "hstp-on-light.svg",
+     "size": 29751,
+     "type": "image/svg+xml"
+    },
+    "mc-on-dark.svg": {
+     "blob": "9205ef8dd2ae0f23cf6af7a44b34f26b",
+     "name": "mc-on-dark.svg",
+     "size": 47286,
+     "type": "image/svg+xml"
+    },
+    "mc-on-light.svg": {
+     "blob": "292ab842323af271ee76248706afc46d",
+     "name": "mc-on-light.svg",
+     "size": 47286,
+     "type": "image/svg+xml"
+    },
+    "mcit-on-dark.svg": {
+     "blob": "6a0d8a3b45bef9f86d3a7d2d397cb9da",
+     "name": "mcit-on-dark.svg",
+     "size": 29011,
+     "type": "image/svg+xml"
+    },
+    "mcit-on-light.svg": {
+     "blob": "b935249db106d2d973deaf26d456ec7e",
+     "name": "mcit-on-light.svg",
+     "size": 29011,
+     "type": "image/svg+xml"
+    },
+    "mep-on-dark.svg": {
+     "blob": "10479e851f4ee2ac9c906ae753534a00",
+     "name": "mep-on-dark.svg",
+     "size": 41196,
+     "type": "image/svg+xml"
+    },
+    "mep-on-light.svg": {
+     "blob": "4f6fe1566f00f8b235284b0fab4d1e82",
+     "name": "mep-on-light.svg",
+     "size": 41196,
+     "type": "image/svg+xml"
+    },
+    "mim-on-dark.svg": {
+     "blob": "0f0463901be52d2eb10f4fec51f12e6c",
+     "name": "mim-on-dark.svg",
+     "size": 152603,
+     "type": "image/svg+xml"
+    },
+    "mim-on-light.svg": {
+     "blob": "ec99e466973f2b06d5066a1432d44625",
+     "name": "mim-on-light.svg",
+     "size": 152603,
+     "type": "image/svg+xml"
+    },
+    "mng-on-dark.svg": {
+     "blob": "df2401be05ecab85bef163ec83766af6",
+     "name": "mng-on-dark.svg",
+     "size": 20218,
+     "type": "image/svg+xml"
+    },
+    "mng-on-light.svg": {
+     "blob": "2ca92fd22f1f97687f1387c68711e2bf",
+     "name": "mng-on-light.svg",
+     "size": 20218,
+     "type": "image/svg+xml"
+    },
+    "moc-on-dark.svg": {
+     "blob": "2856f6a5448460454379ee0d73108b13",
+     "name": "moc-on-dark.svg",
+     "size": 27325,
+     "type": "image/svg+xml"
+    },
+    "moc-on-light.svg": {
+     "blob": "ce6570de93a080a415e731e149252197",
+     "name": "moc-on-light.svg",
+     "size": 27325,
+     "type": "image/svg+xml"
+    },
+    "mod-on-dark.svg": {
+     "blob": "334f704fb8732d495a607f32d4e7d1d6",
+     "name": "mod-on-dark.svg",
+     "size": 59220,
+     "type": "image/svg+xml"
+    },
+    "mod-on-light.svg": {
+     "blob": "2e67ce449bacaa2cba04f7a8ad428b2e",
+     "name": "mod-on-light.svg",
+     "size": 59220,
+     "type": "image/svg+xml"
+    },
+    "moe-on-dark.svg": {
+     "blob": "aa8a567b258130c73d9a59e1987850f1",
+     "name": "moe-on-dark.svg",
+     "size": 19720,
+     "type": "image/svg+xml"
+    },
+    "moe-on-light.svg": {
+     "blob": "84bd1e6e1a14b7d27d1638c29ca7f8c4",
+     "name": "moe-on-light.svg",
+     "size": 19720,
+     "type": "image/svg+xml"
+    },
+    "moenergy-on-dark.svg": {
+     "blob": "97244b540262995eb4f3c07bcf53a76a",
+     "name": "moenergy-on-dark.svg",
+     "size": 9468,
+     "type": "image/svg+xml"
+    },
+    "moenergy-on-light.svg": {
+     "blob": "75e70c4e9a34608b965e9ccc5f24fd15",
+     "name": "moenergy-on-light.svg",
+     "size": 9468,
+     "type": "image/svg+xml"
+    },
+    "mof-on-dark.svg": {
+     "blob": "d50d7eb42c2a6f390a31718e122ee360",
+     "name": "mof-on-dark.svg",
+     "size": 32627,
+     "type": "image/svg+xml"
+    },
+    "mof-on-light.svg": {
+     "blob": "8cf12a10617a1fa8809c70bcd18a5ce7",
+     "name": "mof-on-light.svg",
+     "size": 32627,
+     "type": "image/svg+xml"
+    },
+    "mofa-on-dark.svg": {
+     "blob": "bb13dc5e84513b8724136aabda83d4f4",
+     "name": "mofa-on-dark.svg",
+     "size": 143840,
+     "type": "image/svg+xml"
+    },
+    "mofa-on-light.svg": {
+     "blob": "4ba9b8c3fdc75bea70987d6e2776ad39",
+     "name": "mofa-on-light.svg",
+     "size": 143840,
+     "type": "image/svg+xml"
+    },
+    "moh-on-dark.svg": {
+     "blob": "8be5729015a63b34db7f36e2485e6641",
+     "name": "moh-on-dark.svg",
+     "size": 18451,
+     "type": "image/svg+xml"
+    },
+    "moh-on-light.svg": {
+     "blob": "1ef5b592eaa31e8c06f5e0f2c8c2ec3e",
+     "name": "moh-on-light.svg",
+     "size": 18451,
+     "type": "image/svg+xml"
+    },
+    "mohu-on-dark.svg": {
+     "blob": "68aa9e02e341894310dbd6d6269fee0b",
+     "name": "mohu-on-dark.svg",
+     "size": 53854,
+     "type": "image/svg+xml"
+    },
+    "mohu-on-light.svg": {
+     "blob": "d537a011ddee63077f18c4fdf70418da",
+     "name": "mohu-on-light.svg",
+     "size": 53854,
+     "type": "image/svg+xml"
+    },
+    "moi-on-dark.svg": {
+     "blob": "706c9deef791fecf6a7208eb68498155",
+     "name": "moi-on-dark.svg",
+     "size": 75489,
+     "type": "image/svg+xml"
+    },
+    "moi-on-light.svg": {
+     "blob": "d8ed0b60911aab46381d64e2b97fff64",
+     "name": "moi-on-light.svg",
+     "size": 75489,
+     "type": "image/svg+xml"
+    },
+    "moj-on-dark.svg": {
+     "blob": "5a6c2da7343ae1107f94a51c2e2c11dc",
+     "name": "moj-on-dark.svg",
+     "size": 119455,
+     "type": "image/svg+xml"
+    },
+    "moj-on-light.svg": {
+     "blob": "73547ff3d7b06be6cd2aef05e6d30a91",
+     "name": "moj-on-light.svg",
+     "size": 119455,
+     "type": "image/svg+xml"
+    },
+    "mom-on-dark.svg": {
+     "blob": "7e0e633a31d59092e8800be7862180ff",
+     "name": "mom-on-dark.svg",
+     "size": 95328,
+     "type": "image/svg+xml"
+    },
+    "mom-on-light.svg": {
+     "blob": "0018f85e7d3c1a333791032de925915a",
+     "name": "mom-on-light.svg",
+     "size": 95328,
+     "type": "image/svg+xml"
+    },
+    "momah-on-dark.svg": {
+     "blob": "69f136098afcdf9fce8fa54e47efc0f0",
+     "name": "momah-on-dark.svg",
+     "size": 35976,
+     "type": "image/svg+xml"
+    },
+    "momah-on-light.svg": {
+     "blob": "d5c051662ac5602261a14e8934c589b1",
+     "name": "momah-on-light.svg",
+     "size": 35976,
+     "type": "image/svg+xml"
+    },
+    "mos-on-dark.svg": {
+     "blob": "8b20e056c4c7146ec63b476afc32ab46",
+     "name": "mos-on-dark.svg",
+     "size": 22021,
+     "type": "image/svg+xml"
+    },
+    "mos-on-light.svg": {
+     "blob": "26c7e02263976a83bcef5ac4c22bd8d7",
+     "name": "mos-on-light.svg",
+     "size": 22021,
+     "type": "image/svg+xml"
+    },
+    "mot-on-dark.svg": {
+     "blob": "314d45bc97cc8cacf7b8f53a918bffb9",
+     "name": "mot-on-dark.svg",
+     "size": 287594,
+     "type": "image/svg+xml"
+    },
+    "mot-on-light.svg": {
+     "blob": "1c535b1265404d027adc17f946265fcc",
+     "name": "mot-on-light.svg",
+     "size": 287594,
+     "type": "image/svg+xml"
+    },
+    "mt-on-dark.svg": {
+     "blob": "024ee1b8e899351570dcd9a52d5c91a4",
+     "name": "mt-on-dark.svg",
+     "size": 18447,
+     "type": "image/svg+xml"
+    },
+    "mt-on-light.svg": {
+     "blob": "b7c5bd3394e2b4091ae00c89a52e71cd",
+     "name": "mt-on-light.svg",
+     "size": 18447,
+     "type": "image/svg+xml"
+    },
+    "mtls-on-dark.svg": {
+     "blob": "a217ca88ae426f203892a74d77dc94a5",
+     "name": "mtls-on-dark.svg",
+     "size": 73767,
+     "type": "image/svg+xml"
+    },
+    "mtls-on-light.svg": {
+     "blob": "fe9db284d40b1825a5dd537434e32d16",
+     "name": "mtls-on-light.svg",
+     "size": 73767,
+     "type": "image/svg+xml"
+    },
+    "nadlp-on-dark.svg": {
+     "blob": "ab5dcd7742af61a53e696e21b86b5ba8",
+     "name": "nadlp-on-dark.svg",
+     "size": 49317,
+     "type": "image/svg+xml"
+    },
+    "nadlp-on-light.svg": {
+     "blob": "5c393cfcf78ac365eb8a5c4570214439",
+     "name": "nadlp-on-light.svg",
+     "size": 49317,
+     "type": "image/svg+xml"
+    },
+    "ntp-on-dark.svg": {
+     "blob": "b994272954ec904c9bc58c854e3fed1c",
+     "name": "ntp-on-dark.svg",
+     "size": 26480,
+     "type": "image/svg+xml"
+    },
+    "ntp-on-light.svg": {
+     "blob": "77e78114cf11b423dd74223c88cf4cad",
+     "name": "ntp-on-light.svg",
+     "size": 26480,
+     "type": "image/svg+xml"
+    },
+    "pep-on-dark.svg": {
+     "blob": "2efe60658eec2fb57820b94651822dbe",
+     "name": "pep-on-dark.svg",
+     "size": 30854,
+     "type": "image/svg+xml"
+    },
+    "pep-on-light.svg": {
+     "blob": "70af6081b2ca326094a7c7ec987093c1",
+     "name": "pep-on-light.svg",
+     "size": 30854,
+     "type": "image/svg+xml"
+    },
+    "pifp-on-dark.svg": {
+     "blob": "e5c7bf0487db4f9c16d16c22b184cd32",
+     "name": "pifp-on-dark.svg",
+     "size": 36224,
+     "type": "image/svg+xml"
+    },
+    "pifp-on-light.svg": {
+     "blob": "60bdc1eaa24ed1c669c4b8c30b65ab3f",
+     "name": "pifp-on-light.svg",
+     "size": 36224,
+     "type": "image/svg+xml"
+    },
+    "pp-on-dark.svg": {
+     "blob": "50b1c4605d274605da66a394aad47945",
+     "name": "pp-on-dark.svg",
+     "size": 23009,
+     "type": "image/svg+xml"
+    },
+    "pp-on-light.svg": {
+     "blob": "e87831f7dba154c9e54a50e1d3843e89",
+     "name": "pp-on-light.svg",
+     "size": 23009,
+     "type": "image/svg+xml"
+    },
+    "qlp-on-dark.svg": {
+     "blob": "d742bf462b7c808489a94ce154c46b62",
+     "name": "qlp-on-dark.svg",
+     "size": 25946,
+     "type": "image/svg+xml"
+    },
+    "qlp-on-light.svg": {
+     "blob": "b74bff2f8eeb99de61b7338a5474c12e",
+     "name": "qlp-on-light.svg",
+     "size": 25946,
+     "type": "image/svg+xml"
+    }
+   },
+   "name": "Government entities",
+   "order": [
+    "mofa-on-light.svg",
+    "mofa-on-dark.svg",
+    "mof-on-light.svg",
+    "mof-on-dark.svg",
+    "mod-on-light.svg",
+    "mod-on-dark.svg",
+    "moi-on-light.svg",
+    "moi-on-dark.svg",
+    "mng-on-light.svg",
+    "mng-on-dark.svg",
+    "moh-on-light.svg",
+    "moh-on-dark.svg",
+    "moe-on-light.svg",
+    "moe-on-dark.svg",
+    "moenergy-on-light.svg",
+    "moenergy-on-dark.svg",
+    "mim-on-light.svg",
+    "mim-on-dark.svg",
+    "mep-on-light.svg",
+    "mep-on-dark.svg",
+    "mc-on-light.svg",
+    "mc-on-dark.svg",
+    "mtls-on-light.svg",
+    "mtls-on-dark.svg",
+    "hrsd-on-light.svg",
+    "hrsd-on-dark.svg",
+    "momah-on-light.svg",
+    "momah-on-dark.svg",
+    "mcit-on-light.svg",
+    "mcit-on-dark.svg",
+    "mom-on-light.svg",
+    "mom-on-dark.svg",
+    "moj-on-light.svg",
+    "moj-on-dark.svg",
+    "mohu-on-light.svg",
+    "mohu-on-dark.svg",
+    "moc-on-light.svg",
+    "moc-on-dark.svg",
+    "mot-on-light.svg",
+    "mot-on-dark.svg",
+    "mos-on-light.svg",
+    "mos-on-dark.svg",
+    "hstp-on-light.svg",
+    "hstp-on-dark.svg",
+    "fsdp-on-light.svg",
+    "fsdp-on-dark.svg",
+    "pp-on-light.svg",
+    "pp-on-dark.svg",
+    "ntp-on-light.svg",
+    "ntp-on-dark.svg",
+    "nadlp-on-light.svg",
+    "nadlp-on-dark.svg",
+    "hp-on-light.svg",
+    "hp-on-dark.svg",
+    "pep-on-light.svg",
+    "pep-on-dark.svg",
+    "pifp-on-light.svg",
+    "pifp-on-dark.svg",
+    "fsp-on-light.svg",
+    "fsp-on-dark.svg",
+    "hcdp-on-light.svg",
+    "hcdp-on-dark.svg",
+    "qlp-on-light.svg",
+    "qlp-on-dark.svg",
+    "mt-on-light.svg",
+    "mt-on-dark.svg"
+   ],
+   "tile": "m"
+  },
+  "Icons": {
+   "files": {},
+   "name": "Icons",
+   "order": [],
+   "tile": "s"
+  },
+  "Logos": {
+   "files": {
+    "cst-mark.svg": {
+     "blob": "9c46bb7be4ed0026c6510bf9d3c86ed5",
+     "name": "cst-mark.svg",
+     "size": 18147,
+     "type": "image/svg+xml"
+    },
+    "cst.svg": {
+     "blob": "8f3e4e1380ebae9817a66aa8c80c2aef",
+     "name": "cst.svg",
+     "size": 45187,
+     "type": "image/svg+xml"
+    },
+    "dga-mark.svg": {
+     "blob": "82bf7398857884a514b1d34e1fc8339c",
+     "name": "dga-mark.svg",
+     "size": 2645,
+     "type": "image/svg+xml"
+    },
+    "dga.svg": {
+     "blob": "fafb23185f71d852ec28955b7c39a21d",
+     "name": "dga.svg",
+     "size": 23443,
+     "type": "image/svg+xml"
+    },
+    "invest-saudi-logo-white.svg": {
+     "blob": "e63f18c28dbef5b6726f6fce901432e3",
+     "name": "invest-saudi-logo-white.svg",
+     "size": 11328,
+     "type": "image/svg+xml"
+    },
+    "invest-saudi-logomark-white.svg": {
+     "blob": "08d063a8641a07095a593e861ef1386f",
+     "name": "invest-saudi-logomark-white.svg",
+     "size": 1974,
+     "type": "image/svg+xml"
+    },
+    "misa-on-dark.svg": {
+     "blob": "6f9b4bb5db241154b6260dfdb83aa47b",
+     "name": "misa-on-dark.svg",
+     "size": 14989,
+     "type": "image/svg+xml"
+    },
+    "misa-on-light.svg": {
+     "blob": "6efdadfffe397af87f7379a529a75f18",
+     "name": "misa-on-light.svg",
+     "size": 15156,
+     "type": "image/svg+xml"
+    },
+    "vision-2030-on-dark.svg": {
+     "blob": "1705a2197179845e17ac95331c55381a",
+     "name": "vision-2030-on-dark.svg",
+     "size": 31104,
+     "type": "image/svg+xml"
+    },
+    "vision-2030-on-light.svg": {
+     "blob": "00eb754c459503f36e85a7ef60eb49dc",
+     "name": "vision-2030-on-light.svg",
+     "size": 31102,
+     "type": "image/svg+xml"
+    }
+   },
+   "name": "Logos",
+   "order": [
+    "invest-saudi-logo-white.svg",
+    "invest-saudi-logomark-white.svg",
+    "vision-2030-on-dark.svg",
+    "vision-2030-on-light.svg",
+    "misa-on-dark.svg",
+    "misa-on-light.svg",
+    "dga.svg",
+    "dga-mark.svg",
+    "cst.svg",
+    "cst-mark.svg"
+   ],
+   "tile": "l"
+  },
+  "App store": {
+   "name": "App store",
+   "tile": "m",
+   "order": [
+    "app-store.svg",
+    "google-play.svg",
+    "galaxy-store.svg",
+    "appgallery.svg"
+   ],
+   "files": {
+    "app-store.svg": {
+     "name": "app-store.svg",
+     "blob": "27789d3979225e880f77168237398b52",
+     "size": 9843,
+     "type": "image/svg+xml"
+    },
+    "google-play.svg": {
+     "name": "google-play.svg",
+     "blob": "51e58687b5f53c63afede9900d5e1722",
+     "size": 17075,
+     "type": "image/svg+xml"
+    },
+    "galaxy-store.svg": {
+     "name": "galaxy-store.svg",
+     "blob": "429f39c195ac43741ffca48596b571ba",
+     "size": 13099,
+     "type": "image/svg+xml"
+    },
+    "appgallery.svg": {
+     "name": "appgallery.svg",
+     "blob": "b5f1de3dfcae91e9111b402ed6965549",
+     "size": 13370,
+     "type": "image/svg+xml"
+    }
+   }
+  }
+ },
+ "blobs": {},
+ "createdOnFiles": {
+  "at": "2026-11-03T09:40:01Z",
+  "v": 1
+ },
+ "docs": {
+  "readme": "project/README.md",
+  "sections": []
+ },
+ "groups": [
+  "Logos",
+  "Government entities",
+  "Giga projects",
+  "App store",
+  "Icons"
+ ],
+ "lastChange": {
+  "by": "Yousef",
+  "at": "2026-11-03T10:09:23Z",
+  "via": "Figma · [IS]Design-System_V1.0 (uploaded .fig)",
+  "note": "Switched the whole system to English (LTR); rebuilt Header, Footer, Digital Stamp, Sub-header, Mega menu, Cookies popup and Opportunity cards from the Figma EN variants; tertiary buttons filled as in the file."
+ },
+ "layout": "files",
+ "libraries": [
+  {
+   "name": "react",
+   "version": "18"
+  },
+  {
+   "name": "react-dom",
+   "version": "18"
+  }
+ ],
+ "namespace": "InvestSaudiDS",
+ "sections": {},
+ "title": "Invest Saudi"
+}

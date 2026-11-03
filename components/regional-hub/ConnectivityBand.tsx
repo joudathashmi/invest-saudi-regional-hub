@@ -1,0 +1,189 @@
+'use client';
+
+import * as React from 'react';
+import type { DS } from '@/lib/ds';
+import { CONNECTIVITY_FIGURES, CORRIDORS, HUB_CITIES, LAND_PORTS, MARKETS, NODES, REACH_RINGS, SAUDI_CITIES, type Node } from '@/data/regional-hub';
+import { Globe, greatCircleKm, type GlobeArc, type GlobeLine, type GlobePoint, type GlobeView } from './Globe';
+import { SourceLine, marketNames, type HubContext } from './shared';
+
+type Mode = 'air' | 'sea' | 'ground';
+type Layer = 'all' | 'road' | 'rail' | 'ports';
+
+/* Estimated travel time from great-circle distance. Status "estimate" until the
+ * owning authority publishes a figure per pair. */
+const flightHours = (km: number) => km / 850 + 0.5;
+const driveHours = (km: number) => (km * 1.25) / 80;
+const fmtH = (h: number) => (h < 1 ? `${Math.round(h * 60)} min` : `${h.toFixed(1).replace(/\.0$/, '')} h`);
+
+const REGION_VIEW: GlobeView = { lat: 22, lon: 42, zoom: 1 };
+const SAUDI_VIEW: GlobeView = { lat: 24, lon: 45, zoom: 3.4 };
+const NEIGHBOURS = ['784', '634', '414', '512', '400', '368', '887', '048'];
+
+/** Band 3: how strongly Saudi Arabia is connected, by air, sea and ground, on a real-world globe. */
+export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
+  const [mode, setMode] = React.useState<Mode>('air');
+  const [layer, setLayer] = React.useState<Layer>('all');
+  const [focused, setFocused] = React.useState(false);
+  const [view, setView] = React.useState<GlobeView>(REGION_VIEW);
+  const [details, setDetails] = React.useState(false);
+
+  const selected = MARKETS.filter((m) => ctx.markets.includes(m.code));
+  const shown = selected.length ? selected : MARKETS;
+  const riyadh = HUB_CITIES[0];
+  const ground = new Set(['AE', 'QA', 'KW', 'BH', 'OM', 'JO', 'IQ']);
+  const seaMarkets = shown.filter((m) => !['KW', 'JO', 'IQ'].includes(m.code));
+
+  const enterFocus = () => { setFocused(true); setView(SAUDI_VIEW); };
+  const exitFocus = () => { setFocused(false); setView(REGION_VIEW); };
+
+  /* Region view: hubs, markets, arcs, rings. */
+  const regionPoints: GlobePoint[] = [
+    ...HUB_CITIES.map((h) => ({ ...h, kind: 'hub' as const, labelAt: (h.id === 'jed' ? 'left' : h.id === 'dmm' ? 'above' : 'below') as 'left' | 'above' | 'below' })),
+    ...(mode === 'sea' ? NODES.filter((n) => n.mode === 'sea').map((n) => ({ id: n.id, name: n.name.replace(' Port', ''), lat: n.lat, lon: n.lon, kind: 'port' as const })) : []),
+    ...MARKETS.map((m) => {
+      const on = ctx.markets.includes(m.code);
+      const t = mode === 'air' ? ` · ${fmtH(flightHours(greatCircleKm(riyadh, m)))}` : mode === 'ground' && ground.has(m.code) ? ` · ${fmtH(driveHours(greatCircleKm(riyadh, m)))}` : '';
+      return { id: m.code, name: on ? m.city + t : m.city, lat: m.lat, lon: m.lon, kind: 'market' as const, selected: on, labelAt: (m.lon < riyadh.lon - 8 ? 'left' : 'right') as 'left' | 'right' };
+    }),
+  ];
+  const regionArcs: GlobeArc[] =
+    mode === 'air' ? shown.map((m) => ({ from: riyadh, to: m }))
+      : mode === 'ground' ? shown.filter((m) => ground.has(m.code)).map((m) => ({ from: riyadh, to: m, dashed: true }))
+        : seaMarkets.map((m) => ({ from: m.lon < 44 ? { lat: 21.47, lon: 39.17 } : { lat: 26.47, lon: 50.2 }, to: m, dashed: true }));
+  const rings = mode === 'air' ? REACH_RINGS.map((r) => ({ lat: riyadh.lat, lon: riyadh.lon, km: r.km, label: r.label })) : [];
+
+  /* Focus view: national logistics layer. */
+  const showRoad = layer === 'all' || layer === 'road', showRail = layer === 'all' || layer === 'rail', showPorts = layer === 'all' || layer === 'ports';
+  const focusLines: GlobeLine[] = CORRIDORS.filter((c) => (c.kind === 'road' ? showRoad : showRail)).map((c) => ({ id: c.id, kind: c.kind, points: c.points, name: c.name }));
+  const cityLabel: Record<string, 'left' | 'right' | 'above' | 'below'> = { ruh: 'below', jed: 'left', dmm: 'above', mak: 'below', med: 'right', hof: 'left', qas: 'above', hail: 'right', taif: 'right', jaz: 'left', naj: 'right', tab: 'right', neom: 'left' };
+  const portsOnly = layer === 'ports';
+  const focusPoints: GlobePoint[] = [
+    ...SAUDI_CITIES.map((c) => ({ ...c, kind: (c.id === 'ruh' ? 'hub' : 'city') as 'hub' | 'city', labelAt: cityLabel[c.id] ?? 'right', title: c.name, name: portsOnly && !['ruh', 'jed', 'dmm'].includes(c.id) ? '' : c.name })),
+    ...(showPorts ? NODES.filter((n) => n.mode === 'sea').map((n) => ({ id: n.id, name: portsOnly ? n.name.replace(' Port', '') : '', lat: n.lat, lon: n.lon, kind: 'port' as const, title: n.name, labelAt: (n.id === 'jub' || n.id === 'dmm' ? 'right' : 'left') as 'left' | 'right', sub: portsOnly ? '(port)' : undefined })) : []),
+    ...(showPorts ? NODES.filter((n) => n.mode === 'air').map((n) => ({ id: n.id, name: portsOnly ? n.name.replace(' International Airport', '') : '', lat: n.lat + 0.35, lon: n.lon + 0.35, kind: 'airport' as const, title: n.name, labelAt: (n.id === 'jed' ? 'left' : 'right') as 'left' | 'right', sub: portsOnly ? '(airport)' : undefined })) : []),
+    ...(showRoad || showRail ? LAND_PORTS.map((b) => ({ id: b.id, name: `${b.name} → ${b.neighbour}`, lat: b.lat, lon: b.lon, kind: 'border' as const, labelAt: (['lp-haditha', 'lp-tuwal'].includes(b.id) ? 'left' : ['lp-arar', 'lp-khafji'].includes(b.id) ? 'above' : ['lp-wadiah', 'lp-batha'].includes(b.id) ? 'below' : 'right') as 'left' | 'above' | 'right' | 'below' })) : []),
+  ];
+
+  const legend = focused
+    ? 'Roads in brand, operating rail dashed, planned rail dotted, ports (blue) and airports (orange) as points, border crossings as diamonds labelled with the neighbour they lead to. Hover any point for its name; the Ports and airports layer labels them all. Corridors are schematic; surveyed alignments come from MoT and SAR.'
+    : mode === 'air'
+      ? 'Arcs from Riyadh to each selected market with estimated flight time (great-circle distance at about 850 km/h plus 30 minutes). Pulsing rings are the published 4-hour and 8-hour flight reach.'
+      : mode === 'sea'
+        ? 'Red Sea ports serve Africa, Europe and the Levant; Arabian Gulf ports serve the GCC and Asia. Transit days per port pair are not yet published, so no time is shown.'
+        : 'Road corridors to the GCC, Jordan and Iraq from Riyadh with estimated drive time (road distance taken as 1.25 times great-circle at 80 km/h). Click Saudi Arabia to see the national network.';
+
+  const rows = focused ? NODES : NODES.filter((n) => (mode === 'ground' ? n.mode === 'land' : n.mode === mode));
+  const crossings = LAND_PORTS.map((b) => ({ ...b, km: Math.round(greatCircleKm(riyadh, b)) }));
+  type Crossing = (typeof crossings)[number];
+
+  return (
+    <section id="connectivity" className="rh-band" aria-labelledby="rh-connect">
+      <div className="rh-container rh-stack">
+        <DS.SectionHeader
+          title={focused ? 'Saudi Arabia: roads, rail, ports and borders' : 'How strongly Saudi Arabia is connected'}
+          supporting={focused ? 'The national logistics network and the crossing to every neighbour. Drag to pan.' : `By air, sea and ground to ${marketNames(ctx.markets)}. Click Saudi Arabia on the globe to open its logistics network.`}
+          tabs={
+            focused ? (
+              <DS.Tabs
+                type="button-border"
+                items={[{ label: 'All', value: 'all' }, { label: 'Roads', value: 'road' }, { label: 'Rail', value: 'rail' }, { label: 'Ports and airports', value: 'ports' }]}
+                value={layer}
+                onChange={(v: string) => setLayer(v as Layer)}
+              />
+            ) : (
+              <DS.Tabs
+                type="button-border"
+                items={[{ label: 'Air', value: 'air' }, { label: 'Sea', value: 'sea' }, { label: 'Ground', value: 'ground' }]}
+                value={mode}
+                onChange={(v: string) => setMode(v as Mode)}
+              />
+            )
+          }
+          actions={
+            focused ? (
+              <DS.Button hierarchy="secondary-gray" size="md" iconLeading="arrow-left" onClick={exitFocus}>Back to the region</DS.Button>
+            ) : (
+              <DS.Button hierarchy="secondary-color" size="md" iconLeading="marker-pin-01" onClick={enterFocus}>Open the Saudi network</DS.Button>
+            )
+          }
+        />
+        <div className="rh-globe-layout">
+          <div className="rh-globe-wrap">
+            <Globe
+              points={focused ? focusPoints : regionPoints}
+              arcs={focused ? [] : regionArcs}
+              rings={rings}
+              lines={focused ? focusLines : []}
+              selectedCountryIds={focused ? [] : selected.map((m) => m.countryId)}
+              neighbourCountryIds={focused ? NEIGHBOURS : []}
+              view={view}
+              onViewChange={setView}
+              onHomeClick={focused ? undefined : enterFocus}
+              focused={focused}
+            />
+          </div>
+          <div className="rh-stack" style={{ gap: 'var(--spacing-2xl)' }}>
+            <p className="text-sm-regular rh-muted" style={{ margin: 0 }}>{legend}</p>
+            {focused ? (
+              <div className="rh-table-wrap">
+                <DS.Table
+                  title="Border crossings"
+                  badge={`${crossings.length}`}
+                  columns={[
+                    { key: 'name', title: 'Crossing' },
+                    { key: 'neighbour', title: 'Leads to' },
+                    { key: 'mode', title: 'Mode', render: (b: Crossing) => (b.mode === 'causeway' ? 'Causeway' : b.mode === 'road-rail-planned' ? 'Road; rail planned' : 'Road') },
+                    { key: 'km', title: 'From Riyadh', render: (b: Crossing) => `${b.km.toLocaleString()} km · ${fmtH(driveHours(b.km))} est.` },
+                  ]}
+                  rows={crossings}
+                />
+              </div>
+            ) : (
+              <div className="rh-grid rh-grid--2">
+                {CONNECTIVITY_FIGURES.map((f) => (
+                  <div key={f.label} className="rh-metric">
+                    <DS.MetricItem label={f.label} value={f.value} />
+                    <SourceLine DS={DS} p={f} />
+                  </div>
+                ))}
+              </div>
+            )}
+            {focused ? (
+              <DS.Alert color="warning" title="Schematic geometry">
+                Roads and rail are drawn as straight corridors between known cities and border posts, not surveyed alignments. Distances and drive times are great-circle estimates. MoT, SAR, Mawani, GACA and ZATCA records replace them.
+              </DS.Alert>
+            ) : mode === 'air' ? (
+              <DS.Alert color="gray" title="Flight times on the globe are estimates">
+                They are computed from distance, not from schedules. The published reach figures are the two rings. GACA scheduled flight times per city pair replace the estimates once supplied.
+              </DS.Alert>
+            ) : null}
+            <div className="rh-actions">
+              <DS.Button hierarchy="secondary-gray" size="md" iconLeading={details ? 'chevron-up' : 'chevron-down'} onClick={() => setDetails(!details)}>
+                {details ? 'Hide node details' : 'Show node details'}
+              </DS.Button>
+              <DS.Button hierarchy="link-color" size="md" href="/regions" iconTrailing="arrow-right">
+                Regions and cities
+              </DS.Button>
+            </div>
+          </div>
+        </div>
+        {details && (
+          <div className="rh-table-wrap">
+            <DS.Table
+              title={focused ? 'Ports, airports and corridors' : mode === 'sea' ? 'Ports' : mode === 'air' ? 'Airports' : 'Land corridors and rail'}
+              badge={`${rows.length}`}
+              columns={[
+                { key: 'name', title: 'Node' },
+                { key: 'location', title: 'Location' },
+                { key: 'capacity', title: 'Capacity' },
+                { key: 'transit', title: 'Transit to your markets' },
+                { key: 'status', title: 'Data status', render: (r: Node) => <SourceLine DS={DS} p={r} /> },
+              ]}
+              rows={rows}
+            />
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
