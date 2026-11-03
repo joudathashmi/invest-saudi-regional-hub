@@ -22,11 +22,37 @@ const NEIGHBOURS = ['784', '634', '414', '512', '400', '368', '887', '048'];
 
 /** Band 3: how strongly Saudi Arabia is connected, by air, sea and ground, on a real-world globe. */
 export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
-  const [mode, setMode] = React.useState<Mode>('air');
+  type Step = Mode | 'integrated';
+  const STEPS: Step[] = ['air', 'sea', 'ground', 'digital', 'integrated'];
+  const [step, setStep] = React.useState<Step>('air');
   const [layer, setLayer] = React.useState<Layer>('all');
-  const [focused, setFocused] = React.useState(false);
   const [view, setView] = React.useState<GlobeView>(REGION_VIEW);
-  const [details, setDetails] = React.useState(false);
+  const [details, setDetails] = React.useState<Step | null>(null);
+  const stepRefs = React.useRef<Record<string, HTMLDivElement | null>>({});
+  const focused = step === 'integrated';
+  const mode: Mode = focused ? 'ground' : step;
+
+  /* Scroll story: the step nearest the middle of the viewport drives the globe. */
+  React.useEffect(() => {
+    const els = STEPS.map((k) => stepRefs.current[k]).filter(Boolean) as HTMLDivElement[];
+    if (!els.length || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) if (e.isIntersecting) { const k = e.target.getAttribute('data-step') as Step; if (k) activate(k, false); }
+      },
+      { rootMargin: '-45% 0px -45% 0px', threshold: 0 },
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const activate = (k: Step, scroll: boolean) => {
+    setStep(k);
+    setView(k === 'integrated' ? SAUDI_VIEW : k === 'digital' ? DIGITAL_VIEW : REGION_VIEW);
+    if (scroll) stepRefs.current[k]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+  const enterFocus = () => activate('integrated', true);
 
   const selected = MARKETS.filter((m) => ctx.markets.includes(m.code));
   const shown = selected.length ? selected : MARKETS;
@@ -34,8 +60,6 @@ export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   const ground = new Set(['AE', 'QA', 'KW', 'BH', 'OM', 'JO', 'IQ']);
   const seaMarkets = shown.filter((m) => !['KW', 'JO', 'IQ'].includes(m.code));
 
-  const enterFocus = () => { setFocused(true); setView(SAUDI_VIEW); };
-  const exitFocus = () => { setFocused(false); setView(mode === 'digital' ? DIGITAL_VIEW : REGION_VIEW); };
 
   /* Region view: hubs, markets, arcs, rings. */
   const regionPoints: GlobePoint[] = [
@@ -66,134 +90,124 @@ export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
     ...(showRoad || showRail ? LAND_PORTS.map((b) => ({ id: b.id, name: `${b.name} → ${b.neighbour}`, lat: b.lat, lon: b.lon, kind: 'border' as const, labelAt: (['lp-haditha', 'lp-tuwal'].includes(b.id) ? 'left' : ['lp-arar', 'lp-khafji'].includes(b.id) ? 'above' : ['lp-wadiah', 'lp-batha'].includes(b.id) ? 'below' : 'right') as 'left' | 'above' | 'right' | 'below' })) : []),
   ];
 
-  const legend = focused
-    ? 'Roads in brand, operating rail dashed, planned rail dotted, ports (blue) and airports (orange) as points, border crossings as diamonds labelled with the neighbour they lead to. Hover any point for its name; the Ports and airports layer labels them all. Corridors are schematic; surveyed alignments come from MoT and SAR.'
-    : mode === 'air'
-      ? 'Arcs from Riyadh to each selected market with estimated flight time (great-circle distance at about 850 km/h plus 30 minutes). Pulsing rings are the published 4-hour and 8-hour flight reach.'
-      : mode === 'sea'
-        ? 'Red Sea ports serve Africa, Europe and the Levant; Arabian Gulf ports serve the GCC and Asia. Transit days per port pair are not yet published, so no time is shown.'
-        : mode === 'digital'
-          ? 'Subsea landing cities on both coasts (blue), cloud and data-centre locations (orange). No cable routes are drawn: cable names, capacities and provider region status come from CST and the providers before they appear here.'
-          : 'Road corridors to the GCC, Jordan and Iraq from Riyadh with estimated drive time (road distance taken as 1.25 times great-circle at 80 km/h). Click Saudi Arabia to see the national network.';
-
-  const rows = focused ? NODES : mode === 'digital' ? [] : NODES.filter((n) => (mode === 'ground' ? n.mode === 'land' : n.mode === mode));
   const crossings = LAND_PORTS.map((b) => ({ ...b, km: Math.round(greatCircleKm(riyadh, b)) }));
   type Crossing = (typeof crossings)[number];
+
+  const STEP_META: Record<Step, { label: string; title: string }> = {
+    air: { label: 'Air', title: 'Half the world within an eight-hour flight' },
+    sea: { label: 'Sea', title: 'Two coastlines, two trade systems' },
+    ground: { label: 'Land', title: 'The GCC by road within a day' },
+    digital: { label: 'Digital', title: 'Landings on both coasts, cloud in the middle' },
+    integrated: { label: 'Integrated network', title: 'How it joins up inside Saudi Arabia' },
+  };
+  const legendFor = (k: Step) =>
+    k === 'integrated' ? 'Roads in brand, operating rail dashed, planned rail dotted, ports (blue) and airports (orange) as points, border crossings as diamonds labelled with the neighbour they lead to. Hover any point for its name.'
+    : k === 'air' ? 'Arcs from Riyadh to each selected market with estimated flight time (great-circle distance at about 850 km/h plus 30 minutes). Pulsing rings are the published 4-hour and 8-hour flight reach.'
+    : k === 'sea' ? 'Red Sea ports serve Africa, Europe and the Levant; Arabian Gulf ports serve the GCC and Asia. Transit days per port pair are not yet published, so no time is shown.'
+    : k === 'digital' ? 'Subsea landing cities on both coasts (blue), cloud and data-centre locations (orange). No cable routes are drawn: cable names, capacities and provider region status come from CST and the providers before they appear here.'
+    : 'Road corridors to the GCC, Jordan and Iraq from Riyadh with estimated drive time (road distance taken as 1.25 times great-circle at 80 km/h).';
+  const linksFor = (k: Step) =>
+    k === 'air' ? [{ label: 'Riyadh logistics zone', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Corporate base route', href: '#routes', icon: 'building-07' }, { label: 'Logistics sector', href: '/sectors/logistics', icon: 'briefcase-01' }]
+    : k === 'sea' ? [{ label: 'Zones beside ports', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Export route', href: '#routes', icon: 'tool-02' }, { label: 'Agreements and rules of origin', href: '#market-access', icon: 'globe-01' }]
+    : k === 'ground' ? [{ label: 'Industrial cities', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Distribution route', href: '#routes', icon: 'truck-01' }, { label: 'GCC customs union', href: '#market-access', icon: 'globe-01' }]
+    : k === 'digital' ? [{ label: 'Cloud Computing SEZ', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Digital hub route', href: '#routes', icon: 'server-04' }, { label: 'ICT sector', href: '/sectors/ict', icon: 'briefcase-01' }]
+    : [{ label: 'Where you can operate from', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Regions and cities', href: '/regions', icon: 'globe-01' }];
+  const rowsFor = (k: Step) => (k === 'integrated' ? NODES : k === 'digital' ? [] : NODES.filter((n) => (k === 'ground' ? n.mode === 'land' : n.mode === k)));
 
   return (
     <section id="connectivity" className="rh-band" aria-labelledby="rh-connect">
       <div className="rh-container rh-stack">
-        <DS.SectionHeader
-          title={focused ? 'Saudi Arabia: roads, rail, ports and borders' : 'Connected by air, land, sea and digital links'}
-          supporting={focused ? 'The integrated network: ports, airports, roads, operating and planned rail, and the crossing to every neighbour. Drag to pan.' : `By air, sea, land and digital links to ${marketNames(ctx.markets)}. Transport links are one thing; market access is the section below. Click Saudi Arabia on the globe to open its national network.`}
-          tabs={
-            focused ? (
+        <div className="rh-editorial-lead">
+          <span className="text-sm-semibold rh-eyebrow">Explore</span>
+          <h2 id="rh-connect" className="display-md-semibold rh-h2">Connected by air, land, sea and digital links</h2>
+          <p className="text-lg-regular rh-muted rh-para">Scroll, and the globe changes with the story: how {marketNames(ctx.markets)} are reached from here, mode by mode, then how the network joins up inside Saudi Arabia. Transport links are one thing; market access is the section after this.</p>
+          <DS.Tabs
+            type="button-border"
+            items={STEPS.map((k) => ({ label: STEP_META[k].label, value: k }))}
+            value={step}
+            onChange={(v: string) => activate(v as Step, true)}
+          />
+        </div>
+        <div className="rh-story">
+          <div className="rh-story-visual">
+            <div className="rh-globe-wrap">
+              <Globe
+                points={focused ? focusPoints : regionPoints}
+                arcs={focused ? [] : regionArcs}
+                rings={rings}
+                lines={focused ? focusLines : []}
+                selectedCountryIds={focused ? [] : selected.map((m) => m.countryId)}
+                neighbourCountryIds={focused ? NEIGHBOURS : []}
+                view={view}
+                onViewChange={setView}
+                onHomeClick={focused ? undefined : enterFocus}
+                focused={focused}
+              />
+            </div>
+            {focused && (
               <DS.Tabs
-                type="button-border"
-                items={[{ label: 'Integrated network', value: 'all' }, { label: 'Roads', value: 'road' }, { label: 'Rail', value: 'rail' }, { label: 'Ports and airports', value: 'ports' }]}
+                type="button-gray"
+                items={[{ label: 'All', value: 'all' }, { label: 'Roads', value: 'road' }, { label: 'Rail', value: 'rail' }, { label: 'Ports and airports', value: 'ports' }]}
                 value={layer}
                 onChange={(v: string) => setLayer(v as Layer)}
               />
-            ) : (
-              <DS.Tabs
-                type="button-border"
-                items={[{ label: 'Air', value: 'air' }, { label: 'Sea', value: 'sea' }, { label: 'Land', value: 'ground' }, { label: 'Digital', value: 'digital' }]}
-                value={mode}
-                onChange={(v: string) => { setMode(v as Mode); setView(v === 'digital' ? DIGITAL_VIEW : REGION_VIEW); }}
-              />
-            )
-          }
-          actions={
-            focused ? (
-              <DS.Button hierarchy="secondary-gray" size="md" iconLeading="arrow-left" onClick={exitFocus}>Back to the region</DS.Button>
-            ) : (
-              <DS.Button hierarchy="secondary-color" size="md" iconLeading="marker-pin-01" onClick={enterFocus}>Open the Saudi network</DS.Button>
-            )
-          }
-        />
-        <div className="rh-globe-layout">
-          <div className="rh-globe-wrap">
-            <Globe
-              points={focused ? focusPoints : regionPoints}
-              arcs={focused ? [] : regionArcs}
-              rings={rings}
-              lines={focused ? focusLines : []}
-              selectedCountryIds={focused ? [] : selected.map((m) => m.countryId)}
-              neighbourCountryIds={focused ? NEIGHBOURS : []}
-              view={view}
-              onViewChange={setView}
-              onHomeClick={focused ? undefined : enterFocus}
-              focused={focused}
-            />
+            )}
           </div>
-          <div className="rh-stack" style={{ gap: 'var(--spacing-2xl)' }}>
-            <p className="text-sm-regular rh-muted" style={{ margin: 0 }}>{legend}</p>
-            {focused ? (
-              <div className="rh-table-wrap">
-                <DS.Table
-                  title="Border crossings"
-                  badge={`${crossings.length}`}
-                  columns={[
-                    { key: 'name', title: 'Crossing' },
-                    { key: 'neighbour', title: 'Leads to' },
-                    { key: 'mode', title: 'Mode', render: (b: Crossing) => (b.mode === 'causeway' ? 'Causeway' : b.mode === 'road-rail-planned' ? 'Road; rail planned' : 'Road') },
-                    { key: 'km', title: 'From Riyadh', render: (b: Crossing) => `${b.km.toLocaleString()} km · ${fmtH(driveHours(b.km))} est.` },
-                  ]}
-                  rows={crossings}
-                />
-              </div>
-            ) : (
-              <dl className="rh-statline">
-                {(mode === 'digital' ? DIGITAL_FIGURES : CONNECTIVITY_FIGURES).map((f) => (
-                  <div key={f.label} className="rh-stat">
-                    <dt className="display-xs-semibold">{f.value}</dt>
-                    <dd className="text-sm-regular rh-muted">{f.label}<br /><SourceLine DS={DS} p={f} /></dd>
+          <div className="rh-story-steps">
+            {STEPS.map((k) => (
+              <div key={k} data-step={k} ref={(el) => { stepRefs.current[k] = el; }} className={step === k ? 'rh-step rh-step--on' : 'rh-step'}>
+                <span className="text-sm-semibold rh-eyebrow">{STEP_META[k].label}</span>
+                <h3 className="display-sm-semibold rh-h3">{STEP_META[k].title}</h3>
+                <p className="text-md-regular rh-muted rh-para">{legendFor(k)}</p>
+                {k === 'integrated' ? (
+                  <div className="rh-table-wrap">
+                    <DS.Table
+                      title="Border crossings"
+                      badge={`${crossings.length}`}
+                      columns={[
+                        { key: 'name', title: 'Crossing' },
+                        { key: 'neighbour', title: 'Leads to' },
+                        { key: 'mode', title: 'Mode', render: (b: Crossing) => (b.mode === 'causeway' ? 'Causeway' : b.mode === 'road-rail-planned' ? 'Road; rail planned' : 'Road') },
+                        { key: 'km', title: 'From Riyadh', render: (b: Crossing) => `${b.km.toLocaleString()} km · ${fmtH(driveHours(b.km))} est.` },
+                      ]}
+                      rows={crossings}
+                    />
                   </div>
-                ))}
-              </dl>
-            )}
-            {!focused && (
-              <div className="rh-stack" style={{ gap: 'var(--spacing-lg)' }}>
-                <span className="text-sm-semibold rh-eyebrow">Why it matters to your business</span>
-                <div className="rh-relevance">
-                  {MODE_RELEVANCE[mode].map((r) => (
-                    <p key={r.who} className="text-md-regular rh-muted rh-para">
-                      <b className="rh-strong">{r.who}.</b> {r.why}
-                    </p>
-                  ))}
-                </div>
-                <Sideways
-                  DS={DS}
-                  items={
-                    mode === 'air'
-                      ? [{ label: 'Riyadh logistics zone', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Corporate base route', href: '#routes', icon: 'building-07' }, { label: 'Logistics sector', href: '/sectors/logistics', icon: 'briefcase-01' }]
-                      : mode === 'sea'
-                        ? [{ label: 'Zones beside ports', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Export route', href: '#routes', icon: 'tool-02' }, { label: 'Agreements and rules of origin', href: '#market-access', icon: 'globe-01' }]
-                        : mode === 'ground'
-                          ? [{ label: 'Industrial cities', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Distribution route', href: '#routes', icon: 'truck-01' }, { label: 'GCC customs union', href: '#market-access', icon: 'globe-01' }]
-                          : [{ label: 'Cloud Computing SEZ', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Digital hub route', href: '#routes', icon: 'server-04' }, { label: 'ICT sector', href: '/sectors/ict', icon: 'briefcase-01' }]
-                  }
-                />
+                ) : (
+                  <dl className="rh-statline">
+                    {(k === 'digital' ? DIGITAL_FIGURES : CONNECTIVITY_FIGURES).map((f) => (
+                      <div key={f.label} className="rh-stat">
+                        <dt className="display-xs-semibold">{f.value}</dt>
+                        <dd className="text-sm-regular rh-muted">{f.label}<br /><SourceLine DS={DS} p={f} /></dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+                {k !== 'integrated' && (
+                  <div className="rh-relevance">
+                    {MODE_RELEVANCE[k].map((r) => (
+                      <p key={r.who} className="text-md-regular rh-muted rh-para">
+                        <b className="rh-strong">{r.who}.</b> {r.why}
+                      </p>
+                    ))}
+                  </div>
+                )}
+                <p className="text-xs-regular rh-tertiary rh-para">
+                  {k === 'integrated'
+                    ? 'Roads and rail are drawn as straight corridors between known cities and border posts, not surveyed alignments; distances and drive times are great-circle estimates until MoT, SAR, Mawani, GACA and ZATCA records replace them.'
+                    : k === 'air' ? 'Flight times are computed from distance, not schedules; the two rings are the published reach figures. GACA scheduled times per city pair replace the estimates once supplied.' : ''}
+                </p>
+                <Sideways DS={DS} items={linksFor(k)} />
+                {(rowsFor(k).length > 0 || k === 'digital') && (
+                  <DS.Button hierarchy="link-gray" size="sm" iconLeading={details === k ? 'chevron-up' : 'chevron-down'} onClick={() => setDetails(details === k ? null : k)}>
+                    {details === k ? 'Hide the records' : 'Open the records'}
+                  </DS.Button>
+                )}
               </div>
-            )}
-            <p className="text-xs-regular rh-tertiary" style={{ margin: 0 }}>
-              {focused
-                ? 'Roads and rail are drawn as straight corridors between known cities and border posts, not surveyed alignments; distances and drive times are great-circle estimates until MoT, SAR, Mawani, GACA and ZATCA records replace them.'
-                : mode === 'air'
-                  ? 'Flight times are computed from distance, not schedules; the two rings are the published reach figures. GACA scheduled times per city pair replace the estimates once supplied.'
-                  : ''}
-            </p>
-            <div className="rh-actions">
-              <DS.Button hierarchy="link-gray" size="md" iconLeading={details ? 'chevron-up' : 'chevron-down'} onClick={() => setDetails(!details)}>
-                {details ? 'Hide the records' : 'Open the records'}
-              </DS.Button>
-              <DS.Button hierarchy="link-color" size="md" href="/regions" iconTrailing="arrow-right">
-                Regions and cities
-              </DS.Button>
-            </div>
+            ))}
           </div>
         </div>
-        {details && mode === 'digital' && !focused && (
+        {details === 'digital' && (
           <div className="rh-table-wrap">
             <DS.Table
               title="Digital nodes"
@@ -208,11 +222,11 @@ export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             />
           </div>
         )}
-        {details && rows.length > 0 && (
+        {details && details !== 'digital' && rowsFor(details).length > 0 && (
           <div className="rh-table-wrap">
             <DS.Table
-              title={focused ? 'Ports, airports and corridors' : mode === 'sea' ? 'Ports' : mode === 'air' ? 'Airports' : 'Land corridors and rail'}
-              badge={`${rows.length}`}
+              title={details === 'integrated' ? 'Ports, airports and corridors' : details === 'sea' ? 'Ports' : details === 'air' ? 'Airports' : 'Land corridors and rail'}
+              badge={`${rowsFor(details).length}`}
               columns={[
                 { key: 'name', title: 'Node' },
                 { key: 'location', title: 'Location' },
@@ -220,7 +234,7 @@ export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
                 { key: 'transit', title: 'Transit to your markets' },
                 { key: 'status', title: 'Data status', render: (r: Node) => <SourceLine DS={DS} p={r} badge /> },
               ]}
-              rows={rows}
+              rows={rowsFor(details)}
             />
           </div>
         )}

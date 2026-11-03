@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { ROUTES, type RouteId } from '@/data/regional-hub';
 import { Sideways, SourceLine, type HubContext } from './shared';
@@ -10,6 +11,18 @@ import { Sideways, SourceLine, type HubContext } from './shared';
  */
 export function RoutesBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onChange: (c: HubContext) => void }) {
   const selected = ROUTES.find((r) => r.id === ctx.route) ?? ROUTES[0];
+  const [current, setCurrent] = React.useState(0);
+  const refs = React.useRef<(HTMLLIElement | null)[]>([]);
+  React.useEffect(() => {
+    setCurrent(0);
+    const els = refs.current.filter(Boolean) as HTMLLIElement[];
+    if (!els.length || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { const i = Number(e.target.getAttribute('data-i')); setCurrent((c) => Math.max(c, i)); }
+    }, { rootMargin: '0px 0px -40% 0px', threshold: 0.6 });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [selected.id]);
 
   return (
     <section id="routes" className="rh-band" aria-labelledby="rh-routes">
@@ -37,6 +50,15 @@ export function RoutesBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onC
             <p className="text-md-regular rh-para"><span className="rh-strong">Licence.</span> {selected.licence}.</p>
             <p className="text-md-regular rh-para"><span className="rh-strong">Incentives.</span> {selected.incentives[0]}</p>
             <p className="text-md-regular rh-para"><span className="rh-strong">Connectivity that matters.</span> {selected.connectivity}</p>
+            <ol className="rh-pathlist">
+              {selected.steps.map((st, i) => (
+                <li key={st.title} data-i={i} ref={(el) => { refs.current[i] = el; }} className={i <= current ? 'rh-pathitem rh-pathitem--on' : 'rh-pathitem'}>
+                  <span className="text-xs-medium rh-eyebrow">Step {i + 1}</span>
+                  <span className="text-md-semibold rh-strong">{st.title}</span>
+                  <span className="text-sm-regular rh-muted">{st.description}</span>
+                </li>
+              ))}
+            </ol>
             <SourceLine DS={DS} p={selected.provenance} />
             <div className="rh-actions">
               <DS.Button hierarchy="primary" size="md" href={selected.startHref} iconTrailing="arrow-right">
@@ -57,7 +79,7 @@ export function RoutesBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onC
           </div>
           <div className="rh-route-path">
             <span className="text-sm-semibold rh-eyebrow">The path, in order</span>
-            <DS.ProgressSteps steps={selected.steps} current={0} />
+            <DS.ProgressSteps steps={selected.steps} current={current} />
           </div>
         </div>
       </div>

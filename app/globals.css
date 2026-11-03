@@ -239,3 +239,32 @@
 .rh-showcase-row { display: flex; flex-wrap: wrap; gap: var(--spacing-xl) var(--spacing-4xl); }
 .rh-showcase-name { display: inline-flex; align-items: center; gap: var(--spacing-md); color: var(--text-primary); }
 .rh-showcase-mono { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: var(--radius-full); background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-secondary); }
+
+/* Scroll story: pinned globe, steps on the right. Below 1024px the globe is not pinned and steps stack. */
+.rh-story { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--spacing-6xl); align-items: start; }
+.rh-story-visual { position: sticky; top: calc(var(--spacing-4xl) + env(safe-area-inset-top, 0px)); display: flex; flex-direction: column; gap: var(--spacing-lg); }
+.rh-story-steps { display: flex; flex-direction: column; gap: var(--spacing-8xl); }
+.rh-step { display: flex; flex-direction: column; gap: var(--spacing-lg); min-height: 60vh; opacity: 0.45; transition: opacity 300ms; }
+.rh-step--on { opacity: 1; }
+@media (max-width: 1023px) {
+  .rh-story { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-4xl); }
+  .rh-story-visual { position: static; }
+  .rh-story-steps { gap: var(--spacing-5xl); }
+  .rh-step { min-height: 0; opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .rh-step { opacity: 1; transition: none; } }
+
+/* Routes path list that lights the step diagram. */
+.rh-pathlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-lg); border-top: 1px solid var(--border-secondary); padding-top: var(--spacing-xl); }
+.rh-pathitem { display: flex; flex-direction: column; gap: var(--spacing-xxs); padding-inline-start: var(--spacing-xl); border-inline-start: 2px solid var(--border-secondary); opacity: 0.6; transition: opacity 300ms, border-color 300ms; }
+.rh-pathitem--on { opacity: 1; border-inline-start-color: var(--utility-brand-500); }
+@media (prefers-reduced-motion: reduce) { .rh-pathitem { opacity: 1; transition: none; } }
+
+/* Platform strip reveal. */
+.rh-strip-item { opacity: 0.55; transition: opacity 300ms; }
+.rh-strip-item--on { opacity: 1; }
+.rh-strip-item--on .rh-strip-index { color: var(--utility-brand-400); }
+@media (prefers-reduced-motion: reduce) { .rh-strip-item { opacity: 1; } }
+
+/* Anchor figure ticker inherits the editorial colour. */
+.rh-bignum .is-ticker, .rh-bignum .is-ticker-affix, .rh-bignum .is-ticker-sep { color: var(--text-primary); }

@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { PLATFORMS, ROUTES, SEZ_INCENTIVES } from '@/data/regional-hub';
 import { Sideways, SourceLine, type HubContext } from './shared';
@@ -12,6 +13,18 @@ import { Sideways, SourceLine, type HubContext } from './shared';
  */
 export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   const list = ctx.route ? PLATFORMS.filter((p) => p.routes.includes(ctx.route!)) : PLATFORMS;
+  const [active, setActive] = React.useState(0);
+  const refs = React.useRef<(HTMLElement | null)[]>([]);
+  React.useEffect(() => {
+    const els = refs.current.filter(Boolean) as HTMLElement[];
+    if (!els.length || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver((entries) => {
+      const best = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (best) setActive(Number(best.target.getAttribute('data-i')));
+    }, { threshold: [0.5, 0.75, 1] });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [list.length]);
 
   return (
     <section id="platforms" className="rh-band" aria-labelledby="rh-platforms">
@@ -28,7 +41,7 @@ export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
         ) : (
           <div className="rh-strip" role="list">
             {list.map((p, i) => (
-              <article key={p.id} className="rh-strip-item" role="listitem">
+              <article key={p.id} data-i={i} ref={(el) => { refs.current[i] = el; }} className={i === active ? 'rh-strip-item rh-strip-item--on' : 'rh-strip-item'} role="listitem">
                 <span className="display-lg-semibold rh-strip-index">{String(i + 1).padStart(2, '0')}</span>
                 <span className="text-xs-medium rh-eyebrow">{p.kind}</span>
                 <h3 className="text-xl-semibold rh-strip-title">{p.name}</h3>

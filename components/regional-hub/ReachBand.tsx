@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { CONNECTIVITY_FIGURES, DOMESTIC, REACH } from '@/data/regional-hub';
 import { SourceLine, marketNames, type HubContext } from './shared';
@@ -12,6 +13,15 @@ import { SourceLine, marketNames, type HubContext } from './shared';
 export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   const lead = REACH[3];
   const facts = [DOMESTIC[0], DOMESTIC[1], REACH[4], CONNECTIVITY_FIGURES[0]];
+  const figRef = React.useRef<HTMLDivElement | null>(null);
+  const [seen, setSeen] = React.useState(false);
+  React.useEffect(() => {
+    const el = figRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') { setSeen(true); return; }
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { setSeen(true); io.disconnect(); } }, { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   return (
     <section id="reach" className="rh-band" aria-labelledby="rh-reach">
       <div className="rh-container rh-editorial">
@@ -22,8 +32,10 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             Investors come for Saudi demand first. The region is served from that base, not instead of it. What follows is the domestic economy, then the logistics base and digital backbone a hub needs to serve {marketNames(ctx.markets)}.
           </p>
         </div>
-        <div className="rh-editorial-figure">
-          <span className="display-2xl-semibold rh-bignum">{lead.value}</span>
+        <div className="rh-editorial-figure" ref={figRef}>
+          <span className="rh-bignum" aria-label={lead.value}>
+            <DS.NumberTicker value={seen ? '1.2' : '0.0'} prefix="$" suffix="T+" />
+          </span>
           <span className="text-lg-medium">{lead.label}</span>
           <SourceLine DS={DS} p={lead} />
         </div>

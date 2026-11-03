@@ -15,6 +15,8 @@ Route: `/why-saudi/regional-hub`. Built on the Invest Saudi design system V1.0, 
 
 Inspire (hero with the globe as the visual) → Understand (anchor market, editorial figure) → Explore (connectivity globe with Air, Land, Sea, Digital and the integrated network; platforms as a location strip) → Evaluate (market access summary with details on demand; routes as tabs; industry editorial; companies showcase; comparison on demand) → Act (talent, advisor, FAQ). The regional case builder is a guided three-step slide-out (`CaseBuilder.tsx`) opened from the hero CTA, a persistent button after scrolling, the case strip under the hero, and the Act band; it sets the same shared context as before. Provenance is a footnote line everywhere except inside detail tables, where it keeps the status badge.
 
+Scroll-driven moments (all off under prefers-reduced-motion and non-pinned below 1024px): the connectivity globe is pinned while five steps (Air, Sea, Land, Digital, Integrated network) scroll past and drive its mode and view; the route path lights its steps as their text scrolls into view; the anchor-market figure rolls up with the system NumberTicker on first view; the platform strip highlights the item in view.
+
 ## 2a. Bands And The Components Behind Them
 
 | # | Band | File | Design-system components used |
