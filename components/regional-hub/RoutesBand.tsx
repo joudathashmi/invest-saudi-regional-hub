@@ -4,6 +4,7 @@ import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { ROUTES, type RouteId } from '@/data/regional-hub';
 import { Reveal, Sideways, SourceLine, type HubContext } from './shared';
+import { ROUTE_PHOTOS } from './imagery';
 
 /**
  * Evaluate. Five ways to run the region from here, as tabs with the path drawn
@@ -78,6 +79,7 @@ export function RoutesBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onC
             />
           </div>
           <div className="rh-route-path">
+            <img key={selected.id} className="rh-route-photo" src={ROUTE_PHOTOS[selected.id].src} alt={ROUTE_PHOTOS[selected.id].alt} loading="lazy" />
             <span className="text-sm-semibold rh-eyebrow">The path, in order</span>
             <DS.ProgressSteps steps={selected.steps} current={current} />
           </div>

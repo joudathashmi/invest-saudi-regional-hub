@@ -81,3 +81,9 @@ npm run preview    # static export to out/ for a shareable preview
 ```
 
 Open `http://localhost:3000/why-saudi/regional-hub`.
+
+## Imagery and palette (Nov 2026)
+
+Photography comes from the Invest Saudi homepage design's image library (Figma "Invest Saudi — Homepage"), exported and compressed into `public/img`, mapped in `components/regional-hub/imagery.ts`. Rights follow the homepage library; the brand team confirms before production. Photos are presentation only; no figure or record depends on them.
+
+The page's canvas and card tones (`--rh-canvas`, `--rh-card`, `--rh-tile`, `--rh-glass`, `--rh-accent`) are sampled from the homepage Figma and scoped to `.rh-page` in `app/globals.css`. Design-system files are unchanged (`npm run ds:verify`).

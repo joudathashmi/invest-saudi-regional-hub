@@ -3,6 +3,7 @@
 import type { DS } from '@/lib/ds';
 import { INDUSTRIES, INDUSTRY_REGION, MARKETS } from '@/data/regional-hub';
 import { Reveal, Sideways, SourceLine, marketNames, type HubContext } from './shared';
+import { industryPhoto } from './imagery';
 
 /**
  * Evaluate, continued. Your industry in the region as an editorial read:
@@ -46,6 +47,7 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
               />
             </div>
             <div className="rh-industry-aside">
+              <img key={rec.industry} className="rh-industry-photo" src={industryPhoto(rec.industry).src} alt={industryPhoto(rec.industry).alt} loading="lazy" />
               {rec.nationalFigures.length > 0 ? (
                 <dl className="rh-factlist rh-factlist--col">
                   {rec.nationalFigures.map((f) => (

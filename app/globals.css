@@ -394,3 +394,51 @@
 .rh-includes-grid div { display: flex; flex-direction: column; gap: var(--spacing-xs); }
 .rh-includes-grid dt { color: var(--rh-accent); }
 .rh-includes-grid dd { margin: 0; color: var(--text-secondary); }
+
+/* ---------- Homepage palette (sampled from the Figma homepage, Nov 2026), page-scoped ---------- */
+/* The design system's own tokens are untouched; these page variables carry the homepage's canvas and card tones. */
+.rh-page { --rh-canvas: #0a1113; --rh-card: #111317; --rh-tile: #1f2125; --rh-glass: #0b2321; --rh-glass-2: #112928; --rh-accent: #16cabe; --rh-accent-strong: #30f8e4; }
+.rh-theme-light { --rh-canvas: var(--bg-primary); --rh-card: var(--bg-secondary); --rh-tile: var(--bg-tertiary); --rh-glass: var(--utility-brand-50); --rh-glass-2: var(--utility-brand-100); --rh-accent: var(--brand-600); --rh-accent-strong: var(--brand-700); }
+.rh-page, .rh-band, .rh-chapter, .rh-hero, .rh-nav { background-color: var(--rh-canvas); }
+.rh-theme-light .rh-band { background-color: var(--bg-primary); }
+.rh-nav { background: color-mix(in srgb, var(--rh-canvas) 86%, transparent); }
+.rh-fact, .rh-stat, .rh-includes, .rh-feature, .rh-route-path, .rh-globe-wrap, .rh-card, .rh-router { background: var(--rh-card); }
+.rh-fact dt, .rh-stat dt, .rh-includes-grid dt { color: var(--rh-accent); }
+.rh-reason--on, .rh-reason:hover { background: var(--rh-glass-2); }
+.rh-reason-card { background: linear-gradient(160deg, var(--rh-glass) 0%, var(--rh-card) 60%); }
+.rh-chapter .rh-dim { color: var(--gray-dark-mode-500); }
+.rh-glow-l::after, .rh-glow-r::after { background: radial-gradient(ellipse at center, var(--rh-glass) 0%, transparent 65%); }
+
+/* Photography. Every photo sits under a gradient so type stays readable; none carries data. */
+.rh-hero { min-height: 760px; display: flex; align-items: center; }
+.rh-hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 50%; z-index: -2; }
+.rh-hero::before { display: none; }
+.rh-hero::after { background: linear-gradient(90deg, color-mix(in srgb, var(--rh-canvas) 82%, transparent) 0%, color-mix(in srgb, var(--rh-canvas) 45%, transparent) 50%, color-mix(in srgb, var(--rh-canvas) 15%, transparent) 100%), linear-gradient(180deg, color-mix(in srgb, var(--rh-canvas) 55%, transparent) 0%, transparent 35%, transparent 60%, color-mix(in srgb, var(--rh-canvas) 92%, transparent) 100%); opacity: 1; }
+.rh-hero-globe::before { opacity: 0.35; }
+.rh-hero-globe .rh-globe-sphere { fill: color-mix(in srgb, var(--rh-canvas) 72%, transparent); }
+.rh-hero-globe .rh-globe-country { fill: color-mix(in srgb, var(--rh-tile) 85%, transparent); }
+.rh-hero-stat { background: color-mix(in srgb, var(--rh-card) 78%, transparent); }
+
+.rh-chapter--photo { min-height: 440px; display: flex; align-items: center; overflow: hidden; }
+.rh-chapter-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+.rh-chapter--photo::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, color-mix(in srgb, var(--rh-canvas) 90%, transparent) 0%, color-mix(in srgb, var(--rh-canvas) 55%, transparent) 70%, color-mix(in srgb, var(--rh-canvas) 30%, transparent) 100%), linear-gradient(180deg, var(--rh-canvas) 0%, transparent 25%, transparent 75%, var(--rh-canvas) 100%); }
+.rh-chapter--photo p { color: var(--base-white); }
+.rh-chapter--photo .rh-dim { color: var(--gray-dark-mode-300); }
+
+.rh-mosaic-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 700ms ease; }
+.rh-mosaic-item:hover .rh-mosaic-img, .rh-mosaic-item:focus-visible .rh-mosaic-img { transform: scale(1.05); }
+.rh-mosaic-text { background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--rh-canvas) 60%, transparent) 45%, color-mix(in srgb, var(--rh-canvas) 94%, transparent) 100%); padding-top: var(--spacing-6xl); }
+
+.rh-step-photo { width: 100%; aspect-ratio: 21 / 9; object-fit: cover; border-radius: var(--radius-lg); border: 1px solid var(--border-secondary); margin-bottom: var(--spacing-md); filter: saturate(0.9); }
+.rh-step--on .rh-step-photo { filter: none; }
+.rh-route-photo { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--radius-md); margin: calc(-1 * var(--spacing-3xl)) calc(-1 * var(--spacing-3xl)) 0; width: calc(100% + 2 * var(--spacing-3xl)); border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+.rh-route-path { overflow: hidden; }
+.rh-industry-photo { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--radius-lg); border: 1px solid var(--border-secondary); }
+.rh-feature-media { position: relative; aspect-ratio: 1; border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border-secondary); }
+.rh-feature-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rh-feature-mark--badge { position: absolute; left: var(--spacing-md); bottom: var(--spacing-md); width: 56px; max-width: none; aspect-ratio: 1; background: color-mix(in srgb, var(--rh-canvas) 80%, transparent); color: var(--rh-accent); border-color: var(--border-secondary); backdrop-filter: blur(6px); }
+.rh-reason-card { position: relative; overflow: hidden; isolation: isolate; }
+.rh-reason-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; opacity: 0.22; z-index: -1; mask-image: linear-gradient(180deg, #000 0%, transparent 70%); -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 70%); }
+@media (max-width: 1023px) { .rh-hero { min-height: 0; } }
+.rh-chapter--photo .rh-container { width: 100%; }
+.rh-hero-globe .rh-globe-sphere { fill: color-mix(in srgb, var(--rh-canvas) 55%, transparent); }

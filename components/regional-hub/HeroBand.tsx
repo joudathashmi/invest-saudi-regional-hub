@@ -5,6 +5,7 @@ import type { DS } from '@/lib/ds';
 import { HUB_CITIES, REACH, REACH_RINGS } from '@/data/regional-hub';
 import { Globe, type GlobePoint, type GlobeView } from './Globe';
 import { SourceLine } from './shared';
+import { HERO_PHOTO } from './imagery';
 
 /**
  * Inspire. The globe is the hero visual: Saudi Arabia as the anchor market,
@@ -38,6 +39,7 @@ export function HeroBand({ DS, onBuildCase }: { DS: DS; onBuildCase: () => void 
 
   return (
     <section className="rh-hero" aria-labelledby="rh-title">
+      <img className="rh-hero-photo" src={HERO_PHOTO.src} alt="" aria-hidden="true" />
       <div className="rh-container rh-hero-grid">
         <div className="rh-hero-text">
           <DS.Breadcrumbs items={[{ label: 'Why Saudi', href: '/why-saudi' }, { label: 'Saudi as Your Regional Hub' }]} />

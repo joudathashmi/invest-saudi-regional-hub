@@ -6,6 +6,7 @@ import { Chapter, type HubContext } from './shared';
 import { HeroBand } from './HeroBand';
 import { CaseBuilderPanel, CaseFab, CaseStrip } from './CaseBuilder';
 import { SectionNav } from './SectionNav';
+import { CHAPTER_PHOTOS } from './imagery';
 import { ReachBand } from './ReachBand';
 import { ConnectivityBand } from './ConnectivityBand';
 import { MarketAccessBand } from './MarketAccessBand';
@@ -73,12 +74,12 @@ export function RegionalHubPage() {
         <SectionNav DS={DS} />
         <CaseStrip DS={DS} ctx={ctx} onEdit={() => setCaseOpen(true)} />
         <ReachBand DS={DS} ctx={ctx} />
-        <Chapter parts={['Connected ', { dim: 'by ' }, 'air, land, sea and digital links', { dim: ' to every market in the region, and the ' }, 'terms', { dim: ' on which you sell into them.' }]} />
+        <Chapter parts={['Connected ', { dim: 'by ' }, 'air, land, sea and digital links', { dim: ' to every market in the region, and the ' }, 'terms', { dim: ' on which you sell into them.' }]} photo={CHAPTER_PHOTOS[0]} />
         <ConnectivityBand DS={DS} ctx={ctx} onChange={setCtx} />
         <MarketAccessBand DS={DS} ctx={ctx} />
         <PlatformsBand DS={DS} ctx={ctx} />
         <RoutesBand DS={DS} ctx={ctx} onChange={setCtx} />
-        <Chapter parts={['Your industry', { dim: ' in the region, the ' }, 'companies already here', { dim: ', and how Saudi Arabia ' }, 'compares', { dim: ' as a hub.' }]} />
+        <Chapter parts={['Your industry', { dim: ' in the region, the ' }, 'companies already here', { dim: ', and how Saudi Arabia ' }, 'compares', { dim: ' as a hub.' }]} photo={CHAPTER_PHOTOS[1]} />
         <IndustryBand DS={DS} ctx={ctx} onPick={(industry) => setCtx({ ...ctx, industry: ctx.industry === industry ? null : industry })} />
         <CompaniesBand DS={DS} ctx={ctx} />
         <ComparisonBand DS={DS} ctx={ctx} />

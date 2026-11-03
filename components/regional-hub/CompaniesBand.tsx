@@ -4,6 +4,7 @@ import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { COMPANIES, ROUTES, type RouteId } from '@/data/regional-hub';
 import { Reveal, SourceLine, type HubContext } from './shared';
+import { FEATURE_PHOTO } from './imagery';
 
 /**
  * Showcase. One featured story told large, then the rest grouped by what they
@@ -32,8 +33,9 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
         </Reveal>
 
         <article className="rh-feature">
-          <div className="rh-feature-mark" aria-hidden="true">
-            <span className="display-lg-semibold">{mono(story.name)}</span>
+          <div className="rh-feature-media">
+            <img src={FEATURE_PHOTO.src} alt={FEATURE_PHOTO.alt} loading="lazy" />
+            <span className="rh-feature-mark rh-feature-mark--badge" aria-hidden="true"><span className="display-xs-semibold">{mono(story.name)}</span></span>
           </div>
           <div className="rh-feature-text">
             <span className="text-xs-medium rh-eyebrow">{routeTitle(story.route)} · {story.industry}</span>

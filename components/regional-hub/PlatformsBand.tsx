@@ -5,10 +5,11 @@ import type { DS } from '@/lib/ds';
 import { PLATFORMS, ROUTES, SEZ_INCENTIVES } from '@/data/regional-hub';
 import { Reveal, Sideways, SourceLine, type HubContext } from './shared';
 import { MiniMap } from './Globe';
+import { PLATFORM_PHOTOS } from './imagery';
 
 /**
  * Explore, continued. Where you can operate from, as the homepage's zone
- * mosaic: one large tile and smaller ones, each a map of the place with its
+ * mosaic: one large tile and smaller ones, each a photograph of the place with its
  * index, kind, name and first line of what it permits. Every record opens a
  * panel with the full detail (location, connections, fits, source, links).
  * The shared ECZA package is stated once in the "every zone includes" strip.
@@ -46,7 +47,7 @@ export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
           <div className="rh-mosaic" role="list">
             {list.map((p, i) => (
               <button key={p.id} type="button" className={cls(i)} role="listitem" onClick={() => setDetail(p)} aria-label={`${p.name}: open details`}>
-                <MiniMap lat={p.lat} lon={p.lon} zoom={p.zoom ?? 18} label={p.name} />
+                <img className="rh-mosaic-img" src={PLATFORM_PHOTOS[p.id]?.src ?? '/img/industrial.jpg'} alt={PLATFORM_PHOTOS[p.id]?.alt ?? ''} loading="lazy" />
                 <span className="rh-mosaic-text">
                   <span className="text-xs-semibold rh-eyebrow">{String(i + 1).padStart(2, '0')} · {region(p)}</span>
                   <span className={i === 0 ? 'display-xs-semibold rh-mosaic-title' : 'text-xl-semibold rh-mosaic-title'}>{p.name}</span>

@@ -71,9 +71,10 @@ export function Reveal({ children, className = '' }: { children: React.ReactNode
 }
 
 /** Chapter statement between stages (homepage pattern): the key words bright, connective words dimmed. */
-export function Chapter({ parts }: { parts: (string | { dim: string })[] }) {
+export function Chapter({ parts, photo }: { parts: (string | { dim: string })[]; photo?: { src: string; alt: string } }) {
   return (
-    <div className="rh-chapter" aria-hidden="false">
+    <div className={photo ? 'rh-chapter rh-chapter--photo' : 'rh-chapter'}>
+      {photo && <img className="rh-chapter-photo" src={photo.src} alt="" aria-hidden="true" loading="lazy" />}
       <div className="rh-container">
         <p className="display-sm-semibold">
           {parts.map((p, i) => (typeof p === 'string' ? <React.Fragment key={i}>{p}</React.Fragment> : <em key={i} className="rh-dim">{p.dim}</em>))}

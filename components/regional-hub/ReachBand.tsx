@@ -4,6 +4,7 @@ import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { CONNECTIVITY_FIGURES, DOMESTIC, REACH } from '@/data/regional-hub';
 import { Reveal, SourceLine, marketNames, type HubContext } from './shared';
+import { REACH_PHOTO } from './imagery';
 
 /**
  * Understand. Five reasons as a list on the left (homepage "Why invest"
@@ -51,6 +52,7 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             ))}
           </ul>
           <div className="rh-reason-card" ref={cardRef} role="tabpanel">
+            <img className="rh-reason-photo" src={REACH_PHOTO.src} alt="" aria-hidden="true" loading="lazy" />
             <span className="display-lg-semibold rh-bignum" aria-label={r.fig.value}>
               {i === 0 ? <DS.NumberTicker value={seen ? '1.2' : '0.0'} prefix="$" suffix="T+" /> : r.fig.value}
             </span>
