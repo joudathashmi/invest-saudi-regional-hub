@@ -70,7 +70,7 @@ export function RegionalHubPage() {
       <main>
         {/* Bands alternate the system's two themes: dark (default) and light (data-theme="light"). */}
         <HeroBand DS={DS} onBuildCase={() => setCaseOpen(true)} />
-        <SectionNav DS={DS} onOpenCase={() => setCaseOpen(true)} />
+        <SectionNav DS={DS} />
         <div data-theme="light" className="rh-theme-light">
           <CaseStrip DS={DS} ctx={ctx} onEdit={() => setCaseOpen(true)} />
           <ReachBand DS={DS} ctx={ctx} />

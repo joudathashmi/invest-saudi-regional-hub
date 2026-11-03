@@ -20,7 +20,7 @@ const ITEMS = [
   { id: 'continue', label: 'Act' },
 ];
 
-export function SectionNav({ DS, onOpenCase }: { DS: DS; onOpenCase: () => void }) {
+export function SectionNav({ DS }: { DS: DS }) {
   const [active, setActive] = React.useState('reach');
   React.useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') return;
@@ -38,9 +38,6 @@ export function SectionNav({ DS, onOpenCase }: { DS: DS; onOpenCase: () => void 
         <div className="rh-nav-tabs">
           <DS.Tabs type="underline" items={ITEMS.map((it, i) => ({ label: `${String(i + 1).padStart(2, '0')}  ${it.label}`, value: it.id }))} value={active} onChange={go} />
         </div>
-        <DS.Button hierarchy="secondary-color" size="sm" iconLeading="bookmark" onClick={onOpenCase}>
-          My regional case
-        </DS.Button>
       </div>
     </div>
   );

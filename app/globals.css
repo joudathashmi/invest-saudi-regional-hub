@@ -308,7 +308,6 @@
 .rh-nav-tabs { flex: 1 1 auto; min-width: 0; overflow-x: auto; }
 .rh-nav-tabs .is-tabs { white-space: nowrap; }
 @media (max-width: 1023px) { .rh-nav-in > .is-btn { display: none; } }
-@media (min-width: 1024px) { .rh-fab { display: none; } }
 
 /* Provenance footnote with help icon. */
 .rh-foot { display: inline-flex; align-items: center; gap: var(--spacing-xs); }
