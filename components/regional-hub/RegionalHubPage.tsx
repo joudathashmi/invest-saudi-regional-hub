@@ -13,7 +13,6 @@ import { PlatformsBand } from './PlatformsBand';
 import { RoutesBand } from './RoutesBand';
 import { IndustryBand } from './IndustryBand';
 import { CompaniesBand } from './CompaniesBand';
-import { ComparisonBand } from './ComparisonBand';
 import { ContinueBand } from './ContinueBand';
 import { CapitalBand } from './CapitalBand';
 import { TalentBand } from './TalentBand';
@@ -82,8 +81,7 @@ export function RegionalHubPage() {
         <div data-theme="light" className="rh-theme-light"><IndustryBand DS={DS} ctx={ctx} onPick={(industry) => setCtx({ ...ctx, industry: ctx.industry === industry ? null : industry })} /></div>
         <CapitalBand DS={DS} ctx={ctx} />
         <div data-theme="light" className="rh-theme-light"><CompaniesBand DS={DS} ctx={ctx} /></div>
-        <ComparisonBand DS={DS} ctx={ctx} />
-        <div data-theme="light" className="rh-theme-light"><ContinueBand DS={DS} ctx={ctx} onEditCase={() => setCaseOpen(true)} /></div>
+        <ContinueBand DS={DS} ctx={ctx} onEditCase={() => setCaseOpen(true)} />
       </main>
       <DS.Footer />
       <CaseBuilderPanel DS={DS} ctx={ctx} onChange={setCtx} open={caseOpen} onClose={() => setCaseOpen(false)} />

@@ -74,7 +74,6 @@ export function RoutesBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onC
               items={[
                 { label: 'Platforms for this route', href: '#platforms', icon: 'marker-pin-01' },
                 { label: 'Who already does this', href: '#companies', icon: 'users-01' },
-                { label: 'Compare hubs for this route', href: '#comparison', icon: 'scale-01' },
               ]}
             />
           </div>

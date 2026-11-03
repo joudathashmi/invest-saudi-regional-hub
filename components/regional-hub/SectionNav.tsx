@@ -18,7 +18,6 @@ const ITEMS = [
   { id: 'industry', label: 'Industry' },
   { id: 'capital', label: 'Capital' },
   { id: 'companies', label: 'Companies' },
-  { id: 'comparison', label: 'Compare' },
   { id: 'continue', label: 'Act' },
 ];
 

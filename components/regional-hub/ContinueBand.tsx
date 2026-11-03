@@ -21,7 +21,7 @@ export function ContinueBand({ DS, ctx, onEditCase }: { DS: DS; ctx: HubContext;
     <section id="continue" className="rh-band" aria-labelledby="rh-continue">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
-          <span className="text-sm-semibold rh-eyebrow">11 · Act</span>
+          <span className="text-sm-semibold rh-eyebrow">10 · Act</span>
           <h2 id="rh-continue" className="display-md-semibold rh-h2">Three steps from here</h2>
           <p className="text-lg-regular rh-muted rh-para">Everything you set on this page goes with you: the advisor, the incentive check and the zone pages all receive your case.</p>
         </Reveal>
