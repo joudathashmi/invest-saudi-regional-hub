@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useDS } from '@/lib/ds';
-import type { HubContext } from './shared';
+import { Chapter, type HubContext } from './shared';
 import { HeroBand } from './HeroBand';
 import { CaseBuilderPanel, CaseFab, CaseStrip } from './CaseBuilder';
 import { SectionNav } from './SectionNav';
@@ -68,19 +68,19 @@ export function RegionalHubPage() {
     <div className="rh-page">
       <DS.Header links={NAV as never} homeHref="/" />
       <main>
-        {/* Bands alternate the system's two themes: dark (default) and light (data-theme="light"). */}
+        {/* Dark throughout, as the homepage; the closing Act band is light, like the homepage's Talk to Us. */}
         <HeroBand DS={DS} onBuildCase={() => setCaseOpen(true)} />
         <SectionNav DS={DS} />
-        <div data-theme="light" className="rh-theme-light">
-          <CaseStrip DS={DS} ctx={ctx} onEdit={() => setCaseOpen(true)} />
-          <ReachBand DS={DS} ctx={ctx} />
-        </div>
+        <CaseStrip DS={DS} ctx={ctx} onEdit={() => setCaseOpen(true)} />
+        <ReachBand DS={DS} ctx={ctx} />
+        <Chapter parts={['Connected ', { dim: 'by ' }, 'air, land, sea and digital links', { dim: ' to every market in the region, and the ' }, 'terms', { dim: ' on which you sell into them.' }]} />
         <ConnectivityBand DS={DS} ctx={ctx} onChange={setCtx} />
-        <div data-theme="light" className="rh-theme-light"><MarketAccessBand DS={DS} ctx={ctx} /></div>
+        <MarketAccessBand DS={DS} ctx={ctx} />
         <PlatformsBand DS={DS} ctx={ctx} />
-        <div data-theme="light" className="rh-theme-light"><RoutesBand DS={DS} ctx={ctx} onChange={setCtx} /></div>
+        <RoutesBand DS={DS} ctx={ctx} onChange={setCtx} />
+        <Chapter parts={['Your industry', { dim: ' in the region, the ' }, 'companies already here', { dim: ', and how Saudi Arabia ' }, 'compares', { dim: ' as a hub.' }]} />
         <IndustryBand DS={DS} ctx={ctx} onPick={(industry) => setCtx({ ...ctx, industry: ctx.industry === industry ? null : industry })} />
-        <div data-theme="light" className="rh-theme-light"><CompaniesBand DS={DS} ctx={ctx} /></div>
+        <CompaniesBand DS={DS} ctx={ctx} />
         <ComparisonBand DS={DS} ctx={ctx} />
         <div data-theme="light" className="rh-theme-light"><ContinueBand DS={DS} ctx={ctx} onEditCase={() => setCaseOpen(true)} /></div>
       </main>

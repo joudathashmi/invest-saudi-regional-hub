@@ -115,7 +115,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
   const rowsFor = (k: Step) => (k === 'integrated' ? NODES : k === 'digital' ? [] : NODES.filter((n) => (k === 'ground' ? n.mode === 'land' : n.mode === k)));
 
   return (
-    <section id="connectivity" className="rh-band" aria-labelledby="rh-connect">
+    <section id="connectivity" className="rh-band rh-glow-l" aria-labelledby="rh-connect">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">02 · Connections</span>

@@ -69,3 +69,16 @@ export function Reveal({ children, className = '' }: { children: React.ReactNode
   }, []);
   return <div ref={ref} className={`rh-reveal ${on ? 'rh-in' : ''} ${className}`.trim()}>{children}</div>;
 }
+
+/** Chapter statement between stages (homepage pattern): the key words bright, connective words dimmed. */
+export function Chapter({ parts }: { parts: (string | { dim: string })[] }) {
+  return (
+    <div className="rh-chapter" aria-hidden="false">
+      <div className="rh-container">
+        <p className="display-sm-semibold">
+          {parts.map((p, i) => (typeof p === 'string' ? <React.Fragment key={i}>{p}</React.Fragment> : <em key={i} className="rh-dim">{p.dim}</em>))}
+        </p>
+      </div>
+    </div>
+  );
+}

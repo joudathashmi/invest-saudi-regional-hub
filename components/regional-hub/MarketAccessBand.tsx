@@ -38,7 +38,7 @@ export function MarketAccessBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   };
 
   return (
-    <section id="market-access" className="rh-band" aria-labelledby="rh-access">
+    <section id="market-access" className="rh-band rh-glow-r" aria-labelledby="rh-access">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">03 · Market access</span>

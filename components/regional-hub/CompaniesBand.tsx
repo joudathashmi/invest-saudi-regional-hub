@@ -23,7 +23,7 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   const list = COMPANIES.filter((c) => matches(c) && (!active.length || active.includes(routeTitle(c.route)) || active.includes(c.industry)));
 
   return (
-    <section id="companies" className="rh-band" aria-labelledby="rh-companies">
+    <section id="companies" className="rh-band rh-glow-r" aria-labelledby="rh-companies">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">07 · Who already does this</span>

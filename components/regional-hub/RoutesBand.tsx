@@ -25,7 +25,7 @@ export function RoutesBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onC
   }, [selected.id]);
 
   return (
-    <section id="routes" className="rh-band" aria-labelledby="rh-routes">
+    <section id="routes" className="rh-band rh-glow-r" aria-labelledby="rh-routes">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">05 · Operating routes</span>

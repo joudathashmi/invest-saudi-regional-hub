@@ -16,7 +16,7 @@ export function ComparisonBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   const routeTitle = ctx.route ? ROUTES.find((r) => r.id === ctx.route)?.title : null;
 
   return (
-    <section id="comparison" className="rh-band" aria-labelledby="rh-compare">
+    <section id="comparison" className="rh-band rh-glow-l" aria-labelledby="rh-compare">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">08 · Compare</span>

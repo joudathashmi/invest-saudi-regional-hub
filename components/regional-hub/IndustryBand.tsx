@@ -14,7 +14,7 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
   const rec = ctx.industry ? INDUSTRY_REGION[ctx.industry] : null;
 
   return (
-    <section id="industry" className="rh-band" aria-labelledby="rh-industry">
+    <section id="industry" className="rh-band rh-glow-l" aria-labelledby="rh-industry">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">06 · Your industry</span>
