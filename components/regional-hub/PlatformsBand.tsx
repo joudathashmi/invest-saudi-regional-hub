@@ -31,7 +31,7 @@ export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
     <section id="platforms" className="rh-band" aria-labelledby="rh-platforms">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
-          <span className="text-sm-semibold rh-eyebrow">Explore</span>
+          <span className="text-sm-semibold rh-eyebrow">04 · Locations</span>
           <h2 id="rh-platforms" className="display-md-semibold rh-h2">Where you can operate from</h2>
           <p className="text-lg-regular rh-muted rh-para">
             Special economic zones, a logistics zone at the Riyadh airport, and industrial cities on both coasts. The four ECZA zones share one published package: {SEZ_INCENTIVES[0].toLowerCase()}, {SEZ_INCENTIVES[1].toLowerCase()}, customs deferral and 0% VAT on intra-zone goods, shown as potentially applicable and confirmed by the zone authority.

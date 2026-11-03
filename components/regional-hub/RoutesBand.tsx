@@ -28,7 +28,7 @@ export function RoutesBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onC
     <section id="routes" className="rh-band" aria-labelledby="rh-routes">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
-          <span className="text-sm-semibold rh-eyebrow">Evaluate</span>
+          <span className="text-sm-semibold rh-eyebrow">05 · Operating routes</span>
           <h2 id="rh-routes" className="display-md-semibold rh-h2">How you can run the region from here</h2>
           <p className="text-lg-regular rh-muted rh-para">Five routes, each with its licence, the incentives that may apply, the connectivity it depends on, and the order of steps. A regional headquarters is one of the five, not the only one.</p>
         </Reveal>

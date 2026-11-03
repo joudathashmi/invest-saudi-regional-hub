@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
-import { CONNECTIVITY_FIGURES, CORRIDORS, DIGITAL_FIGURES, DIGITAL_NODES, HUB_CITIES, LAND_PORTS, MARKETS, MODE_RELEVANCE, NODES, REACH_RINGS, SAUDI_CITIES, type Node } from '@/data/regional-hub';
+import { CONNECTIVITY_FIGURES, CORRIDORS, DIGITAL_FIGURES, DIGITAL_NODES, HUB_CITIES, LAND_PORTS, MARKETS, MODE_RELEVANCE, NODES, REACH_RINGS, SAUDI_CITIES, TREATIES, type Node } from '@/data/regional-hub';
 import { Globe, greatCircleKm, type GlobeArc, type GlobeLine, type GlobePoint, type GlobeView } from './Globe';
 import { Reveal, Sideways, SourceLine, marketNames, type HubContext } from './shared';
 
@@ -21,7 +21,7 @@ const DIGITAL_VIEW: GlobeView = { lat: 24, lon: 44, zoom: 2.2 };
 const NEIGHBOURS = ['784', '634', '414', '512', '400', '368', '887', '048'];
 
 /** Band 3: how strongly Saudi Arabia is connected, by air, sea and ground, on a real-world globe. */
-export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
+export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onChange?: (c: HubContext) => void }) {
   type Step = Mode | 'integrated';
   const STEPS: Step[] = ['air', 'sea', 'ground', 'digital', 'integrated'];
   const [step, setStep] = React.useState<Step>('air');
@@ -118,9 +118,9 @@ export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
     <section id="connectivity" className="rh-band" aria-labelledby="rh-connect">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
-          <span className="text-sm-semibold rh-eyebrow">Explore</span>
+          <span className="text-sm-semibold rh-eyebrow">02 · Connections</span>
           <h2 id="rh-connect" className="display-md-semibold rh-h2">Connected by air, land, sea and digital links</h2>
-          <p className="text-lg-regular rh-muted rh-para">Scroll, and the globe changes with the story: how {marketNames(ctx.markets)} are reached from here, mode by mode, then how the network joins up inside Saudi Arabia. Transport links are one thing; market access is the section after this.</p>
+          <p className="text-lg-regular rh-muted rh-para">Scroll, and the globe changes with the story: how {marketNames(ctx.markets)} are reached from here, mode by mode, then how the network joins up inside Saudi Arabia. Hover any point for its detail; click a market to add it to your case. Transport links are one thing; market access is the section after this.</p>
           <DS.Tabs
             type="button-border"
             items={STEPS.map((k) => ({ label: STEP_META[k].label, value: k }))}
@@ -142,6 +142,23 @@ export function ConnectivityBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
                 onViewChange={setView}
                 onHomeClick={focused ? undefined : enterFocus}
                 focused={focused}
+                onPointClick={onChange && !focused ? (pt) => { const m = MARKETS.find((x) => x.code === pt.id); if (m) onChange({ ...ctx, markets: ctx.markets.includes(m.code) ? ctx.markets.filter((k) => k !== m.code) : [...ctx.markets, m.code] }); } : undefined}
+                pointCard={(pt) => {
+                  const m = MARKETS.find((x) => x.code === pt.id);
+                  if (m) {
+                    const on = ctx.markets.includes(m.code);
+                    const km = Math.round(greatCircleKm(riyadh, m));
+                    const t = TREATIES.find((x) => x.market === m.code);
+                    return { title: `${m.name} · ${m.city}`, description: `${km.toLocaleString()} km from Riyadh, about ${fmtH(flightHours(km))} by air (estimate). ${t ? `Tax treaty: ${t.treaty.toLowerCase()}.` : ''} ${on ? 'In your case. Click to remove.' : 'Click to add to your case.'}` };
+                  }
+                  const n = NODES.find((x) => x.id === pt.id) ?? null;
+                  if (n) return { title: n.name, description: `${n.location}. ${n.source}.` };
+                  const d = DIGITAL_NODES.find((x) => x.id === pt.id) ?? null;
+                  if (d) return { title: d.name, description: d.note };
+                  const b = LAND_PORTS.find((x) => x.id === pt.id) ?? null;
+                  if (b) return { title: `${b.name} to ${b.neighbour}`, description: b.mode === 'causeway' ? 'Causeway crossing.' : b.mode === 'road-rail-planned' ? 'Road crossing; rail planned.' : 'Road crossing.' };
+                  return pt.kind === 'hub' || pt.kind === 'city' ? { title: pt.name } : null;
+                }}
               />
             </div>
             {focused && (

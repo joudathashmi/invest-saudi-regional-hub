@@ -5,6 +5,7 @@ import { useDS } from '@/lib/ds';
 import type { HubContext } from './shared';
 import { HeroBand } from './HeroBand';
 import { CaseBuilderPanel, CaseFab, CaseStrip } from './CaseBuilder';
+import { SectionNav } from './SectionNav';
 import { ReachBand } from './ReachBand';
 import { ConnectivityBand } from './ConnectivityBand';
 import { MarketAccessBand } from './MarketAccessBand';
@@ -69,11 +70,12 @@ export function RegionalHubPage() {
       <main>
         {/* Bands alternate the system's two themes: dark (default) and light (data-theme="light"). */}
         <HeroBand DS={DS} onBuildCase={() => setCaseOpen(true)} />
+        <SectionNav DS={DS} onOpenCase={() => setCaseOpen(true)} />
         <div data-theme="light" className="rh-theme-light">
           <CaseStrip DS={DS} ctx={ctx} onEdit={() => setCaseOpen(true)} />
           <ReachBand DS={DS} ctx={ctx} />
         </div>
-        <ConnectivityBand DS={DS} ctx={ctx} />
+        <ConnectivityBand DS={DS} ctx={ctx} onChange={setCtx} />
         <div data-theme="light" className="rh-theme-light"><MarketAccessBand DS={DS} ctx={ctx} /></div>
         <PlatformsBand DS={DS} ctx={ctx} />
         <div data-theme="light" className="rh-theme-light"><RoutesBand DS={DS} ctx={ctx} onChange={setCtx} /></div>

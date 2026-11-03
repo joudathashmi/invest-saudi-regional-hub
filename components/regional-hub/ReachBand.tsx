@@ -26,7 +26,7 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
     <section id="reach" className="rh-band" aria-labelledby="rh-reach">
       <div className="rh-container rh-editorial">
         <Reveal className="rh-editorial-lead">
-          <span className="text-sm-semibold rh-eyebrow">Understand</span>
+          <span className="text-sm-semibold rh-eyebrow">01 · Understand</span>
           <h2 id="rh-reach" className="display-md-semibold rh-h2">An anchor market before it is a hub</h2>
           <p className="text-lg-regular rh-muted rh-para">
             Investors come for Saudi demand first. The region is served from that base, not instead of it. What follows is the domestic economy, then the logistics base and digital backbone a hub needs to serve {marketNames(ctx.markets)}.

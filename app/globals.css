@@ -301,3 +301,36 @@
 .rh-reveal { opacity: 0; transform: translateY(16px); transition: opacity 600ms ease, transform 600ms ease; }
 .rh-reveal.rh-in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .rh-reveal { opacity: 1; transform: none; transition: none; } }
+
+/* Journey navigator. */
+.rh-nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: color-mix(in srgb, var(--bg-primary) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border-secondary); }
+.rh-nav-in { display: flex; align-items: center; gap: var(--spacing-xl); }
+.rh-nav-tabs { flex: 1 1 auto; min-width: 0; overflow-x: auto; }
+.rh-nav-tabs .is-tabs { white-space: nowrap; }
+@media (max-width: 1023px) { .rh-nav-in > .is-btn { display: none; } }
+@media (min-width: 1024px) { .rh-fab { display: none; } }
+
+/* Provenance footnote with help icon. */
+.rh-foot { display: inline-flex; align-items: center; gap: var(--spacing-xs); }
+
+/* Globe hover card and clickable markets. */
+.rh-globe-box { position: relative; }
+.rh-globe-card { position: absolute; transform: translate(14px, -50%); max-width: 260px; display: flex; flex-direction: column; gap: var(--spacing-xxs); padding: var(--spacing-md) var(--spacing-lg); background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-secondary); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); pointer-events: none; z-index: 5; }
+.rh-globe-card-desc { color: var(--text-secondary); }
+.rh-globe-points .rh-globe-ptg { pointer-events: auto; }
+.rh-globe-ptg--click { cursor: pointer; }
+.rh-globe-ptg text { pointer-events: none; }
+
+/* Market access accordion. */
+.rh-access-head { display: grid; grid-template-columns: 220px minmax(0, 1fr) 24px; gap: var(--spacing-3xl); width: 100%; text-align: start; background: none; border: 0; padding: var(--spacing-xl) 0; cursor: pointer; color: inherit; font: inherit; align-items: start; }
+.rh-access-head:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-xs); }
+.rh-access-row { padding-block: 0; display: block; }
+.rh-access-chev { color: var(--fg-quaternary); display: inline-flex; }
+.rh-access-body { display: flex; flex-direction: column; gap: var(--spacing-lg); padding: 0 0 var(--spacing-2xl) 0; }
+@media (min-width: 768px) { .rh-access-body { padding-inline-start: calc(220px + var(--spacing-3xl)); } }
+@media (max-width: 767px) { .rh-access-head { grid-template-columns: minmax(0, 1fr) 24px; } .rh-access-sum { grid-column: 1 / -1; } }
+
+/* Company names are buttons now. */
+.rh-showcase-name { background: none; border: 0; padding: var(--spacing-xs) 0; cursor: pointer; font: inherit; }
+.rh-showcase-name:hover .rh-showcase-mono { background: var(--utility-brand-50); color: var(--utility-brand-700); border-color: var(--utility-brand-200); }
+.rh-showcase-name:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-xs); }

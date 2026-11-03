@@ -14,6 +14,7 @@ import { Reveal, SourceLine, type HubContext } from './shared';
 export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   const [showAll, setShowAll] = React.useState(false);
   const [active, setActive] = React.useState<string[]>([]);
+  const [detail, setDetail] = React.useState<(typeof COMPANIES)[number] | null>(null);
   const routeTitle = (id: RouteId) => ROUTES.find((r) => r.id === id)?.title.replace(' (Regional Headquarters)', '') ?? id;
   const matches = (c: (typeof COMPANIES)[number]) => (!ctx.route || c.route === ctx.route) && (!ctx.industry || c.industry === ctx.industry);
   const story = COMPANIES.find((c) => c.story && matches(c)) ?? COMPANIES.find((c) => c.story && (!ctx.route || c.route === ctx.route)) ?? COMPANIES.find((c) => c.story)!;
@@ -25,7 +26,7 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
     <section id="companies" className="rh-band" aria-labelledby="rh-companies">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
-          <span className="text-sm-semibold rh-eyebrow">Who already does this</span>
+          <span className="text-sm-semibold rh-eyebrow">07 · Who already does this</span>
           <h2 id="rh-companies" className="display-md-semibold rh-h2">Running the region from Saudi Arabia</h2>
           <p className="text-lg-regular rh-muted rh-para">Exporters, logistics operators, service firms, digital platforms and regional headquarters that have publicly announced a Saudi base. Names come from public announcements; logos appear only with each company&rsquo;s consent.</p>
         </Reveal>
@@ -55,10 +56,10 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
                 <span className="text-xs-medium rh-eyebrow">{g.title}</span>
                 <div className="rh-showcase-row">
                   {names.map((c) => (
-                    <span key={c.id} className="rh-showcase-name" title={`${c.industry}, ${c.base}. ${c.source}`}>
+                    <button key={c.id} type="button" className="rh-showcase-name" onClick={() => setDetail(c)}>
                       <span className="rh-showcase-mono text-xs-semibold" aria-hidden="true">{mono(c.name)}</span>
                       <span className="text-md-medium">{c.name}</span>
-                    </span>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -96,6 +97,22 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
           </div>
         )}
       </div>
+      {detail && (
+        <DS.SlideoutMenu title={detail.name} description={`${routeTitle(detail.route)} · ${detail.industry}`} open width={480} onClose={() => setDetail(null)} actions={<DS.Button hierarchy="secondary-gray" size="md" onClick={() => setDetail(null)}>Close</DS.Button>}>
+          <div className="rh-stack" style={{ gap: 'var(--spacing-xl)' }}>
+            <div className="rh-feature-mark" aria-hidden="true" style={{ maxWidth: 120 }}><span className="display-sm-semibold">{mono(detail.name)}</span></div>
+            <p className="text-md-regular rh-para"><span className="rh-strong">Saudi base.</span> {detail.base}.</p>
+            {detail.story && <p className="text-md-regular rh-para"><span className="rh-strong">What they do from here.</span> {detail.story}</p>}
+            <p className="text-md-regular rh-para"><span className="rh-strong">How they operate.</span> {routeTitle(detail.route)}.</p>
+            <SourceLine DS={DS} p={detail} badge />
+            <p className="text-xs-regular rh-tertiary rh-para">Name from a public announcement. The company&rsquo;s logo and a fuller story appear once the company consents.</p>
+            <div className="rh-actions">
+              <DS.Button hierarchy="secondary-gray" size="md" href={`/sectors/${detail.industry.toLowerCase().replace(/\s+and\s+/g, '-').replace(/\s+/g, '-')}`} iconTrailing="arrow-right">Sector page</DS.Button>
+              <DS.Button hierarchy="link-color" size="md" href="#routes" iconTrailing="arrow-right" onClick={() => setDetail(null)}>Same route</DS.Button>
+            </div>
+          </div>
+        </DS.SlideoutMenu>
+      )}
     </section>
   );
 }

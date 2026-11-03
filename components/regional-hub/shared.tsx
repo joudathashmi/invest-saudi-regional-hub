@@ -27,10 +27,13 @@ export function SourceLine({ DS, p, badge = false }: { DS: DS; p: Provenance; ba
       </div>
     );
   }
-  /* Footnote form: the status is a word, not a badge. */
+  /* Footnote form: the cited authority only; the full provenance opens on the help icon. */
+  const cited = p.source.replace(/^investsaudi\.sa \(Why Saudi\), citing /, '').replace(/^Public announcement, /, '');
+  const period = /live site|as published|as shown|to confirm|pending|schematic|estimate|approximate|announced|in force since|reported|status|no treaty/i.test(p.period) ? '' : `, ${p.period}`;
   return (
     <span className="rh-foot text-xs-regular">
-      {p.source} · {p.period} · {p.status}
+      <span>Source: {cited}{period}</span>
+      <DS.HelpIcon title={`${p.status[0].toUpperCase()}${p.status.slice(1)}`} description={`${p.source}. Period: ${p.period}. ${p.updated}. Owner: ${p.owner}.`} />
     </span>
   );
 }

@@ -49,17 +49,18 @@ export interface GlobeView { lat: number; lon: number; zoom: number }
 
 export function Globe({
   points, arcs, rings, lines = [], size = 720, homeCountryId = '682', selectedCountryIds = [], neighbourCountryIds = [],
-  view, onViewChange, onHomeClick, focused = false, autoRotate = false, showFoot = true,
+  view, onViewChange, onHomeClick, focused = false, autoRotate = false, showFoot = true, onPointClick, pointCard,
 }: {
   points: GlobePoint[]; arcs: GlobeArc[]; rings: GlobeRing[]; lines?: GlobeLine[]; size?: number;
   homeCountryId?: string; selectedCountryIds?: string[]; neighbourCountryIds?: string[];
-  view: GlobeView; onViewChange: (v: GlobeView) => void; onHomeClick?: () => void; focused?: boolean; autoRotate?: boolean; showFoot?: boolean;
+  view: GlobeView; onViewChange: (v: GlobeView) => void; onHomeClick?: () => void; focused?: boolean; autoRotate?: boolean; showFoot?: boolean; onPointClick?: (p: GlobePoint) => void; pointCard?: (p: GlobePoint) => { title: string; description?: string } | null;
 }) {
   const [cur, setCur] = React.useState<GlobeView>(view);
   const [hiRes, setHiRes] = React.useState<Countries | null>(countries50);
   React.useEffect(() => { if (focused && !hiRes) load50().then(setHiRes).catch(() => undefined); }, [focused, hiRes]);
   const COUNTRIES = focused && hiRes ? hiRes : COUNTRIES_110;
   const [hover, setHover] = React.useState<string | null>(null);
+  const [hoverPt, setHoverPt] = React.useState<{ p: GlobePoint; x: number; y: number } | null>(null);
   const drag = React.useRef<{ x: number; y: number; v: GlobeView; moved: boolean } | null>(null);
   const anim = React.useRef<number | null>(null);
   const R = size / 2 - 12;
@@ -202,7 +203,14 @@ export function Globe({
             const show = (kind !== 'market' || p.selected) && p.name !== '';
             const r = kind === 'hub' ? 5 : kind === 'city' ? 3.5 : kind === 'border' ? 4 : kind === 'centre' ? 3.5 : p.selected ? 4.5 : 3;
             return (
-              <g key={p.id} transform={`translate(${q![0].toFixed(1)} ${q![1].toFixed(1)})`}>
+              <g
+                key={p.id}
+                transform={`translate(${q![0].toFixed(1)} ${q![1].toFixed(1)})`}
+                className={onPointClick && kind === 'market' ? 'rh-globe-ptg rh-globe-ptg--click' : 'rh-globe-ptg'}
+                onPointerEnter={() => pointCard && setHoverPt({ p, x: q![0], y: q![1] })}
+                onPointerLeave={() => setHoverPt(null)}
+                onPointerUp={() => { if (onPointClick && kind === 'market' && drag.current && !drag.current.moved) onPointClick(p); }}
+              >
                 {kind === 'hub' && <circle r={10} className="rh-globe-pt-halo" />}
                 {kind === 'border' ? <rect x={-4} y={-4} width={8} height={8} transform="rotate(45)" className={cls}><title>{p.title ?? p.name}</title></rect> : <circle r={r} className={cls}><title>{p.title ?? p.name}</title></circle>}
                 {show && (
@@ -221,6 +229,12 @@ export function Globe({
           })}
         </g>
       </svg>
+      {hoverPt && pointCard && pointCard(hoverPt.p) && (
+        <div className="rh-globe-card" style={{ left: `${(hoverPt.x / size) * 100}%`, top: `${(hoverPt.y / size) * 100}%` }}>
+          <span className="text-sm-semibold">{pointCard(hoverPt.p)!.title}</span>
+          {pointCard(hoverPt.p)!.description && <span className="text-xs-regular rh-globe-card-desc">{pointCard(hoverPt.p)!.description}</span>}
+        </div>
+      )}
       {showFoot && <div className="rh-globe-foot text-xs-regular">
         <span>{hover ?? (focused ? `Corridors are schematic, drawn between known cities and border posts. Boundaries: Natural Earth 1:${hiRes ? '50' : '110'}m. Drag to pan.` : (rings.length ? `Dotted rings: ${rings.map((r) => r.label).join(' and ')}. ` : '') + 'Click Saudi Arabia for its logistics network. Boundaries: Natural Earth 1:110m.')}</span>
       </div>}
