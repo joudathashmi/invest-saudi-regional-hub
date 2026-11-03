@@ -73,7 +73,7 @@ export function RegionalHubPage() {
         <HeroBand DS={DS} onBuildCase={() => setCaseOpen(true)} />
         <SectionNav DS={DS} />
         <CaseStrip DS={DS} ctx={ctx} onEdit={() => setCaseOpen(true)} />
-        <ReachBand DS={DS} ctx={ctx} />
+        <div data-theme="light" className="rh-theme-light"><ReachBand DS={DS} ctx={ctx} /></div>
         <Chapter parts={['Connected ', { dim: 'by ' }, 'air, land, sea and digital links', { dim: ' to every market in the region, and the ' }, 'terms', { dim: ' on which you sell into them.' }]} photo={CHAPTER_PHOTOS[0]} />
         <ConnectivityBand DS={DS} ctx={ctx} onChange={setCtx} />
         <MarketAccessBand DS={DS} ctx={ctx} />

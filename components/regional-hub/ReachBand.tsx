@@ -10,7 +10,9 @@ import { CountUp, Reveal, SourceLine, marketNames, type HubContext } from './sha
  * label and points in the card on the right, over its own photograph. The
  * list advances by itself every few seconds (a progress bar shows where it
  * is) and stops the moment the reader takes over. Same five published
- * records, every source kept.
+ * records, every source kept. Desktop: the card is pinned and the reader
+ * scrolls through the reasons, each taking the card as it reaches the middle
+ * of the screen; clicking a reason scrolls to it. Narrow screens: tabs.
  */
 const REASONS = [
   { fig: REACH[3], title: 'The largest economy in the region', photo: '/img/skyline-day.jpg', points: ['Investors come for Saudi demand first; the region is served from that base, not instead of it.', 'Non-oil activity now carries the larger share of GDP, which widens the domestic market for most sectors.'] },
@@ -19,29 +21,31 @@ const REASONS = [
   { fig: REACH[4], title: 'A logistics base that ranks', photo: '/img/port-cranes.jpg', points: ['World Bank Logistics Performance Index rank, as shown on the live site.', '59 logistics zones are planned by 2030 and 39+ industrial cities operate today.'] },
   { fig: CONNECTIVITY_FIGURES[0], title: 'Built for the next decade', photo: '/img/airport.jpg', points: ['Planned logistics zones under the National Transport and Logistics Strategy.', 'Airports, ports and rail are expanding together; the integrated network step below shows how they join.'] },
 ];
-const DWELL = 6000;
 
 export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   const [i, setI] = React.useState(0);
-  const [auto, setAuto] = React.useState(true);
   const [seen, setSeen] = React.useState(false);
   const [reduced, setReduced] = React.useState(false);
   const ref = React.useRef<HTMLDivElement | null>(null);
+  const items = React.useRef<(HTMLLIElement | null)[]>([]);
   const r = REASONS[i];
   React.useEffect(() => { try { setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch { /* none */ } }, []);
   React.useEffect(() => {
     const el = ref.current;
     if (!el || typeof IntersectionObserver === 'undefined') { setSeen(true); return; }
-    const io = new IntersectionObserver((es) => setSeen(es.some((e) => e.isIntersecting)), { threshold: 0.35 });
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { setSeen(true); io.disconnect(); } }, { threshold: 0.2 });
     io.observe(el);
     return () => io.disconnect();
   }, []);
+  /* Scroll-driven on wide screens: the reason crossing the middle band of the viewport takes the card. */
   React.useEffect(() => {
-    if (!auto || !seen || reduced) return;
-    const t = window.setTimeout(() => setI((k) => (k + 1) % REASONS.length), DWELL);
-    return () => window.clearTimeout(t);
-  }, [auto, seen, reduced, i]);
-  const pick = (k: number) => { setI(k); setAuto(false); };
+    if (typeof IntersectionObserver === 'undefined' || !window.matchMedia('(min-width: 1024px)').matches) return;
+    const els = items.current.filter(Boolean) as HTMLLIElement[];
+    const io = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) setI(Number(e.target.getAttribute('data-i'))); }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+  const pick = (k: number) => { setI(k); items.current[k]?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' }); };
 
   return (
     <section id="reach" className="rh-band rh-glow-r" aria-labelledby="rh-reach">
@@ -51,17 +55,16 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
           <h2 id="rh-reach" className="display-md-semibold rh-h2">An anchor market before it is a hub</h2>
           <p className="text-lg-regular rh-muted rh-para">Five reasons the base matters before the reach does, for a hub serving {marketNames(ctx.markets)}.</p>
         </Reveal>
-        <div className="rh-reasons" ref={ref} onMouseEnter={() => setAuto(false)}>
+        <div className="rh-reasons rh-reasons--scroll" ref={ref}>
           <ul className="rh-reason-list" role="tablist" aria-label="Reasons">
             {REASONS.map((x, k) => (
-              <li key={x.title} role="presentation">
+              <li key={x.title} role="presentation" data-i={k} ref={(el) => { items.current[k] = el; }}>
                 <button type="button" role="tab" aria-selected={k === i} className={k === i ? 'rh-reason rh-reason--on' : 'rh-reason'} onClick={() => pick(k)}>
                   <span className="rh-reason-idx text-xs-semibold">{String(k + 1).padStart(2, '0')}</span>
                   <span className="rh-reason-body">
                     <span className="text-lg-semibold">{x.title}</span>
                     <span className="text-sm-medium rh-reason-sub">{x.fig.value} · {x.fig.label}</span>
                   </span>
-                  {k === i && <span className={auto && seen && !reduced ? 'rh-reason-bar rh-reason-bar--run' : 'rh-reason-bar'} style={{ animationDuration: `${DWELL}ms` }} aria-hidden="true" />}
                 </button>
               </li>
             ))}
@@ -69,6 +72,7 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
           <div className="rh-reason-card" role="tabpanel" key={i}>
             <img className="rh-reason-photo" src={r.photo} alt="" aria-hidden="true" loading="lazy" />
             <div className="rh-reason-in">
+              <span className="rh-reason-dots" aria-hidden="true">{REASONS.map((_, k) => <span key={k} className={k === i ? 'rh-on' : ''} />)}</span>
               <span className="display-lg-semibold rh-bignum" aria-label={r.fig.value}><CountUp value={r.fig.value} run={seen && !reduced} /></span>
               <span className="text-md-regular rh-muted">{r.fig.label}</span>
               <h3 className="display-xs-semibold rh-h3">{r.title}</h3>
