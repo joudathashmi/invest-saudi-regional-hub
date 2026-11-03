@@ -37,15 +37,35 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
     io.observe(el);
     return () => io.disconnect();
   }, []);
-  /* Scroll-driven on wide screens: the reason crossing the middle band of the viewport takes the card. */
+  /* Scroll-driven on wide screens: the block is pinned while a tall track scrolls past; progress through the track picks the reason. */
+  const track = React.useRef<HTMLDivElement | null>(null);
   React.useEffect(() => {
-    if (typeof IntersectionObserver === 'undefined' || !window.matchMedia('(min-width: 1024px)').matches) return;
-    const els = items.current.filter(Boolean) as HTMLLIElement[];
-    const io = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) setI(Number(e.target.getAttribute('data-i'))); }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    if (!window.matchMedia('(min-width: 1024px)').matches) return;
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const el = track.current; if (!el) return;
+        const r = el.getBoundingClientRect();
+        const travel = r.height - window.innerHeight;
+        if (travel <= 0) return;
+        const p = Math.min(1, Math.max(0, -r.top / travel));
+        setI(Math.min(REASONS.length - 1, Math.floor(p * REASONS.length)));
+      });
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
   }, []);
-  const pick = (k: number) => { setI(k); items.current[k]?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' }); };
+  const pick = (k: number) => {
+    setI(k);
+    const el = track.current;
+    if (el && window.matchMedia('(min-width: 1024px)').matches) {
+      const travel = el.offsetHeight - window.innerHeight;
+      const y = window.scrollY + el.getBoundingClientRect().top + ((k + 0.5) / REASONS.length) * travel;
+      window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
+    }
+  };
 
   return (
     <section id="reach" className="rh-band rh-glow-r" aria-labelledby="rh-reach">
@@ -55,6 +75,7 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
           <h2 id="rh-reach" className="display-md-semibold rh-h2">An anchor market before it is a hub</h2>
           <p className="text-lg-regular rh-muted rh-para">Five reasons the base matters before the reach does, for a hub serving {marketNames(ctx.markets)}.</p>
         </Reveal>
+        <div className="rh-reasons-track" ref={track}>
         <div className="rh-reasons rh-reasons--scroll" ref={ref}>
           <ul className="rh-reason-list" role="tablist" aria-label="Reasons">
             {REASONS.map((x, k) => (
@@ -82,6 +103,7 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
               <SourceLine DS={DS} p={r.fig} />
             </div>
           </div>
+        </div>
         </div>
         <div className="rh-actions">
           <DS.Button hierarchy="link-color" size="md" href="/why-saudi" iconTrailing="arrow-right">Why Saudi, the full picture</DS.Button>

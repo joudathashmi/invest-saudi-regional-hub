@@ -500,12 +500,11 @@
 
 /* Understand, light and scroll-driven: pinned card on the right, reasons scroll past on the left. */
 @media (min-width: 1024px) {
-  .rh-reasons--scroll { align-items: start; }
-  .rh-reasons--scroll .rh-reason-list { gap: var(--spacing-md); }
-  .rh-reasons--scroll .rh-reason-list > li { padding-block: 14vh; }
-  .rh-reasons--scroll .rh-reason-list > li:first-child { padding-top: 2vh; }
-  .rh-reasons--scroll .rh-reason { padding: var(--spacing-2xl) var(--spacing-3xl); }
-  .rh-reasons--scroll .rh-reason-card { position: sticky; top: calc(72px + var(--spacing-3xl)); min-height: 0; }
+  .rh-reasons-track { height: 260vh; }
+  .rh-reasons--scroll { position: sticky; top: calc(72px + var(--spacing-3xl)); align-items: center; }
+  .rh-reasons--scroll .rh-reason-list { gap: var(--spacing-sm); }
+  .rh-reasons--scroll .rh-reason { padding: var(--spacing-xl) var(--spacing-2xl); }
+  .rh-reasons--scroll .rh-reason-card { min-height: 0; }
 }
 .rh-theme-light .rh-reason { color: var(--text-secondary); border-radius: var(--radius-lg); border-inline-start-width: 3px; }
 .rh-theme-light .rh-reason:hover { background: var(--utility-brand-50); color: var(--text-primary); }
