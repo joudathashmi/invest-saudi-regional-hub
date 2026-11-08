@@ -1,8 +1,9 @@
 'use client';
 
+import * as React from 'react';
 import type { DS } from '@/lib/ds';
-import { FAQ_ITEMS, ROUTES } from '@/data/regional-hub';
-import { Details, Reveal, marketNames, type HubContext } from './shared';
+import { FAQ_ITEMS, PLATFORMS, ROUTES } from '@/data/regional-hub';
+import { Details, Reveal, Thread, marketNames, PURPOSE_LABEL, COAST_LABEL, type HubContext } from './shared';
 import { contextQuery } from '@/lib/copilot-context';
 
 /**
@@ -48,12 +49,43 @@ export function ContinueBand({ DS, ctx, onEditCase }: { DS: DS; ctx: HubContext;
   ];
   const STEPS = (ctx.route ? BY_ROUTE[ctx.route] : GENERAL).map((x, i) => ({ ...x, eyebrow: `Step ${i + 1}` }));
   const routeLabel = ctx.route ? ROUTES.find((r) => r.id === ctx.route)?.title.replace(' (Regional Headquarters)', '') : null;
+  const route = ctx.route ? ROUTES.find((r) => r.id === ctx.route) : null;
+  const places = route ? PLATFORMS.filter((p) => p.routes.includes(route.id)).map((p) => p.name) : [];
+  const [copied, setCopied] = React.useState(false);
+  const ROWS: { k: string; v: string | null; href: string }[] = [
+    { k: 'Purpose', v: ctx.route ? PURPOSE_LABEL[ctx.route] : null, href: '#top' },
+    { k: 'Markets', v: ctx.markets.length ? marketNames(ctx.markets) : null, href: '#connectivity' },
+    { k: 'Coast', v: ctx.coast ? COAST_LABEL[ctx.coast].replace(/^(facing|run|built)/, (m) => m[0].toUpperCase() + m.slice(1)) : null, href: '#platforms' },
+    { k: 'Locations that fit', v: places.length ? places.join(', ') : null, href: '#platforms' },
+    { k: 'Licence', v: route ? route.licence : null, href: '#routes' },
+    { k: 'Incentive to check', v: route ? route.incentives[0] : null, href: '#routes' },
+    { k: 'Industry', v: ctx.industry, href: '#industry' },
+  ];
+  const filled = ROWS.filter((r) => r.v).length;
+  const caseText = () => [
+    'My regional case, Invest Saudi',
+    ...ROWS.filter((r) => r.v).map((r) => `${r.k}: ${r.v}`),
+    '',
+    'Next steps',
+    ...STEPS.map((st, i) => `${i + 1}. ${st.title}: ${st.text}`),
+    '',
+    `Continue: https://investsaudi.sa/why-saudi/regional-hub/?${q}`,
+    'Figures and eligibility are indicative until confirmed by the relevant authority.',
+  ].join('\n');
+  const copy = async () => { try { await navigator.clipboard.writeText(caseText()); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* clipboard unavailable */ } };
+  const download = () => {
+    try {
+      const blob = new Blob([caseText()], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'my-regional-case.txt'; a.click(); URL.revokeObjectURL(a.href);
+    } catch { /* download unavailable */ }
+  };
   return (
     <section id="continue" className="rh-band" aria-labelledby="rh-continue">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
+          <Thread ctx={ctx} />
           <span className="text-sm-semibold rh-eyebrow">10 · Act</span>
-          <h2 id="rh-continue" className="display-md-semibold rh-h2">{routeLabel ? `Three steps for a ${routeLabel.toLowerCase()}` : 'Three steps from here'}</h2>
+          <h2 id="rh-continue" className="display-md-semibold rh-h2">{routeLabel ? `Three steps for ${/^[aeiou]/i.test(routeLabel) ? 'an' : 'a'} ${routeLabel.toLowerCase()}` : 'Three steps from here'}</h2>
           <p className="text-lg-regular rh-muted rh-para">{routeLabel ? 'Chosen for your purpose; change it in the hero or the explorer and these change too. ' : ''}Your choices travel as parameters on every link out of this page; where a destination page does not yet read them, they are simply ignored.</p>
         </Reveal>
         <div className="rh-steps3">
@@ -69,9 +101,32 @@ export function ContinueBand({ DS, ctx, onEditCase }: { DS: DS; ctx: HubContext;
             </a>
           ))}
         </div>
-        <Details DS={DS} label="Your case, related pages and questions investors ask">
+        <Reveal className="rh-case">
+          <div className="rh-case-head">
+            <div>
+              <span className="text-xs-semibold rh-eyebrow">Your regional case</span>
+              <h3 className="display-xs-semibold rh-h3">{filled ? 'What you have built on this page' : 'Build it as you go'}</h3>
+              <p className="text-sm-regular rh-muted rh-para">{filled ? 'Take it with you, or send it ahead to an advisor and the Copilot with every choice attached.' : 'Choose a purpose, markets, a coast and an industry above and they collect here.'}</p>
+            </div>
+            <span className="rh-case-count text-xs-semibold">{filled} of {ROWS.length}</span>
+          </div>
+          <dl className="rh-case-grid">
+            {ROWS.map((r) => (
+              <div key={r.k} className={r.v ? 'rh-case-row' : 'rh-case-row rh-case-row--empty'}>
+                <dt className="text-xs-semibold">{r.k}</dt>
+                <dd className="text-sm-medium">{r.v ?? <a href={r.href} className="rh-case-add">Add →</a>}</dd>
+              </div>
+            ))}
+          </dl>
+          <div className="rh-actions">
+            <DS.Button hierarchy="primary" size="md" href={`/contact/advisor?${q}`} iconTrailing="arrow-right">Send to an advisor</DS.Button>
+            <DS.Button hierarchy="secondary-gray" size="md" onClick={copy} iconLeading="copy-01">{copied ? 'Copied' : 'Copy summary'}</DS.Button>
+            <DS.Button hierarchy="secondary-gray" size="md" onClick={download} iconLeading="download-01">Download</DS.Button>
+            <DS.Button hierarchy="link-color" size="md" onClick={onEditCase} iconLeading="edit-03">Edit</DS.Button>
+          </div>
+        </Reveal>
+        <Details DS={DS} label="Related pages and questions investors ask">
         <div className="rh-actions">
-          <DS.Button hierarchy="secondary-color" size="md" iconLeading="bookmark" onClick={onEditCase}>Edit my regional case</DS.Button>
           <DS.Button hierarchy="secondary-gray" size="md" href="#" iconLeading="bookmark">Save to My Space</DS.Button>
           <DS.Button hierarchy="link-gray" size="md" href="/why-saudi" iconLeading="arrow-left">Why Saudi</DS.Button>
           <DS.Button hierarchy="link-gray" size="md" href="/sectors">Sectors</DS.Button>

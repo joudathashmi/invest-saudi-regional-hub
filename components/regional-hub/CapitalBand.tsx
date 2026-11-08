@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { CAPITAL_FIGURES, CAPITAL_LAYERS } from '@/data/regional-hub';
-import { Details, Reveal, SourceLine, type HubContext } from './shared';
+import { Details, Reveal, SourceLine, type HubContext, Thread } from './shared';
 
 /**
  * 08 Capital. One statement over the finance photograph with the anchor
@@ -22,6 +22,7 @@ export function CapitalBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
     <section id="capital" className="rh-band rh-band--flush" aria-labelledby="rh-capital">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
+          <Thread ctx={ctx} />
           <span className="text-sm-semibold rh-eyebrow">08 · Capital</span>
           <h2 id="rh-capital" className="display-md-semibold rh-h2">Capital that clears here</h2>
         </Reveal>

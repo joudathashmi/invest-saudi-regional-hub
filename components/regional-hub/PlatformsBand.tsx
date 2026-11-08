@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { PLATFORMS, ROUTES, SEZ_INCENTIVES } from '@/data/regional-hub';
-import { Details, Reveal, Sideways, SourceLine, type HubContext } from './shared';
+import { Details, Reveal, Sideways, SourceLine, Thread, type HubContext } from './shared';
 import { CoastMap, MiniMap, type CoastPin } from './Globe';
 import { PLATFORM_PHOTOS } from './imagery';
 
@@ -43,8 +43,9 @@ const PINS: CoastPin[] = [
   { id: 'riyadh', name: 'Riyadh: Cloud SEZ, ILBZ', coast: 'capital', lat: 24.75, lon: 46.7, labelAt: 'below' },
 ];
 
-export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
-  const [coast, setCoast] = React.useState('red');
+export function PlatformsBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onChange: (c: HubContext) => void }) {
+  const coast = ctx.coast ?? 'red';
+  const setCoast = (id: string) => onChange({ ...ctx, coast: id });
   const [detail, setDetail] = React.useState<(typeof PLATFORMS)[number] | null>(null);
   const c = COASTS.find((x) => x.id === coast) ?? COASTS[0];
   const list = c.platforms.map((id) => PLATFORMS.find((p) => p.id === id)!).filter(Boolean);
@@ -55,6 +56,7 @@ export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
     <section id="platforms" className="rh-band" aria-labelledby="rh-platforms">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
+          <Thread ctx={ctx} />
           <span className="text-sm-semibold rh-eyebrow">04 · Where you operate</span>
           <h2 id="rh-platforms" className="display-md-semibold rh-h2">Two coasts and a capital</h2>
           <p className="text-lg-regular rh-muted rh-para">Where you build decides which markets you face. Choose a coast to see what it reaches and the zones and cities on it.</p>

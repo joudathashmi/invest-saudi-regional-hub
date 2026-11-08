@@ -29,7 +29,7 @@ export function HeroBand({ DS, ctx, onChange, onBuildCase: _onBuildCase }: { DS:
   const strip = [REACH[3], REACH[0], REACH[1]];
   const pick = (id: RouteId) => onChange({ ...ctx, route: ctx.route === id ? null : id });
   return (
-    <section className="rh-hero" aria-labelledby="rh-title">
+    <section id="top" className="rh-hero" aria-labelledby="rh-title">
       <img className="rh-hero-photo" src={HERO_PHOTO.src} alt="" aria-hidden="true" />
       <div className="rh-container rh-hero-grid">
         <div className="rh-hero-text">

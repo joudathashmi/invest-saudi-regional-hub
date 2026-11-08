@@ -37,8 +37,8 @@ export function RegionalHubPage() {
   const [cookies, setCookies] = React.useState(false);
   const [caseOpen, setCaseOpen] = React.useState(false);
   const [section, setSection] = React.useState<string | null>(null);
-  React.useEffect(() => { const r = restoreContext(); if (r && (r.industry || r.route || r.markets.length)) setCtx({ industry: r.industry ?? null, route: r.route ?? null, markets: r.markets ?? [] }); }, []);
-  React.useEffect(() => { publishContext({ industry: ctx.industry, route: ctx.route, markets: ctx.markets, section, topic: null }); }, [ctx, section]);
+  React.useEffect(() => { const r = restoreContext(); if (r && (r.industry || r.route || r.markets.length)) setCtx({ industry: r.industry ?? null, route: r.route ?? null, markets: r.markets ?? [], coast: r.coast ?? null }); }, []);
+  React.useEffect(() => { publishContext({ industry: ctx.industry, route: ctx.route, markets: ctx.markets, coast: ctx.coast ?? null, section, topic: null }); }, [ctx, section]);
 
   React.useEffect(() => {
     try {
@@ -72,9 +72,9 @@ export function RegionalHubPage() {
         <div data-theme="light" className="rh-theme-light"><ReachBand DS={DS} ctx={ctx} /></div>
         <ConnectivityBand DS={DS} ctx={ctx} onChange={setCtx} />
         <div data-theme="light" className="rh-theme-light"><MarketAccessBand DS={DS} ctx={ctx} /></div>
-        <PlatformsBand DS={DS} ctx={ctx} />
+        <PlatformsBand DS={DS} ctx={ctx} onChange={setCtx} />
         <div data-theme="light" className="rh-theme-light"><RoutesBand DS={DS} ctx={ctx} onChange={setCtx} /></div>
-        <TalentBand DS={DS} />
+        <TalentBand DS={DS} ctx={ctx} />
         <div data-theme="light" className="rh-theme-light"><IndustryBand DS={DS} ctx={ctx} onPick={(industry) => setCtx({ ...ctx, industry: ctx.industry === industry ? null : industry })} /></div>
         <CapitalBand DS={DS} ctx={ctx} />
         <div data-theme="light" className="rh-theme-light"><CompaniesBand DS={DS} ctx={ctx} /></div>

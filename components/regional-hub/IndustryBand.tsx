@@ -3,7 +3,7 @@
 import type { DS } from '@/lib/ds';
 import { GREEN_FIGURES, INDUSTRIES, INDUSTRY_REGION, MARKETS, SECTOR_BASE } from '@/data/regional-hub';
 import { contextQuery } from '@/lib/copilot-context';
-import { Details, Reveal, SourceLine, marketNames, type HubContext } from './shared';
+import { Details, Reveal, SourceLine, marketNames, type HubContext, Thread } from './shared';
 import { industryPhoto } from './imagery';
 
 /**
@@ -34,6 +34,7 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
     <section id="industry" className="rh-band rh-glow-l" aria-labelledby="rh-industry">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
+          <Thread ctx={ctx} />
           <span className="text-sm-semibold rh-eyebrow">07 · Your industry</span>
           <h2 id="rh-industry" className="display-md-semibold rh-h2">{rec ? `${rec.industry} in the region` : 'Your industry in the region'}</h2>
           <p className="text-lg-regular rh-muted rh-para">{rec ? `Across ${marketNames(ctx.markets)}: the market, Saudi Arabia's place in it, and the links that carry it.` : 'Pick a sector. The market, Saudi Arabia’s place in it, and the links that carry it, in three panels.'}</p>

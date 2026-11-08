@@ -10,6 +10,27 @@ export interface HubContext {
   industry: string | null;
   markets: string[];
   route: RouteId | null;
+  coast?: string | null;
+}
+
+export const PURPOSE_LABEL: Record<string, string> = { export: 'Manufacture and export', corporate: 'Regional headquarters', logistics: 'Distribution and logistics', digital: 'Digital operations', services: 'Regional services' };
+export const COAST_LABEL: Record<string, string> = { red: 'facing Europe and Africa from the Red Sea', gulf: 'facing the GCC and Asia from the Gulf', capital: 'run from Riyadh', anywhere: 'built where the market is' };
+
+/** The spine: one line that carries the visitor's choices from section to section. */
+export function Thread({ ctx, lead }: { ctx: HubContext; lead?: string }) {
+  const parts: { label: string; href: string }[] = [];
+  if (ctx.route) parts.push({ label: PURPOSE_LABEL[ctx.route], href: '#top' });
+  if (ctx.markets.length) parts.push({ label: `serving ${marketNames(ctx.markets)}`, href: '#connectivity' });
+  if (ctx.coast) parts.push({ label: COAST_LABEL[ctx.coast], href: '#platforms' });
+  if (ctx.industry) parts.push({ label: ctx.industry, href: '#industry' });
+  if (!parts.length) return <p className="rh-thread text-sm-regular"><span className="rh-thread-k text-xs-semibold">Your case</span><a className="rh-thread-a" href="#top">Choose a purpose at the top and this page follows it.</a></p>;
+  return (
+    <p className="rh-thread text-sm-regular">
+      <span className="rh-thread-k text-xs-semibold">Your case so far</span>
+      {parts.map((x, i) => <React.Fragment key={x.href + x.label}>{i > 0 && <span className="rh-thread-sep" aria-hidden="true">·</span>}<a className="rh-thread-a" href={x.href}>{x.label}</a></React.Fragment>)}
+      {lead && <span className="rh-thread-lead">{lead}</span>}
+    </p>
+  );
 }
 
 /** Provenance line shown under every figure, composed from tokens and the Tag component. */

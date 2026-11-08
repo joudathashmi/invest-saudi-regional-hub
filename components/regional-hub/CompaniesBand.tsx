@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { COMPANIES, PRESENCE, ROUTES, type RouteId } from '@/data/regional-hub';
-import { Details, Reveal, SourceLine, type HubContext } from './shared';
+import { Details, Reveal, SourceLine, type HubContext, Thread } from './shared';
 import { FEATURE_PHOTO, industryPhoto } from './imagery';
 import { Logo } from './Logo';
 
@@ -30,6 +30,7 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
     <section id="companies" className="rh-band" aria-labelledby="rh-companies">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
+          <Thread ctx={ctx} />
           <span className="text-sm-semibold rh-eyebrow">09 · Who already does this</span>
           <h2 id="rh-companies" className="display-md-semibold rh-h2">{COMPANIES.length} companies running the region from here</h2>
         </Reveal>

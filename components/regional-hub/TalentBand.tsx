@@ -2,14 +2,14 @@
 
 import type { DS } from '@/lib/ds';
 import { LIVING_PROJECTS, SOFT_POWER, TALENT_FIGURES, TALENT_LIVING } from '@/data/regional-hub';
-import { Details, Reveal, Sideways, SourceLine } from './shared';
+import { Details, Reveal, Sideways, SourceLine, Thread, type HubContext } from './shared';
 
 /**
  * Explore, continued. Talent and living: who staffs the hub and why they
  * move. Residency and visa rules as records, the livability projects as a
  * list, the soft-power anchors (sport, events, destinations) as a photo strip.
  */
-export function TalentBand({ DS }: { DS: DS }) {
+export function TalentBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   const tiles = [TALENT_LIVING[0], TALENT_FIGURES[1], TALENT_FIGURES[0]];
   const soft = SOFT_POWER.filter((f) => f.status !== 'unavailable');
   const photos = ['/img/alula-people.jpg', '/img/overlook.jpg', '/img/riyadh-aerial.jpg', '/img/mountains.jpg'];
@@ -17,6 +17,7 @@ export function TalentBand({ DS }: { DS: DS }) {
     <section id="talent" className="rh-band rh-glow-l" aria-labelledby="rh-talent">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
+          <Thread ctx={ctx} />
           <span className="text-sm-semibold rh-eyebrow">06 · Talent and living</span>
           <h2 id="rh-talent" className="display-md-semibold rh-h2">Build your regional business. Attract the people to run it.</h2>
           <p className="text-lg-regular rh-muted rh-para">A young national workforce, residency routes for senior hires, and cities people choose to live in.</p>

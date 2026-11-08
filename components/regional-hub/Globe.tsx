@@ -326,18 +326,19 @@ export function MiniMap({ lat, lon, zoom = 18, size = 420, label }: { lat: numbe
  * Pins are the locations; the active coast draws short dashed reach lines in
  * the direction its ports face. Boundaries: Natural Earth. */
 export interface CoastPin extends LatLon { id: string; name: string; coast: string; labelAt?: 'left' | 'right' | 'above' | 'below' }
-export function CoastMap({ pins, active, onPick, reach = [], size = 560 }: { pins: CoastPin[]; active: string; onPick?: (coast: string) => void; reach?: { from: LatLon; to: LatLon }[]; size?: number }) {
+export function CoastMap({ pins, active, onPick, reach = [], size = 560, tone = 'dark' }: { pins: CoastPin[]; active: string; onPick?: (coast: string) => void; reach?: { from: LatLon; to: LatLon }[]; size?: number; tone?: 'dark' | 'light' }) {
+  const gid = React.useId().replace(/:/g, '');
   const [hi, setHi] = React.useState<Countries | null>(countries50);
   React.useEffect(() => { if (!hi) load50().then(setHi).catch(() => undefined); }, [hi]);
   const projection = React.useMemo(() => geoOrthographic().translate([size / 2, size / 2]).scale(size * 2.05).rotate([-45.2, -24.2]).clipAngle(90), [size]);
   const path = React.useMemo(() => geoPath(projection), [projection]);
   const data = hi ?? COUNTRIES_110;
   return (
-    <svg className="rh-coastmap" viewBox={`0 0 ${size} ${size}`} role="img" aria-label="Map of Saudi Arabia with the Red Sea coast, the Arabian Gulf coast and Riyadh">
+    <svg className={`rh-coastmap rh-coastmap--${tone}`} viewBox={`0 0 ${size} ${size}`} role="img" aria-label="Map of Saudi Arabia with the Red Sea coast, the Arabian Gulf coast and Riyadh">
       <defs>
-        <radialGradient id="rh-coast-sea" cx="50%" cy="50%" r="70%"><stop offset="0%" stopColor="#16242a" /><stop offset="100%" stopColor="#0a1113" /></radialGradient>
+        <radialGradient id={`sea-${gid}`} cx="50%" cy="50%" r="70%">{tone === 'dark' ? <><stop offset="0%" stopColor="#16242a" /><stop offset="100%" stopColor="#0a1113" /></> : <><stop offset="0%" stopColor="#e3f3f5" /><stop offset="100%" stopColor="#cfe7eb" /></>}</radialGradient>
       </defs>
-      <rect width={size} height={size} fill="url(#rh-coast-sea)" />
+      <rect width={size} height={size} fill={`url(#sea-${gid})`} />
       <g>
         {data.features.map((f) => <path key={String(f.id)} d={path(f) ?? ''} className={String(f.id) === '682' ? 'rh-coast-country rh-coast-country--home' : 'rh-coast-country'} />)}
       </g>

@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { AGREEMENTS, FRAMEWORK_DETAIL, LEGAL_FOUNDATION, MARKETS, TREATIES, type Agreement } from '@/data/regional-hub';
-import { Details, Reveal, SourceLine, type HubContext } from './shared';
+import { Details, Reveal, SourceLine, type HubContext, Thread } from './shared';
 
 /**
  * 03 One region, shared frameworks. Told as partnership, not conquest: the
@@ -29,6 +29,7 @@ export function MarketAccessBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
     <section id="market-access" className="rh-band rh-glow-r" aria-labelledby="rh-access">
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
+          <Thread ctx={ctx} />
           <span className="text-sm-semibold rh-eyebrow">03 · One region</span>
           <h2 id="rh-access" className="display-md-semibold rh-h2">One region, shared frameworks</h2>
           <p className="text-lg-regular rh-muted rh-para">A business based here operates across the region under frameworks built together: the Gulf customs union, the Arab free trade area, the GCC&rsquo;s agreements beyond the region, and a network of tax treaties. Open any framework for what it covers and what it does not.</p>
