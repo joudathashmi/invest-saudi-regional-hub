@@ -78,21 +78,21 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
 
   /* Region view: hubs, markets, arcs, rings. */
   const regionPoints: GlobePoint[] = [
-    ...(mode === 'air' ? CENTRES.map((c) => ({ id: c.id, name: c.city, lat: c.lat, lon: c.lon, kind: 'centre' as const, labelAt: (c.lon < 30 ? 'left' : 'right') as 'left' | 'right', title: `${c.city}, ${c.country}` })) : []),
-    ...HUB_CITIES.map((h) => ({ ...h, kind: 'hub' as const, labelAt: (h.id === 'jed' ? 'left' : h.id === 'dmm' ? 'above' : 'below') as 'left' | 'above' | 'below' })),
+    ...(mode === 'air' ? CENTRES.filter((c) => ['c-lon', 'c-jnb', 'c-del', 'c-sin', 'c-sha'].includes(c.id)).map((c) => ({ id: c.id, name: c.city, lat: c.lat, lon: c.lon, kind: 'centre' as const, labelAt: (c.lon < 30 ? 'left' : 'right') as 'left' | 'right', title: `${c.city}, ${c.country}` })) : []),
+    ...HUB_CITIES.filter((h) => (mode !== 'air' || h.id === 'ruh') && mode !== 'digital').map((h) => ({ ...h, kind: 'hub' as const, labelAt: (h.id === 'jed' ? 'left' : h.id === 'dmm' ? 'above' : 'below') as 'left' | 'above' | 'below' })),
     ...(mode === 'corridors' ? NODES.filter((n) => ['jip', 'kap', 'dmm', 'jub'].includes(n.id)).map((n) => ({ id: n.id, name: '', title: n.name, lat: n.lat, lon: n.lon, kind: 'port' as const })) : []),
     ...(mode === 'sea' ? NODES.filter((n) => n.mode === 'sea').map((n) => ({ id: n.id, name: n.name.replace(' Port', ''), lat: n.lat, lon: n.lon, kind: 'port' as const })) : []),
-    ...(mode === 'digital' ? DIGITAL_NODES.map((d) => ({ id: d.id, name: d.name, lat: d.lat, lon: d.lon, kind: (d.kind === 'landing' ? 'port' : 'airport') as 'port' | 'airport', pulse: true, title: `${d.name}: ${d.note}`, labelAt: (d.lon < 44 ? 'left' : 'right') as 'left' | 'right', sub: d.kind === 'landing' ? '(landing)' : d.kind === 'cloud' ? '(cloud)' : '(planned)' })) : []),
-    ...MARKETS.map((m) => {
+    ...(mode === 'digital' ? DIGITAL_NODES.map((d) => ({ id: d.id, name: d.name, lat: d.lat, lon: d.lon, kind: (d.kind === 'landing' ? 'port' : 'airport') as 'port' | 'airport', pulse: true, title: `${d.name}: ${d.note}`, labelAt: (d.lon < 44 ? 'left' : d.id === 'd-khb' ? 'right' : d.id === 'd-dmm' ? 'above' : d.id === 'd-ruh' ? 'left' : 'right') as 'left' | 'right' | 'above' | 'below', sub: d.kind === 'landing' ? '(landing)' : d.kind === 'cloud' ? '(cloud)' : '(planned)' })) : []),
+    ...(mode === 'sea' || mode === 'corridors' ? [] : MARKETS).map((m) => {
       const on = ctx.markets.includes(m.code);
       const t = mode === 'air' && on && greatCircleKm(riyadh, m) <= 2000 ? ` · ${fmtH(flightHours(greatCircleKm(riyadh, m)))}` : mode === 'ground' && ground.has(m.code) && ['AE', 'QA', 'KW', 'BH', 'OM'].includes(m.code) ? ` · ${fmtH(driveHours(greatCircleKm({ lat: 26.43, lon: 50.10 }, m)))} from Dammam` : '';
-      return { id: m.code, name: on ? m.city + t : m.city, lat: m.lat, lon: m.lon, kind: 'market' as const, selected: on || (mode === 'air' && shown.includes(m)) || (mode === 'ground' && ground.has(m.code)), pulse: mode === 'digital' ? false : undefined, labelAt: (m.lon < riyadh.lon - 8 ? 'left' : 'right') as 'left' | 'right' };
+      return { id: m.code, name: on ? m.city + t : m.city, lat: m.lat, lon: m.lon, kind: 'market' as const, selected: on || (mode === 'ground' && ground.has(m.code)), pulse: mode === 'digital' ? false : undefined, labelAt: (m.lon < riyadh.lon - 8 ? 'left' : 'right') as 'left' | 'right' };
     }),
   ];
   const regionArcs: GlobeArc[] =
     mode === 'air' ? [
-      ...shown.map((m) => { const km = greatCircleKm(riyadh, m); const h = flightHours(km); return { from: riyadh, to: m, vehicle: 'plane' as const, hours: h, label: km > 3000 ? fmtH(h) : undefined }; }),
-      ...CENTRES.map((c) => { const km = greatCircleKm(riyadh, c); const h = flightHours(km); return { from: riyadh, to: c, vehicle: 'plane' as const, thin: true, dashed: true, hours: h, label: fmtH(h) }; }),
+      ...selected.map((m) => { const km = greatCircleKm(riyadh, m); const h = flightHours(km); return { from: riyadh, to: m, vehicle: 'plane' as const, hours: h, label: km > 3000 ? fmtH(h) : undefined }; }),
+      ...CENTRES.filter((c) => ['c-lon', 'c-jnb', 'c-del', 'c-sin', 'c-sha'].includes(c.id)).map((c, i) => { const km = greatCircleKm(riyadh, c); const h = flightHours(km); return { from: riyadh, to: c, vehicle: i < 3 ? ('plane' as const) : undefined, thin: true, dashed: true, hours: h, label: fmtH(h) }; }),
     ]
       : mode === 'ground' ? (() => {
           const dmm = { lat: 26.43, lon: 50.10 };
@@ -144,7 +144,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
   };
   const legendFor = (k: Step) =>
     k === 'integrated' ? 'Roads in brand, operating rail solid blue, planned rail dotted, ports (blue) and airports (orange) as points, border crossings as diamonds labelled with the neighbour they lead to. Hover any point for its name.'
-    : k === 'air' ? 'Arcs show geographic reach from Riyadh with estimated flight time (great-circle distance at about 850 km/h plus 30 minutes); they are not a schedule and do not confirm a direct commercial service. Rings are the published 4-hour and 8-hour reach. King Salman International Airport is planned, not operating.'
+    : k === 'air' ? 'Five reach lines from Riyadh to global centres with estimated flight time (great-circle at about 850 km/h plus 30 minutes); they are not schedules. Dots are the regional markets; choose markets in your case to draw their routes. Rings are the published 4-hour and 8-hour reach. King Salman International Airport is planned, not operating.'
     : k === 'sea' ? 'Red Sea ports serve Africa, Europe and the Levant; Arabian Gulf ports serve the GCC and Asia. Transit days per port pair are not yet published, so no time is shown.'
     : k === 'corridors' ? 'Solid lines are operating rail; dotted lines are planned or in delivery. Ships mark the sea legs the corridor joins: Asia into Dammam and Jubail, the Red Sea out to Suez, Europe and East Africa. Alignments are schematic until Saudi Arabia Railways publishes them.'
     : k === 'digital' ? 'Subsea landing cities on both coasts (blue), cloud and data-centre locations (orange). No cable routes are drawn: cable names, capacities and provider region status come from CST and the providers before they appear here.'

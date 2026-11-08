@@ -780,3 +780,12 @@
 .rh-globe-vehicle--truck path { transform-box: fill-box; }
 
 @media (min-width: 1024px) { #connectivity .rh-story-visual { max-height: calc(100vh - 88px); } #connectivity .rh-globe-box { max-width: min(100%, calc(100vh - 220px)); margin-inline: auto; } }
+
+/* Quiet map: unselected markets are faint, graticule minimal, one accent. */
+#connectivity .rh-globe-pt--market:not(.rh-globe-pt--on) { fill: #6b7680; opacity: 0.8; }
+#connectivity .rh-globe-grat { opacity: 0.25; }
+#connectivity .rh-globe-rings path { opacity: 0.4; stroke-width: 1; }
+#connectivity .rh-globe-pulse-ring { opacity: 0.5; }
+#connectivity .rh-globe-arc--thin { opacity: 0.55; stroke-width: 1; }
+#connectivity .rh-globe-arc-glow { display: none; }
+#connectivity .rh-globe-pill rect { fill: #0f1a1e; }
