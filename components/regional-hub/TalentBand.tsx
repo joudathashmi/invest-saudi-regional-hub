@@ -18,8 +18,8 @@ export function TalentBand({ DS }: { DS: DS }) {
       <div className="rh-container rh-stack">
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">06 · Talent and living</span>
-          <h2 id="rh-talent" className="display-md-semibold rh-h2">Staffed before it is operated</h2>
-          <p className="text-lg-regular rh-muted rh-para">A young national workforce, residency routes that free senior hires from sponsorship, and the places that decide whether an executive relocates with family rather than commutes.</p>
+          <h2 id="rh-talent" className="display-md-semibold rh-h2">Build your regional business. Attract the people to run it.</h2>
+          <p className="text-lg-regular rh-muted rh-para">Five things decide whether a regional team can be built here: who is available, how they are developed, how they are hired and moved, how executives relocate, and how they live. Workforce figures are national; sector-specific talent evidence sits on each sector page.</p>
         </Reveal>
         <dl className="rh-factlist rh-factlist--3">
           {tiles.map((f) => (
@@ -29,6 +29,13 @@ export function TalentBand({ DS }: { DS: DS }) {
             </div>
           ))}
         </dl>
+        <ol className="rh-five">
+          <li><span className="rh-five-n">1</span><span className="rh-five-t text-md-semibold">Talent availability</span><span className="text-sm-regular rh-muted">A young national workforce, 70% under 35, with rising participation; figures are national and published by GASTAT.</span></li>
+          <li><span className="rh-five-n">2</span><span className="rh-five-t text-md-semibold">Talent development</span><span className="text-sm-regular rh-muted">National academies and sector programmes (digital, tourism, industrial) train for the roles regional operations need; detail on the <a className="rh-inline-link" href="/how-to-invest/talent">talent programmes page</a>.</span></li>
+          <li><span className="rh-five-n">3</span><span className="rh-five-t text-md-semibold">Recruitment and mobility</span><span className="text-sm-regular rh-muted">Work authorisation through the licensed entity; Saudization quotas by activity and size, with relief periods published per programme.</span></li>
+          <li><span className="rh-five-n">4</span><span className="rh-five-t text-md-semibold">Executive relocation</span><span className="text-sm-regular rh-muted">Premium Residency categories and RHQ executive visas remove the sponsorship dependency for senior hires and their families.</span></li>
+          <li><span className="rh-five-n">5</span><span className="rh-five-t text-md-semibold">Quality of life</span><span className="text-sm-regular rh-muted">The districts, parks and destinations below are what decide whether an executive relocates with family; they support the location decision, they are not the reason for it.</span></li>
+        </ol>
         <div className="rh-talent-grid">
           <div className="rh-stack" style={{ gap: 'var(--spacing-xl)' }}>
             <h3 className="display-xs-semibold rh-h3">Residency and visas</h3>

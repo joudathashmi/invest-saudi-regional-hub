@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
-import { AGREEMENTS, LEGAL_FOUNDATION, MARKETS, TREATIES, type Agreement } from '@/data/regional-hub';
+import { AGREEMENTS, FRAMEWORK_DETAIL, LEGAL_FOUNDATION, MARKETS, TREATIES, type Agreement } from '@/data/regional-hub';
 import { Reveal, SourceLine, type HubContext } from './shared';
 
 /**
@@ -18,6 +18,7 @@ const PARTNERS: Record<string, string> = { efta: 'Iceland, Liechtenstein, Norway
 
 export function MarketAccessBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   const [detail, setDetail] = React.useState(false);
+  const [openFw, setOpenFw] = React.useState<Agreement | null>(null);
   const mname = (code: string) => MARKETS.find((m) => m.code === code)?.name ?? code;
   const inForce = TREATIES.filter((t) => t.treaty === 'In force');
   const signed = TREATIES.filter((t) => t.treaty === 'Signed, not yet in force');
@@ -35,13 +36,13 @@ export function MarketAccessBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
 
         <div className="rh-frameworks">
           {AGREEMENTS.map((a) => (
-            <div key={a.id} className={yours(a) ? 'rh-framework rh-framework--yours' : 'rh-framework'}>
+            <button key={a.id} type="button" className={yours(a) ? 'rh-framework rh-framework--yours' : 'rh-framework'} onClick={() => setOpenFw(a)} aria-haspopup="dialog">
               <DS.FeaturedIcon icon={ICONS[a.id] ?? 'globe-01'} color="brand" size="md" />
               <span className="text-md-semibold rh-strong">{a.name.replace(' (GAFTA)', '')}</span>
-              <span className="text-sm-regular rh-muted">{a.summary}</span>
+              <span className="text-sm-regular rh-muted">{FRAMEWORK_DETAIL[a.id]?.why ?? a.summary}</span>
               {partnersOf(a) && <span className="text-xs-regular rh-tertiary"><span className="rh-strong">Together with:</span> {partnersOf(a)}</span>}
-              <SourceLine DS={DS} p={a} />
-            </div>
+              <span className="text-xs-semibold rh-framework-more">What it covers, conditions, limits →</span>
+            </button>
           ))}
         </div>
 
@@ -60,7 +61,7 @@ export function MarketAccessBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
         <div className="rh-legal">
           <div className="rh-editorial-lead">
             <span className="text-xs-semibold rh-eyebrow">The legal foundation beneath every route</span>
-            <p className="text-md-regular rh-muted rh-para">Shared frameworks decide how goods and services move; these laws decide how a business is formed, contracts are enforced and disputes are settled once it is here.</p>
+            <p className="text-md-regular rh-muted rh-para">Shared frameworks decide how goods and services move; these laws decide how a business is formed, contracts are enforced and disputes are settled once it is here. The full regulatory detail lives on the <a className="rh-inline-link" href="/how-to-invest/regulations">Invest Saudi regulations pages</a>.</p>
           </div>
           <dl className="rh-legal-grid">
             {LEGAL_FOUNDATION.map((l) => (
@@ -90,6 +91,19 @@ export function MarketAccessBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             />
           </div>
         )}
+        {openFw && (() => { const d = FRAMEWORK_DETAIL[openFw.id]; return (
+          <DS.SlideoutMenu title={openFw.name.replace(' (GAFTA)', '')} description={openFw.type} open width={520} onClose={() => setOpenFw(null)} actions={<DS.Button hierarchy="secondary-gray" size="md" onClick={() => setOpenFw(null)}>Close</DS.Button>}>
+            <dl className="rh-fwdetail">
+              <div><dt className="text-xs-semibold rh-eyebrow">What it covers</dt><dd className="text-md-regular">{d?.covers ?? openFw.summary}</dd></div>
+              <div><dt className="text-xs-semibold rh-eyebrow">Together with</dt><dd className="text-md-regular">{partnersOf(openFw) || 'All partners'}</dd></div>
+              {d && <div><dt className="text-xs-semibold rh-eyebrow">Why it matters commercially</dt><dd className="text-md-regular">{d.why}</dd></div>}
+              {d && <div><dt className="text-xs-semibold rh-eyebrow">Conditions that apply</dt><dd className="text-md-regular">{d.conditions}</dd></div>}
+              {d && <div><dt className="text-xs-semibold rh-eyebrow">What it does not guarantee</dt><dd className="text-md-regular">{d.notGuaranteed}</dd></div>}
+              <div><dt className="text-xs-semibold rh-eyebrow">Status and source</dt><dd className="text-md-regular"><DS.Tag size="sm" color="success" dot>{openFw.inForce}</DS.Tag> <SourceLine DS={DS} p={openFw} /></dd></div>
+              {d && <div><dt className="text-xs-semibold rh-eyebrow">Verify</dt><dd><DS.Button hierarchy="link-color" size="md" href={d.verify.href} iconTrailing="arrow-up-right">{d.verify.label}</DS.Button></dd></div>}
+            </dl>
+          </DS.SlideoutMenu>
+        ); })()}
         <p className="text-xs-regular rh-tertiary rh-para">Rules of origin decide whether goods made in Saudi Arabia qualify under each framework, and each market&rsquo;s regulator licenses activities within it; both are confirmed per case with an advisor.</p>
       </div>
     </section>

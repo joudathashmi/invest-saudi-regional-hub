@@ -1,7 +1,8 @@
 'use client';
 
 import type { DS } from '@/lib/ds';
-import { GREEN_FIGURES, INDUSTRIES, INDUSTRY_REGION, MARKETS } from '@/data/regional-hub';
+import { GREEN_FIGURES, INDUSTRIES, INDUSTRY_REGION, MARKETS, SECTOR_BASE } from '@/data/regional-hub';
+import { contextQuery } from '@/lib/copilot-context';
 import { Reveal, SourceLine, marketNames, type HubContext } from './shared';
 import { industryPhoto } from './imagery';
 
@@ -44,6 +45,7 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
         </div>
         {rec ? (
           <>
+            <p className="rh-sector-base display-xs-semibold">{SECTOR_BASE[rec.industry]}</p>
             <div className="rh-ind">
               <figure className="rh-ind-photo"><img src={photo.src} alt={photo.alt} loading="lazy" /><figcaption className="text-xs-semibold rh-eyebrow">{rec.industry}</figcaption></figure>
               <div className="rh-ind-panels">
@@ -73,8 +75,8 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
               <p className="text-xs-regular rh-tertiary rh-para">Regional demand by market appears once the sector team publishes it as part of the sector equity story.</p>
             )}
             <div className="rh-actions">
-              <DS.Button hierarchy="primary" size="md" href={rec.sectorHref} iconTrailing="arrow-right">{rec.industry} sector page</DS.Button>
-              <DS.Button hierarchy="secondary-gray" size="md" href={`/opportunities?sector=${encodeURIComponent(rec.industry)}`} iconLeading="coins-stacked-01">Opportunities</DS.Button>
+              <DS.Button hierarchy="primary" size="md" href={`${rec.sectorHref}?${contextQuery(ctx)}`} iconTrailing="arrow-right">{rec.industry} sector page</DS.Button>
+              <DS.Button hierarchy="secondary-gray" size="md" href={`/opportunities?${contextQuery(ctx, { sector: rec.industry })}`} iconLeading="coins-stacked-01">Opportunities</DS.Button>
               <DS.Button hierarchy="link-color" size="md" href="#companies" iconTrailing="arrow-right">Companies in this sector</DS.Button>
             </div>
           </>

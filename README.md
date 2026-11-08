@@ -87,3 +87,9 @@ Open `http://localhost:3000/why-saudi/regional-hub`.
 Photography comes from the Invest Saudi homepage design's image library (Figma "Invest Saudi — Homepage"), exported and compressed into `public/img`, mapped in `components/regional-hub/imagery.ts`. Rights follow the homepage library; the brand team confirms before production. Photos are presentation only; no figure or record depends on them.
 
 The page's canvas and card tones (`--rh-canvas`, `--rh-card`, `--rh-tile`, `--rh-glass`, `--rh-accent`) are sampled from the homepage Figma and scoped to `.rh-page` in `app/globals.css`. Design-system files are unchanged (`npm run ds:verify`).
+
+## Investor Context And Copilot Integration (Nov 2026)
+
+`lib/copilot-context.ts` publishes the investor's current context (industry, operating route, markets, active section) as `window.InvestSaudiPageContext`, as an `investsaudi:context` event, and as query parameters (`from`, `industry`, `route`, `markets`, `topic`) on every link that leaves the page. The context is restored from the URL or sessionStorage on load. The Investor Copilot widget, when embedded, reads the object on open and listens to the event; no backend call is made from this page. Destination pages that do not yet read the parameters ignore them, and the page says so.
+
+Hero purpose selector sets the operating route for the whole page (sections 05 and 10 respond; 04, 07, 09 highlight). Section navigation is six groups over ten sections (`components/regional-hub/SectionNav.tsx`).

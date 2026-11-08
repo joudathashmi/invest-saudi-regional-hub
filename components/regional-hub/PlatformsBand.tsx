@@ -25,6 +25,7 @@ const INCLUDES = [
 export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   const list = ctx.route ? PLATFORMS.filter((p) => p.routes.includes(ctx.route!)) : PLATFORMS;
   const [detail, setDetail] = React.useState<(typeof PLATFORMS)[number] | null>(null);
+  const [mode, setMode] = React.useState<'visual' | 'compare'>('visual');
   const n = list.length;
   const cls = (i: number) => {
     if (i === 0) return 'rh-mosaic-item rh-mosaic-item--big';
@@ -41,7 +42,25 @@ export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
           <h2 id="rh-platforms" className="display-md-semibold rh-h2">Zones and cities built for regional business</h2>
           <p className="text-lg-regular rh-muted rh-para">Special economic zones on both coasts and in the cloud, a bonded logistics zone at the Riyadh airport, and industrial cities nationwide. Open any location for what it permits and how it connects.</p>
         </Reveal>
-        {n === 0 ? (
+        <DS.Tabs type="button-gray" items={[{ label: 'Explore', value: 'visual' }, { label: 'Compare', value: 'compare' }]} value={mode} onChange={(v: string) => setMode(v as 'visual' | 'compare')} />
+        {mode === 'compare' && n > 0 && (
+          <div className="rh-table-wrap">
+            <DS.Table
+              striped
+              columns={[
+                { key: 'name', title: 'Location', render: (p: (typeof PLATFORMS)[number]) => <button type="button" className="rh-linkbtn text-sm-semibold" onClick={() => setDetail(p)}>{p.name}</button> },
+                { key: 'kind', title: 'Type' },
+                { key: 'permits', title: 'Industries and activities', render: (p: (typeof PLATFORMS)[number]) => p.permits[0] },
+                { key: 'connectedTo', title: 'Connectivity', render: (p: (typeof PLATFORMS)[number]) => p.connectedTo.join('; ') },
+                { key: 'routes', title: 'Operating models', render: (p: (typeof PLATFORMS)[number]) => p.routes.map((r) => ROUTES.find((x) => x.id === r)?.title.replace(' (Regional Headquarters)', '')).join(', ') },
+                { key: 'inc', title: 'Incentives', render: (p: (typeof PLATFORMS)[number]) => <span>{p.authority === 'ECZA' || p.authority === 'ECZA with CST' ? 'SEZ package, potentially applicable' : p.id === 'ilbz' ? 'ILBZ regime, potentially applicable' : 'Programme-specific, subject to eligibility'} <DS.Tag size="sm" color="warning" dot>eligibility to confirm</DS.Tag></span> },
+                { key: 'prov', title: 'Data status', render: (p: (typeof PLATFORMS)[number]) => <SourceLine DS={DS} p={p} badge /> },
+              ]}
+              rows={list}
+            />
+          </div>
+        )}
+        {mode === 'compare' ? null : n === 0 ? (
           <DS.EmptyState icon="marker-pin-01" title="No platform is listed for this route yet" description="The zone authorities have not published a platform record for the selected route." />
         ) : (
           <div className="rh-mosaic" role="list">
@@ -58,7 +77,7 @@ export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
           </div>
         )}
         <div className="rh-includes">
-          <span className="text-xs-semibold rh-eyebrow">Every ECZA zone includes</span>
+          <span className="text-xs-semibold rh-eyebrow">The four ECZA special economic zones share this package; ILBZ and industrial cities have their own</span>
           <dl className="rh-includes-grid">
             {INCLUDES.map((x) => (
               <div key={x.l}><dt className="display-xs-semibold">{x.v}</dt><dd className="text-sm-regular">{x.l}</dd></div>

@@ -1,7 +1,8 @@
 'use client';
 
+import * as React from 'react';
 import type { DS } from '@/lib/ds';
-import { CAPITAL_FIGURES } from '@/data/regional-hub';
+import { CAPITAL_FIGURES, CAPITAL_LAYERS } from '@/data/regional-hub';
 import { Reveal, SourceLine, type HubContext } from './shared';
 
 /**
@@ -32,21 +33,32 @@ export function CapitalBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             <span className="text-sm-regular rh-statement-foot">Saudi Exchange capitalisation, {CAPITAL_FIGURES[0].value} at the end of March 2026. <SourceLine DS={DS} p={usd} /></span>
           </figcaption>
         </figure>
+        <div className="rh-flow" aria-label="How capital reaches a business here">
+          {['Capital markets', 'Institutions and funds', 'Banks and programmes', 'Your regional business'].map((n, i, arr) => (
+            <React.Fragment key={n}>
+              <span className={i === arr.length - 1 ? 'rh-flow-node rh-flow-node--you' : 'rh-flow-node'}>{n}</span>
+              {i < arr.length - 1 && <span className="rh-flow-arrow" aria-hidden="true"><DS.Icon name="arrow-right" size={16} /></span>}
+            </React.Fragment>
+          ))}
+        </div>
         <div className="rh-three">
-          {WAYS.map((w) => (
+          {CAPITAL_LAYERS.map((w) => (
             <a key={w.title} className="rh-three-card" href={w.href}>
               <DS.FeaturedIcon icon={w.icon} color="brand" size="lg" />
               <span className="display-xs-semibold rh-h3">{w.title}</span>
-              <span className="text-md-regular rh-muted">{w.text}</span>
-              <span className="rh-three-fig">
-                <span className="display-sm-semibold">{w.fig.value}</span>
-                <span className="text-xs-regular rh-muted">{w.fig.label}</span>
-                <SourceLine DS={DS} p={w.fig} />
-              </span>
+              <span className="text-sm-regular rh-muted">{w.what}</span>
+              <span className="text-md-regular"><span className="rh-strong">What it means for you.</span> {w.means}</span>
+              {w.fig && (
+                <span className="rh-three-fig">
+                  <span className="display-sm-semibold">{w.fig.value}</span>
+                  <span className="text-xs-regular rh-muted">{w.fig.label}</span>
+                  <SourceLine DS={DS} p={w.fig} />
+                </span>
+              )}
             </a>
           ))}
         </div>
-        <p className="text-xs-regular rh-tertiary rh-para">Share of regional venture deal value appears here once MAGNiTT figures are confirmed by the Data team. PIF assets are press-reported pending the annual report.</p>
+        <p className="text-xs-regular rh-tertiary rh-para">Market depth is not the same as financing availability: each layer has its own eligibility, and a foreign investor&rsquo;s access to it is confirmed case by case. Share of regional venture deal value appears once MAGNiTT figures are confirmed; PIF assets are press-reported pending the annual report.</p>
       </div>
     </section>
   );

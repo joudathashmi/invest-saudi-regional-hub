@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
-import { ROUTES, type RouteId } from '@/data/regional-hub';
+import { PLATFORMS, ROUTES, type RouteId } from '@/data/regional-hub';
+import { contextQuery } from '@/lib/copilot-context';
 import { Reveal, Sideways, SourceLine, type HubContext } from './shared';
 import { ROUTE_PHOTOS } from './imagery';
 
@@ -31,7 +32,7 @@ export function RoutesBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onC
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">05 · Operating routes</span>
           <h2 id="rh-routes" className="display-md-semibold rh-h2">How you can run the region from here</h2>
-          <p className="text-lg-regular rh-muted rh-para">Five routes, each with its licence, the incentives that may apply, the connectivity it depends on, and the order of steps. A regional headquarters is one of the five, not the only one.</p>
+          <p className="text-lg-regular rh-muted rh-para">Five ways to run the region from here. Each answers four questions: what you can establish, why here, what you would need, and what to do next. A regional headquarters is one of the five, not the only one. Your choice highlights what matters elsewhere on the page.</p>
         </Reveal>
         <DS.Tabs
           type="underline"
@@ -39,49 +40,61 @@ export function RoutesBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onC
           value={selected.id}
           onChange={(v: string) => onChange({ ...ctx, route: v as RouteId })}
         />
-        <div className="rh-route">
-          <div className="rh-route-text">
-            <div className="rh-route-head">
-              <DS.FeaturedIcon icon={selected.icon} color="brand" size="lg" />
-              <div>
-                <h3 className="display-xs-semibold rh-h3">{selected.title}</h3>
-                <p className="text-md-regular rh-muted rh-para">{selected.description}</p>
-              </div>
+        <div className="rh-explorer">
+          <div className="rh-q">
+            <span className="rh-q-n text-xs-semibold">1</span>
+            <div className="rh-q-body">
+              <h3 className="display-xs-semibold rh-h3">What can I establish?</h3>
+              <div className="rh-route-head"><DS.FeaturedIcon icon={selected.icon} color="brand" size="lg" /><div><span className="text-lg-semibold rh-strong">{selected.title}</span><p className="text-md-regular rh-muted rh-para">{selected.description}</p></div></div>
             </div>
-            <p className="text-md-regular rh-para"><span className="rh-strong">Licence.</span> {selected.licence}.</p>
-            <p className="text-md-regular rh-para"><span className="rh-strong">Incentives.</span> {selected.incentives[0]}</p>
-            <p className="text-md-regular rh-para"><span className="rh-strong">Connectivity that matters.</span> {selected.connectivity}</p>
-            <ol className="rh-pathlist">
-              {selected.steps.map((st, i) => (
-                <li key={st.title} data-i={i} ref={(el) => { refs.current[i] = el; }} className={i <= current ? 'rh-pathitem rh-pathitem--on' : 'rh-pathitem'}>
-                  <span className="text-xs-medium rh-eyebrow">Step {i + 1}</span>
-                  <span className="text-md-semibold rh-strong">{st.title}</span>
-                  <span className="text-sm-regular rh-muted">{st.description}</span>
-                </li>
-              ))}
-            </ol>
-            <SourceLine DS={DS} p={selected.provenance} />
-            <div className="rh-actions">
-              <DS.Button hierarchy="primary" size="md" href={selected.startHref} iconTrailing="arrow-right">
-                {selected.startLabel}
-              </DS.Button>
-              <DS.Button hierarchy="secondary-gray" size="md" href={`/how-to-invest/incentives?route=${selected.id}`} iconLeading="coins-stacked-01">
-                Find incentives for this route
-              </DS.Button>
-            </div>
-            <Sideways
-              DS={DS}
-              items={[
-                { label: 'Platforms for this route', href: '#platforms', icon: 'marker-pin-01' },
-                { label: 'Who already does this', href: '#companies', icon: 'users-01' },
-              ]}
-            />
           </div>
-          <div className="rh-route-path">
+          <div className="rh-q">
+            <span className="rh-q-n text-xs-semibold">2</span>
+            <div className="rh-q-body">
+              <h3 className="display-xs-semibold rh-h3">Why establish it in Saudi Arabia?</h3>
+              <p className="text-md-regular rh-para">{selected.meta}. {selected.connectivity}</p>
+            </div>
+          </div>
+          <div className="rh-q">
+            <span className="rh-q-n text-xs-semibold">3</span>
+            <div className="rh-q-body">
+              <h3 className="display-xs-semibold rh-h3">What would I need?</h3>
+              <dl className="rh-needs">
+                <div><dt className="text-xs-semibold rh-eyebrow">Locations</dt><dd className="text-sm-regular">{PLATFORMS.filter((p) => p.routes.includes(selected.id)).map((p) => p.name).join(', ') || 'Any licensed premises'} <a className="rh-inline-link" href="#platforms">See locations →</a></dd></div>
+                <div><dt className="text-xs-semibold rh-eyebrow">Licence</dt><dd className="text-sm-regular">{selected.licence}.</dd></div>
+                <div><dt className="text-xs-semibold rh-eyebrow">Incentives</dt><dd className="text-sm-regular">{selected.incentives[0]}</dd></div>
+                <div><dt className="text-xs-semibold rh-eyebrow">Shared frameworks</dt><dd className="text-sm-regular">{selected.id === 'export' || selected.id === 'logistics' ? 'GCC customs union and GAFTA rules of origin for goods.' : 'National licensing in each market; tax treaties where in force.'} <a className="rh-inline-link" href="#market-access">See frameworks →</a></dd></div>
+                <div><dt className="text-xs-semibold rh-eyebrow">People</dt><dd className="text-sm-regular">Residency routes and Saudization terms per programme. <a className="rh-inline-link" href="#talent">See talent →</a></dd></div>
+              </dl>
+              <ol className="rh-pathlist">
+                {selected.steps.map((st, i) => (
+                  <li key={st.title} data-i={i} ref={(el) => { refs.current[i] = el; }} className={i <= current ? 'rh-pathitem rh-pathitem--on' : 'rh-pathitem'}>
+                    <span className="text-xs-medium rh-eyebrow">Step {i + 1}</span>
+                    <span className="text-md-semibold rh-strong">{st.title}</span>
+                    <span className="text-sm-regular rh-muted">{st.description}</span>
+                  </li>
+                ))}
+              </ol>
+              <SourceLine DS={DS} p={selected.provenance} />
+            </div>
+          </div>
+          <div className="rh-q">
+            <span className="rh-q-n text-xs-semibold">4</span>
+            <div className="rh-q-body">
+              <h3 className="display-xs-semibold rh-h3">What should I do next?</h3>
+              <div className="rh-actions">
+                <DS.Button hierarchy="primary" size="md" href={`/how-to-invest/set-up?${contextQuery(ctx, { route: selected.id })}`} iconTrailing="arrow-right">{selected.startLabel}</DS.Button>
+                <DS.Button hierarchy="secondary-gray" size="md" href={`/how-to-invest/incentives?${contextQuery(ctx, { route: selected.id })}`} iconLeading="coins-stacked-01">Review incentives</DS.Button>
+                <DS.Button hierarchy="secondary-gray" size="md" href={`/opportunities?${contextQuery(ctx, { route: selected.id })}`} iconLeading="search-lg">Opportunities</DS.Button>
+              </div>
+              <p className="text-xs-regular rh-tertiary rh-para">The establishment steps themselves live on the How to Set Up pages; this explorer explains the model and carries your choices there.</p>
+            </div>
+          </div>
+          <aside className="rh-route-path">
             <img key={selected.id} className="rh-route-photo" src={ROUTE_PHOTOS[selected.id].src} alt={ROUTE_PHOTOS[selected.id].alt} loading="lazy" />
             <span className="text-sm-semibold rh-eyebrow">The path, in order</span>
             <DS.ProgressSteps steps={selected.steps} current={current} />
-          </div>
+          </aside>
         </div>
       </div>
     </section>

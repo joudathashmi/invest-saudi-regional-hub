@@ -568,3 +568,53 @@ export const SOFT_POWER: Figure[] = [
   { label: 'Giga-tourism destinations', value: 'Red Sea Global, Amaala, AlUla', ...official('PIF and the Royal Commission for AlUla', 'in development', 'Content Team') },
   { label: 'International tourist arrivals', value: PLACEHOLDER, ...pending('Content Team', 'Ministry of Tourism statistics') },
 ];
+
+/* ---------- Master implementation (8 Nov 2026): editorial structures over existing records ---------- */
+
+/* Section 01: the five arguments as Evidence, Commercial implication, Investor relevance. Figures reference existing records. */
+export const THESIS: { title: string; fig: Figure; photo: string; evidence: string; implication: string; relevance: string; href: string; hrefLabel: string }[] = [
+  { title: 'A substantial domestic market', fig: REACH[3], photo: '/img/skyline-day.jpg', evidence: 'The largest economy in the Middle East and North Africa, with non-oil activity now the larger share of GDP.', implication: 'A business can establish operations that serve domestic demand first, and build regional capability on that base rather than instead of it.', relevance: 'Explore the sectors and opportunities this demand supports.', href: '#industry', hrefLabel: 'Sectors' },
+  { title: 'Growth that is broadening', fig: DOMESTIC[0], photo: '/img/riyadh-aerial.jpg', evidence: 'Real GDP grew 2.7% in 2024 with non-oil activities expanding faster than the headline.', implication: 'New demand is arriving in services, manufacturing, logistics and digital, the activities a regional base is built from.', relevance: 'See how your industry sits in that growth.', href: '#industry', hrefLabel: 'Your industry' },
+  { title: 'Capital already arriving', fig: DOMESTIC[1], photo: '/img/finance.jpg', evidence: 'Foreign direct investment inflows grew 24% in 2024.', implication: 'Peers are committing; suppliers, partners and competitors are forming an ecosystem a new entrant can join.', relevance: 'See who already operates the region from here.', href: '#companies', hrefLabel: 'Companies' },
+  { title: 'A logistics base that performs', fig: REACH[4], photo: '/img/port-cranes.jpg', evidence: 'Ranked 38th of 139 on the World Bank Logistics Performance Index, with ports on two coasts and 39+ industrial cities.', implication: 'Goods made or consolidated here move to the region on existing infrastructure, not infrastructure still to come.', relevance: 'Explore the air, sea, land and digital links.', href: '#connectivity', hrefLabel: 'Connectivity' },
+  { title: 'Built for the next decade', fig: CONNECTIVITY_FIGURES[0], photo: '/img/airport.jpg', evidence: '59 logistics zones are planned by 2030 under the National Transport and Logistics Strategy; King Salman International Airport and the Land Bridge are in delivery.', implication: 'Capacity is growing ahead of demand, so a base chosen now sits on a network that keeps improving.', relevance: 'See where you could operate.', href: '#platforms', hrefLabel: 'Locations' },
+];
+
+/* Section 03: what each framework covers, why it matters, conditions, what it does not guarantee, where to verify. Editorial, owner Legal Team. */
+export const FRAMEWORK_DETAIL: Record<string, { covers: string; why: string; conditions: string; notGuaranteed: string; verify: { label: string; href: string } }> = {
+  gcc: { covers: 'A single customs territory with a common external tariff and free movement of GCC-origin goods between the six states.', why: 'Goods produced in Saudi Arabia move to five neighbouring markets without customs duty.', conditions: 'GCC origin requires at least 40% local value added and a GCC-owned share of the producer, with a certificate of origin.', notGuaranteed: 'Services, professional licensing and product registration remain national decisions in each state.', verify: { label: 'GCC Secretariat and ZATCA', href: 'https://zatca.gov.sa' } },
+  gafta: { covers: 'Duty-free trade in goods of Arab origin across the Arab League states that have implemented the agreement.', why: 'Opens Egypt, Jordan, Iraq, Morocco and the wider Arab market to Saudi-made goods without tariffs.', conditions: 'Arab origin at 40% local value added; some products and states apply exceptions or non-tariff measures.', notGuaranteed: 'Services, investment protection and standards recognition are outside its scope.', verify: { label: 'Ministry of Commerce', href: 'https://mc.gov.sa' } },
+  efta: { covers: 'Preferential tariffs on goods between the GCC and Iceland, Liechtenstein, Norway and Switzerland.', why: 'A Saudi production base reaches four high-income European markets on preferential terms.', conditions: 'Product-specific rules of origin under the agreement protocol.', notGuaranteed: 'It is not an EU agreement; EU market access follows EU rules.', verify: { label: 'GCC Secretariat', href: 'https://www.gcc-sg.org' } },
+  sg: { covers: 'Preferential tariffs on goods between the GCC and Singapore, with provisions on services and investment.', why: 'A corridor for Asian re-export and for services businesses operating between the two hubs.', conditions: 'Product-specific rules of origin and service schedules under the agreement.', notGuaranteed: 'It does not extend to ASEAN as a whole.', verify: { label: 'GCC Secretariat', href: 'https://www.gcc-sg.org' } },
+  wto: { covers: 'Most-favoured-nation treatment and the multilateral trade rules of the World Trade Organization, of which Saudi Arabia has been a member since 2005.', why: 'Predictable tariff and dispute rules with every market on this page.', conditions: 'Bound tariff schedules and commitments as notified.', notGuaranteed: 'It does not provide preferential access; that comes from the agreements above.', verify: { label: 'WTO member page', href: 'https://www.wto.org' } },
+};
+
+/* Section 09: the kind of Saudi presence each public announcement describes. Only "Regional headquarters" where the announcement says so. */
+export type Presence = 'Regional headquarters' | 'Manufacturing operations' | 'Distribution operations' | 'Service centre' | 'Investment project' | 'Commercial presence';
+export const PRESENCE: Record<string, Presence> = {
+  c1: 'Regional headquarters', c2: 'Regional headquarters', c3: 'Regional headquarters', c4: 'Regional headquarters', c5: 'Regional headquarters', c6: 'Regional headquarters',
+  c7: 'Manufacturing operations', c8: 'Manufacturing operations', c9: 'Manufacturing operations', c10: 'Manufacturing operations', c11: 'Distribution operations', c12: 'Distribution operations',
+  c13: 'Investment project', c14: 'Investment project', c15: 'Manufacturing operations', c16: 'Service centre',
+};
+
+/* Section 07: why Saudi Arabia can be the regional base for each sector, one sentence each. Editorial, owner Sector Team; detail stays on the sector microsite. */
+export const SECTOR_BASE: Record<string, string> = {
+  'Advanced Manufacturing': 'Domestic production for the largest regional market, industrial cities and zones on both coasts, and duty-free routes to the GCC and Arab markets under rules of origin.',
+  Chemicals: 'Feedstock, Jubail and Yanbu, and the region’s largest downstream base for specialty conversion serving Asia, Africa and Europe.',
+  Energy: 'The largest renewable and grid project pipeline in the region, and green hydrogen for export, supplied from a Saudi base.',
+  'Financial Services': 'The deepest capital market in the region and a regulated hub for regional corporate banking, asset management and fintech licensed from Riyadh.',
+  'Food and Agriculture': 'Processing, cold chain and halal certification reaching the Gulf by road within a day and the Red Sea markets by sea.',
+  'Healthcare and Life Sciences': 'Local manufacturing with SFDA registration, mutual recognition across the GCC, and the region’s largest healthcare demand.',
+  ICT: 'Hyperscale cloud regions, subsea landings on both coasts, a data-residency framework and the Cloud Computing SEZ for regional digital operations.',
+  Logistics: 'Two coastlines, the Land Bridge in delivery, bonded zones at the Riyadh airport and 59 planned logistics zones for regional distribution.',
+  'Mining and Metals': 'The Arabian Shield, Ras Al-Khair industrial port and downstream metals capacity serving regional construction and energy demand.',
+  'Real Estate': 'Giga-projects and housing programmes at a scale that supports regional design, construction and property-services operations.',
+  Tourism: 'Giga-destinations and global events that make Saudi Arabia the regional base for hospitality management, travel technology and events services.',
+};
+
+/* Section 08: the three capital layers and what each means for a business establishing regional operations. */
+export const CAPITAL_LAYERS: { title: string; icon: string; what: string; means: string; fig?: Figure; href: string }[] = [
+  { title: 'Capital markets', icon: 'bar-chart-square-02', what: 'The Saudi Exchange, sukuk and bond markets, and the advisers and banks that serve them.', means: 'A regional company can list, issue and refinance here; depth matters for exits and for partners’ confidence. Listing is subject to CMA rules and eligibility.', fig: CAPITAL_FIGURES[0], href: '/opportunities' },
+  { title: 'Institutional and private capital', icon: 'coins-stacked-01', what: 'The Public Investment Fund and its portfolio companies, regional funds and the venture and private-equity arms based in Riyadh.', means: 'Supplier and partner relationships with sovereign-backed programmes, and co-investment for qualifying projects. Not a source of automatic funding for every entrant.', fig: CAPITAL_FIGURES[2], href: '#companies' },
+  { title: 'Business financing', icon: 'bank', what: 'Commercial banks, the Saudi Industrial Development Fund, export credit and programme-specific finance.', means: 'Working capital and project finance for an operating business, on the lender’s terms; SIDF industrial loans are available to licensed factories that qualify.', href: '/how-to-invest/incentives' },
+];

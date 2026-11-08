@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useDS } from '@/lib/ds';
+import { publishContext, restoreContext } from '@/lib/copilot-context';
 import type { HubContext } from './shared';
 import { HeroBand } from './HeroBand';
 import { CaseBuilderPanel } from './CaseBuilder';
@@ -35,6 +36,9 @@ export function RegionalHubPage() {
   const [ctx, setCtx] = React.useState<HubContext>({ industry: null, markets: [], route: null });
   const [cookies, setCookies] = React.useState(false);
   const [caseOpen, setCaseOpen] = React.useState(false);
+  const [section, setSection] = React.useState<string | null>(null);
+  React.useEffect(() => { const r = restoreContext(); if (r && (r.industry || r.route || r.markets.length)) setCtx({ industry: r.industry ?? null, route: r.route ?? null, markets: r.markets ?? [] }); }, []);
+  React.useEffect(() => { publishContext({ industry: ctx.industry, route: ctx.route, markets: ctx.markets, section, topic: null }); }, [ctx, section]);
 
   React.useEffect(() => {
     try {
@@ -63,8 +67,8 @@ export function RegionalHubPage() {
       <DS.Header links={NAV as never} homeHref="/" />
       <main>
         {/* Light and dark alternate band by band so each stage reads as its own chapter. */}
-        <HeroBand DS={DS} onBuildCase={() => setCaseOpen(true)} />
-        <SectionNav DS={DS} />
+        <HeroBand DS={DS} ctx={ctx} onChange={setCtx} onBuildCase={() => setCaseOpen(true)} />
+        <SectionNav DS={DS} onActive={setSection} />
         <div data-theme="light" className="rh-theme-light"><ReachBand DS={DS} ctx={ctx} /></div>
         <ConnectivityBand DS={DS} ctx={ctx} onChange={setCtx} />
         <div data-theme="light" className="rh-theme-light"><MarketAccessBand DS={DS} ctx={ctx} /></div>

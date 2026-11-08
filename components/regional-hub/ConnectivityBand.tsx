@@ -123,21 +123,21 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
   const crossings = LAND_PORTS.map((b) => ({ ...b, km: Math.round(greatCircleKm(riyadh, b)) }));
   type Crossing = (typeof crossings)[number];
 
-  const STEP_META: Record<Step, { label: string; title: string }> = {
-    air: { label: 'Air', title: 'Half the world within an eight-hour flight' },
-    sea: { label: 'Sea', title: 'Two coastlines, two trade systems' },
-    ground: { label: 'Land', title: 'The GCC by road within a day' },
-    corridors: { label: 'Freight corridors', title: 'Gulf to Red Sea by rail, bypassing the Strait of Hormuz' },
-    digital: { label: 'Digital', title: 'Landings on both coasts, cloud in the middle' },
-    integrated: { label: 'Integrated network', title: 'How it joins up inside Saudi Arabia' },
+  const STEP_META: Record<Step, { label: string; title: string; message: string }> = {
+    air: { label: 'Air', title: 'Half the world within an eight-hour flight', message: 'Executives reach every GCC capital in under two hours and most of the region within four, from three international airports; a fourth is in construction.' },
+    sea: { label: 'Sea', title: 'Two coastlines, two trade systems', message: 'Red Sea ports face Suez, Europe and Africa; Arabian Gulf ports face the GCC and Asia. A plant can import feedstock on one coast and export on the other.' },
+    ground: { label: 'Land', title: 'The GCC by road within a day', message: 'Trucks reach Kuwait, Bahrain, Qatar, the UAE and Jordan from Riyadh or Dammam within a day, inside the customs union for GCC-origin goods.' },
+    corridors: { label: 'Rail', title: 'Gulf to Red Sea by rail', message: 'Operating rail links Riyadh with Dammam and the north; the Land Bridge to Jeddah is in delivery, phased before 2034, joining the two coasts without the sea passage around the peninsula.' },
+    digital: { label: 'Digital', title: 'Landings on both coasts, cloud in the middle', message: 'Subsea landings at Jeddah, Yanbu and Al Khobar, national fibre, hyperscale cloud regions and the Cloud Computing SEZ for regional digital operations under data-residency rules.' },
+    integrated: { label: 'Integrated network', title: 'How it joins up inside Saudi Arabia', message: 'A factory in Jubail ships by rail to Riyadh, by road to the GCC, and by sea from either coast: the modes reinforce one another from one base.' },
   };
   const legendFor = (k: Step) =>
-    k === 'integrated' ? 'Roads in brand, operating rail dashed, planned rail dotted, ports (blue) and airports (orange) as points, border crossings as diamonds labelled with the neighbour they lead to. Hover any point for its name.'
-    : k === 'air' ? 'Arcs from Riyadh to each selected market with estimated flight time (great-circle distance at about 850 km/h plus 30 minutes). Pulsing rings are the published 4-hour and 8-hour flight reach.'
+    k === 'integrated' ? 'Roads in brand, operating rail solid blue, planned rail dotted, ports (blue) and airports (orange) as points, border crossings as diamonds labelled with the neighbour they lead to. Hover any point for its name.'
+    : k === 'air' ? 'Arcs show geographic reach from Riyadh with estimated flight time (great-circle distance at about 850 km/h plus 30 minutes); they are not a schedule and do not confirm a direct commercial service. Rings are the published 4-hour and 8-hour reach. King Salman International Airport is planned, not operating.'
     : k === 'sea' ? 'Red Sea ports serve Africa, Europe and the Levant; Arabian Gulf ports serve the GCC and Asia. Transit days per port pair are not yet published, so no time is shown.'
-    : k === 'corridors' ? 'Operating rail dashed, the planned Land Bridge dotted. Ships mark the sea legs the corridor joins: Asia into Dammam and Jubail, the Red Sea out to Suez, Europe and East Africa. Alignments are schematic until Saudi Arabia Railways publishes them.'
+    : k === 'corridors' ? 'Solid lines are operating rail; dotted lines are planned or in delivery. Ships mark the sea legs the corridor joins: Asia into Dammam and Jubail, the Red Sea out to Suez, Europe and East Africa. Alignments are schematic until Saudi Arabia Railways publishes them.'
     : k === 'digital' ? 'Subsea landing cities on both coasts (blue), cloud and data-centre locations (orange). No cable routes are drawn: cable names, capacities and provider region status come from CST and the providers before they appear here.'
-    : 'Road corridors to the GCC, Jordan and Iraq from Riyadh with estimated drive time (road distance taken as 1.25 times great-circle at 80 km/h).';
+    : 'Road corridors to the GCC, Jordan and Iraq from Riyadh with estimated drive time (road distance taken as 1.25 times great-circle at 80 km/h). Freight delivery time adds customs and handling and is quoted by carriers.';
   const linksFor = (k: Step) =>
     k === 'air' ? [{ label: 'Riyadh logistics zone', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Corporate base route', href: '#routes', icon: 'building-07' }, { label: 'Logistics sector', href: '/sectors/logistics', icon: 'briefcase-01' }]
     : k === 'sea' ? [{ label: 'Zones beside ports', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Export route', href: '#routes', icon: 'tool-02' }, { label: 'Shared frameworks', href: '#market-access', icon: 'globe-01' }]
@@ -219,6 +219,13 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                 onChange={(v: string) => setLayer(v as Layer)}
               />
             )}
+            {!focused && mode === 'corridors' && (
+              <ul className="rh-legend" aria-label="Map legend">
+                <li><span className="rh-legend-line rh-legend-line--rail" /> Rail, operating</li>
+                <li><span className="rh-legend-line rh-legend-line--rail-planned" /> Rail, planned or in delivery</li>
+                <li><span className="rh-legend-mark rh-legend-mark--port"><DS.Icon name="anchor" size={12} /></span> Seaport</li>
+              </ul>
+            )}
             {focused && (
               <ul className="rh-legend" aria-label="Map legend">
                 <li><span className="rh-legend-line rh-legend-line--road" /> Road corridor</li>
@@ -236,7 +243,8 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
               <div key={k} data-step={k} ref={(el) => { stepRefs.current[k] = el; }} className={step === k ? 'rh-step rh-step--on' : 'rh-step'}>
                 <span className="text-sm-semibold rh-eyebrow">{STEP_META[k].label}</span>
                 <h3 className="display-sm-semibold rh-h3">{STEP_META[k].title}</h3>
-                <p className="text-md-regular rh-muted rh-para">{legendFor(k)}</p>
+                <p className="text-md-regular rh-para">{STEP_META[k].message}</p>
+                {step === k && <p className="text-sm-regular rh-muted rh-para">{legendFor(k)}</p>}
                 {k === 'integrated' ? (
                   <>
                     <div className="rh-actions"><DS.Button hierarchy="link-gray" size="md" iconLeading={crossingsOpen ? 'chevron-up' : 'chevron-down'} onClick={() => setCrossingsOpen(!crossingsOpen)}>{crossingsOpen ? 'Hide border crossings' : `Border crossings (${crossings.length})`}</DS.Button></div>
@@ -256,7 +264,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                   </div>
                     )}
                   </>
-                ) : (
+                ) : step === k && (
                   <dl className="rh-statline">
                     {(k === 'digital' ? [...DIGITAL_FIGURES.slice(0, 2), ...COMPUTE_FIGURES.slice(0, 2)] : k === 'air' ? [REACH[0], REACH[1], ...AVIATION_FIGURES] : k === 'corridors' ? FREIGHT_FIGURES.filter((f) => f.status !== 'unavailable') : CONNECTIVITY_FIGURES).map((f) => (
                       <div key={f.label} className="rh-stat">
@@ -275,13 +283,13 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                     ))}
                   </div>
                 )}
-                <p className="text-xs-regular rh-tertiary rh-para">
+                {step === k && <p className="text-xs-regular rh-tertiary rh-para">
                   {k === 'integrated'
                     ? 'Roads and rail are drawn as straight corridors between known cities and border posts, not surveyed alignments; distances and drive times are great-circle estimates until MoT, SAR, Mawani, GACA and ZATCA records replace them.'
                     : k === 'air' ? 'Flight times are computed from distance, not schedules; the two rings are the published reach figures. GACA scheduled times per city pair replace the estimates once supplied. King Salman International Airport capacity and Riyadh Air operations are press-reported and confirmed against GACA and the airline.'
                     : k === 'corridors' ? 'Land Bridge delivery is the SAR statement of phased completion before 2034. Transit-time savings and port throughput are not shown until SAR and Mawani publish them; the 3 to 5 day saving in circulation is unverified.'
                     : k === 'digital' ? 'Hyperscaler commitments are press-reported (Arab News, September 2025) and confirmed against CST and each provider before the Data team marks them verified.' : ''}
-                </p>
+                </p>}
                 <Sideways DS={DS} items={linksFor(k)} />
                 {(rowsFor(k).length > 0 || k === 'digital') && (
                   <DS.Button hierarchy="link-gray" size="sm" iconLeading={details === k ? 'chevron-up' : 'chevron-down'} onClick={() => setDetails(details === k ? null : k)}>

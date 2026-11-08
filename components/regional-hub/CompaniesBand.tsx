@@ -2,9 +2,9 @@
 
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
-import { COMPANIES, ROUTES, type RouteId } from '@/data/regional-hub';
+import { COMPANIES, PRESENCE, ROUTES, type RouteId } from '@/data/regional-hub';
 import { Reveal, SourceLine, type HubContext } from './shared';
-import { FEATURE_PHOTO } from './imagery';
+import { FEATURE_PHOTO, industryPhoto } from './imagery';
 import { Logo } from './Logo';
 
 /**
@@ -18,7 +18,9 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   const [all, setAll] = React.useState(false);
   const routeTitle = (id: RouteId) => ROUTES.find((r) => r.id === id)?.title.replace(' (Regional Headquarters)', '') ?? id;
   const matches = (c: (typeof COMPANIES)[number]) => (!ctx.route || c.route === ctx.route) && (!ctx.industry || c.industry === ctx.industry);
-  const story = COMPANIES.find((c) => c.story && matches(c)) ?? COMPANIES.find((c) => c.story && (!ctx.route || c.route === ctx.route)) ?? COMPANIES.find((c) => c.story)!;
+  const withStory = COMPANIES.filter((c) => c.story);
+  const stories = [...withStory.filter(matches), ...withStory.filter((c) => !matches(c))].slice(0, 3);
+  const story = stories[0];
   const mono = (n: string) => n.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase();
   const full = COMPANIES.filter((c) => filter === 'all' || c.route === filter);
   const list = all ? full : full.slice(0, 8);
@@ -31,20 +33,21 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
           <span className="text-sm-semibold rh-eyebrow">09 · Who already does this</span>
           <h2 id="rh-companies" className="display-md-semibold rh-h2">{COMPANIES.length} companies running the region from here</h2>
         </Reveal>
-        <figure className="rh-statement rh-statement--split">
-          <img src={FEATURE_PHOTO.src} alt={FEATURE_PHOTO.alt} loading="lazy" />
-          <figcaption>
-            <span className="text-xs-semibold rh-eyebrow">{routeTitle(story.route)} · {story.industry}</span>
-            <span className="rh-statement-logo"><Logo name={story.name} mono={mono(story.name)} size={44} /></span>
-            <span className="display-sm-semibold">{story.name}</span>
-            <span className="text-lg-regular">{story.story} Based in {story.base}.</span>
-            <SourceLine DS={DS} p={story} />
-            <span className="rh-actions">
-              <DS.Button hierarchy="primary" size="md" onClick={() => setDetail(story)} iconTrailing="arrow-right">Open the record</DS.Button>
-              <DS.Button hierarchy="link-color" size="md" href="/why-saudi/success-stories" iconTrailing="arrow-right">All success stories</DS.Button>
-            </span>
-          </figcaption>
-        </figure>
+        <div className="rh-stories">
+          {stories.map((c, i) => (
+            <figure key={c.id} className={i === 0 ? 'rh-story rh-story--lead' : 'rh-story'}>
+              <img src={i === 0 ? FEATURE_PHOTO.src : industryPhoto(c.industry).src} alt="" aria-hidden="true" loading="lazy" />
+              <figcaption>
+                <span className="rh-story-logo"><Logo name={c.name} mono={mono(c.name)} size={40} /></span>
+                <span className="text-xs-semibold rh-eyebrow">{PRESENCE[c.id] ?? 'Commercial presence'} · {c.industry}</span>
+                <span className={i === 0 ? 'display-sm-semibold' : 'text-xl-semibold'}>{c.name}</span>
+                <span className="rh-story-chain text-sm-regular">{c.base} → {routeTitle(c.route)} → {c.story}</span>
+                <SourceLine DS={DS} p={c} />
+                <span className="rh-actions"><DS.Button hierarchy={i === 0 ? 'primary' : 'link-color'} size="md" onClick={() => setDetail(c)} iconTrailing="arrow-right">Open the record</DS.Button></span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
         <div className="rh-chips">
           <DS.Chip size="md" selected={filter === 'all'} onClick={() => setFilter('all')}>All · {COMPANIES.length}</DS.Chip>
           {counts.map((c) => <DS.Chip key={c.id} size="md" selected={filter === c.id} onClick={() => setFilter(c.id)}>{c.title} · {c.n}</DS.Chip>)}
@@ -54,17 +57,17 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             <button key={c.id} type="button" role="listitem" className={matches(c) ? 'rh-wall-tile' : 'rh-wall-tile rh-wall-tile--dim'} onClick={() => setDetail(c)}>
               <Logo name={c.name} mono={mono(c.name)} />
               <span className="text-md-semibold rh-wall-name">{c.name}</span>
-              <span className="text-xs-regular rh-muted">{c.industry}</span>
+              <span className="text-xs-regular rh-muted">{PRESENCE[c.id] ?? 'Commercial presence'} · {c.industry}</span>
             </button>
           ))}
         </div>
         {full.length > 8 && (
           <div className="rh-actions"><DS.Button hierarchy="link-gray" size="md" iconLeading={all ? 'chevron-up' : 'chevron-down'} onClick={() => setAll(!all)}>{all ? 'Show fewer' : `Show all ${full.length}`}</DS.Button></div>
         )}
-        <p className="text-xs-regular rh-tertiary rh-para">Names from public announcements. Marks are loaded from public sources for this prototype and are each company&rsquo;s trademark; production use needs the company&rsquo;s consent and the brand team&rsquo;s files. Tiles outside your current case are dimmed, not hidden.</p>
+        <p className="text-xs-regular rh-tertiary rh-para">Presence type (regional headquarters, manufacturing, distribution, service centre, investment project) is as stated in each public announcement; no outcome figures are shown until the company confirms them. Names from public announcements. Marks are loaded from public sources for this prototype and are each company&rsquo;s trademark; production use needs the company&rsquo;s consent and the brand team&rsquo;s files. Tiles outside your current case are dimmed, not hidden.</p>
       </div>
       {detail && (
-        <DS.SlideoutMenu title={detail.name} description={`${routeTitle(detail.route)} · ${detail.industry}`} open width={480} onClose={() => setDetail(null)} actions={<DS.Button hierarchy="secondary-gray" size="md" onClick={() => setDetail(null)}>Close</DS.Button>}>
+        <DS.SlideoutMenu title={detail.name} description={`${PRESENCE[detail.id] ?? 'Commercial presence'} · ${detail.industry}`} open width={480} onClose={() => setDetail(null)} actions={<DS.Button hierarchy="secondary-gray" size="md" onClick={() => setDetail(null)}>Close</DS.Button>}>
           <div className="rh-stack" style={{ gap: 'var(--spacing-xl)' }}>
             <p className="text-md-regular rh-para"><span className="rh-strong">Saudi base.</span> {detail.base}.</p>
             {detail.story && <p className="text-md-regular rh-para"><span className="rh-strong">What they do from here.</span> {detail.story}</p>}
