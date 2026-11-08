@@ -690,3 +690,13 @@
 .rh-step .rh-h3 { font-size: 24px; line-height: 32px; }
 .rh-step .rh-relevance { gap: var(--spacing-md); }
 .rh-step .rh-relevance p { font-size: 14px; line-height: 20px; }
+
+/* 03 One region: framework cards and tax agreements. */
+.rh-frameworks { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--spacing-lg); }
+@media (max-width: 1279px) { .rh-frameworks { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 767px) { .rh-frameworks { grid-template-columns: minmax(0, 1fr); } }
+.rh-framework { display: flex; flex-direction: column; gap: var(--spacing-sm); padding: var(--spacing-2xl); border: 1px solid var(--border-secondary); border-radius: var(--radius-lg); background: var(--rh-card); }
+.rh-theme-light .rh-framework { background: var(--bg-primary); box-shadow: var(--shadow-xs); }
+.rh-framework--yours { border-color: var(--utility-brand-300); box-shadow: 0 0 0 1px var(--utility-brand-300), var(--shadow-sm); }
+.rh-framework .rh-foot { margin-top: auto; }
+.rh-treaty { display: flex; flex-direction: column; gap: var(--spacing-xl); padding: var(--spacing-3xl); border-radius: var(--radius-lg); background: linear-gradient(135deg, var(--utility-brand-50) 0%, transparent 70%); border: 1px solid var(--border-secondary); }

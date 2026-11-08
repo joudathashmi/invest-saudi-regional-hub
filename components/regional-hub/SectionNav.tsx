@@ -11,7 +11,7 @@ import type { DS } from '@/lib/ds';
 const ITEMS = [
   { id: 'reach', label: 'Understand' },
   { id: 'connectivity', label: 'Connections' },
-  { id: 'market-access', label: 'Market access' },
+  { id: 'market-access', label: 'One region' },
   { id: 'platforms', label: 'Locations' },
   { id: 'routes', label: 'Routes' },
   { id: 'talent', label: 'Talent' },
