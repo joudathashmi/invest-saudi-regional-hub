@@ -32,7 +32,7 @@ export function SourceLine({ DS, p, badge = false }: { DS: DS; p: Provenance; ba
   const period = /live site|as published|as shown|to confirm|pending|schematic|estimate|approximate|announced|in force since|reported|status|no treaty/i.test(p.period) ? '' : `, ${p.period}`;
   return (
     <span className="rh-foot text-xs-regular">
-      <span>Source: {cited}{period}</span>
+      <span className="rh-foot-text">Source: {cited}{period}</span>
       <DS.HelpIcon title={`${p.status[0].toUpperCase()}${p.status.slice(1)}`} description={`${p.source}. Period: ${p.period}. ${p.updated}. Owner: ${p.owner}.`} />
     </span>
   );
@@ -101,4 +101,15 @@ export function CountUp({ value, run = true, ms = 1100 }: { value: string; run?:
   if (!m || Number.isNaN(target)) return <>{value}</>;
   const shown = (run ? n : target).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
   return <>{m[1]}{shown}{m[3]}</>;
+}
+
+/** One disclosure per section: everything that is not the section's single idea lives inside it. */
+export function Details({ DS, children, label = 'Details and sources' }: { DS: DS; children: React.ReactNode; label?: string }) {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div className="rh-details">
+      <DS.Button hierarchy="link-gray" size="md" iconLeading={open ? 'chevron-up' : 'chevron-down'} onClick={() => setOpen(!open)} aria-expanded={open}>{open ? 'Hide details' : label}</DS.Button>
+      {open && <div className="rh-details-body rh-stack">{children}</div>}
+    </div>
+  );
 }

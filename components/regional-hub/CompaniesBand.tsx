@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { COMPANIES, PRESENCE, ROUTES, type RouteId } from '@/data/regional-hub';
-import { Reveal, SourceLine, type HubContext } from './shared';
+import { Details, Reveal, SourceLine, type HubContext } from './shared';
 import { FEATURE_PHOTO, industryPhoto } from './imagery';
 import { Logo } from './Logo';
 
@@ -23,7 +23,7 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   const story = stories[0];
   const mono = (n: string) => n.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase();
   const full = COMPANIES.filter((c) => filter === 'all' || c.route === filter);
-  const list = all ? full : full.slice(0, 8);
+  const list = all ? full : full.slice(0, 16);
   const counts = ROUTES.map((r) => ({ id: r.id, title: routeTitle(r.id), n: COMPANIES.filter((c) => c.route === r.id).length })).filter((x) => x.n > 0);
 
   return (
@@ -48,6 +48,7 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             </figure>
           ))}
         </div>
+        <Details DS={DS} label={`All ${COMPANIES.length} companies`}>
         <div className="rh-chips">
           <DS.Chip size="md" selected={filter === 'all'} onClick={() => setFilter('all')}>All · {COMPANIES.length}</DS.Chip>
           {counts.map((c) => <DS.Chip key={c.id} size="md" selected={filter === c.id} onClick={() => setFilter(c.id)}>{c.title} · {c.n}</DS.Chip>)}
@@ -64,6 +65,7 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
         {full.length > 8 && (
           <div className="rh-actions"><DS.Button hierarchy="link-gray" size="md" iconLeading={all ? 'chevron-up' : 'chevron-down'} onClick={() => setAll(!all)}>{all ? 'Show fewer' : `Show all ${full.length}`}</DS.Button></div>
         )}
+        </Details>
         <p className="text-xs-regular rh-tertiary rh-para">Presence type (regional headquarters, manufacturing, distribution, service centre, investment project) is as stated in each public announcement; no outcome figures are shown until the company confirms them. Names from public announcements. Marks are loaded from public sources for this prototype and are each company&rsquo;s trademark; production use needs the company&rsquo;s consent and the brand team&rsquo;s files. Tiles outside your current case are dimmed, not hidden.</p>
       </div>
       {detail && (

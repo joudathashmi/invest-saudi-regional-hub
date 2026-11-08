@@ -2,7 +2,7 @@
 
 import type { DS } from '@/lib/ds';
 import { LIVING_PROJECTS, SOFT_POWER, TALENT_FIGURES, TALENT_LIVING } from '@/data/regional-hub';
-import { Reveal, Sideways, SourceLine } from './shared';
+import { Details, Reveal, Sideways, SourceLine } from './shared';
 
 /**
  * Explore, continued. Talent and living: who staffs the hub and why they
@@ -19,7 +19,7 @@ export function TalentBand({ DS }: { DS: DS }) {
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">06 · Talent and living</span>
           <h2 id="rh-talent" className="display-md-semibold rh-h2">Build your regional business. Attract the people to run it.</h2>
-          <p className="text-lg-regular rh-muted rh-para">Five things decide whether a regional team can be built here: who is available, how they are developed, how they are hired and moved, how executives relocate, and how they live. Workforce figures are national; sector-specific talent evidence sits on each sector page.</p>
+          <p className="text-lg-regular rh-muted rh-para">A young national workforce, residency routes for senior hires, and cities people choose to live in.</p>
         </Reveal>
         <dl className="rh-factlist rh-factlist--3">
           {tiles.map((f) => (
@@ -29,6 +29,7 @@ export function TalentBand({ DS }: { DS: DS }) {
             </div>
           ))}
         </dl>
+        <Details DS={DS} label="How talent is built, hired and relocated">
         <ol className="rh-five">
           <li><span className="rh-five-n">1</span><span className="rh-five-t text-md-semibold">Talent availability</span><span className="text-sm-regular rh-muted">A young national workforce, 70% under 35, with rising participation; figures are national and published by GASTAT.</span></li>
           <li><span className="rh-five-n">2</span><span className="rh-five-t text-md-semibold">Talent development</span><span className="text-sm-regular rh-muted">National academies and sector programmes (digital, tourism, industrial) train for the roles regional operations need; detail on the <a className="rh-inline-link" href="/how-to-invest/talent">talent programmes page</a>.</span></li>
@@ -53,6 +54,7 @@ export function TalentBand({ DS }: { DS: DS }) {
             </ul>
           </div>
         </div>
+        </Details>
         <div className="rh-soft">
           {soft.map((f, i) => (
             <figure key={f.label} className="rh-soft-tile">
@@ -65,8 +67,7 @@ export function TalentBand({ DS }: { DS: DS }) {
             </figure>
           ))}
         </div>
-        <p className="text-xs-regular rh-tertiary rh-para">Tourism arrivals and spend appear here once the Ministry of Tourism figures are confirmed by the Content team. Photography from the Invest Saudi homepage library.</p>
-        <Sideways DS={DS} items={[{ label: 'Talent and relocation support', href: '/how-to-invest/talent', icon: 'users-01' }, { label: 'Corporate base route', href: '#routes', icon: 'building-07' }, { label: 'Regions and cities', href: '/regions', icon: 'globe-01' }]} />
+        <div className="rh-actions"><DS.Button hierarchy="secondary-gray" size="md" href="/how-to-invest/talent" iconTrailing="arrow-right">Talent and relocation support</DS.Button></div>
       </div>
     </section>
   );

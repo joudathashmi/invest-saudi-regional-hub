@@ -3,7 +3,7 @@
 import type { DS } from '@/lib/ds';
 import { GREEN_FIGURES, INDUSTRIES, INDUSTRY_REGION, MARKETS, SECTOR_BASE } from '@/data/regional-hub';
 import { contextQuery } from '@/lib/copilot-context';
-import { Reveal, SourceLine, marketNames, type HubContext } from './shared';
+import { Details, Reveal, SourceLine, marketNames, type HubContext } from './shared';
 import { industryPhoto } from './imagery';
 
 /**
@@ -46,9 +46,13 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
         {rec ? (
           <>
             <p className="rh-sector-base display-xs-semibold">{SECTOR_BASE[rec.industry]}</p>
+            <figure className="rh-ind-photo rh-ind-photo--wide"><img src={photo.src} alt={photo.alt} loading="lazy" /><figcaption className="text-xs-semibold rh-eyebrow">{rec.industry}</figcaption></figure>
+            <div className="rh-actions">
+              <DS.Button hierarchy="primary" size="md" href={`${rec.sectorHref}?${contextQuery(ctx)}`} iconTrailing="arrow-right">{rec.industry} sector page</DS.Button>
+            </div>
+            <Details DS={DS} label="The region, Saudi Arabia's position, figures and the green hub">
             <div className="rh-ind">
-              <figure className="rh-ind-photo"><img src={photo.src} alt={photo.alt} loading="lazy" /><figcaption className="text-xs-semibold rh-eyebrow">{rec.industry}</figcaption></figure>
-              <div className="rh-ind-panels">
+              <div className="rh-ind-panels" style={{ gridColumn: '1 / -1' }}>
                 {panels.map((p) => (
                   <div key={p.title} className="rh-ind-panel">
                     <DS.FeaturedIcon icon={p.icon} color="brand" size="md" />
@@ -75,15 +79,16 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
               <p className="text-xs-regular rh-tertiary rh-para">Regional demand by market appears once the sector team publishes it as part of the sector equity story.</p>
             )}
             <div className="rh-actions">
-              <DS.Button hierarchy="primary" size="md" href={`${rec.sectorHref}?${contextQuery(ctx)}`} iconTrailing="arrow-right">{rec.industry} sector page</DS.Button>
               <DS.Button hierarchy="secondary-gray" size="md" href={`/opportunities?${contextQuery(ctx, { sector: rec.industry })}`} iconLeading="coins-stacked-01">Opportunities</DS.Button>
               <DS.Button hierarchy="link-color" size="md" href="#companies" iconTrailing="arrow-right">Companies in this sector</DS.Button>
             </div>
+            </Details>
           </>
         ) : (
-          <figure className="rh-ind-photo rh-ind-photo--wide"><img src={photo.src} alt={photo.alt} loading="lazy" /><figcaption className="text-sm-medium">Eleven sectors. Choose one above.</figcaption></figure>
+          <figure className="rh-ind-photo rh-ind-photo--wide"><img src={photo.src} alt={photo.alt} loading="lazy" /><figcaption className="text-sm-medium">Choose a sector above.</figcaption></figure>
         )}
 
+        {!rec && <Details DS={DS} label="Industrial and green hub">
         <div className="rh-green">
           <div className="rh-editorial-lead">
             <span className="text-xs-semibold rh-eyebrow">Industrial and green hub</span>
@@ -108,6 +113,7 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
           </dl>
           <p className="text-xs-regular rh-tertiary rh-para">NEOM figures are design capacities reported by the developer; first ammonia deliveries are expected in early 2027. NIDLP localisation figures appear once the Sector team confirms the annual report. For a regional manufacturer the point is supply security: energy-intensive processes beside competitively priced, increasingly low-carbon inputs.</p>
         </div>
+        </Details>}
       </div>
     </section>
   );

@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { CAPITAL_FIGURES, CAPITAL_LAYERS } from '@/data/regional-hub';
-import { Reveal, SourceLine, type HubContext } from './shared';
+import { Details, Reveal, SourceLine, type HubContext } from './shared';
 
 /**
  * 08 Capital. One statement over the finance photograph with the anchor
@@ -41,6 +41,7 @@ export function CapitalBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             </React.Fragment>
           ))}
         </div>
+        <Details DS={DS} label="The three layers and what each means for you">
         <div className="rh-three">
           {CAPITAL_LAYERS.map((w) => (
             <a key={w.title} className="rh-three-card" href={w.href}>
@@ -58,6 +59,7 @@ export function CapitalBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             </a>
           ))}
         </div>
+        </Details>
         <p className="text-xs-regular rh-tertiary rh-para">Market depth is not the same as financing availability: each layer has its own eligibility, and a foreign investor&rsquo;s access to it is confirmed case by case. Share of regional venture deal value appears once MAGNiTT figures are confirmed; PIF assets are press-reported pending the annual report.</p>
       </div>
     </section>

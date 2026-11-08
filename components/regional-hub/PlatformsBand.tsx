@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { PLATFORMS, ROUTES, SEZ_INCENTIVES } from '@/data/regional-hub';
-import { Reveal, Sideways, SourceLine, type HubContext } from './shared';
+import { Details, Reveal, Sideways, SourceLine, type HubContext } from './shared';
 import { MiniMap } from './Globe';
 import { PLATFORM_PHOTOS } from './imagery';
 
@@ -40,10 +40,9 @@ export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">04 · Where you operate</span>
           <h2 id="rh-platforms" className="display-md-semibold rh-h2">Zones and cities built for regional business</h2>
-          <p className="text-lg-regular rh-muted rh-para">Special economic zones on both coasts and in the cloud, a bonded logistics zone at the Riyadh airport, and industrial cities nationwide. Open any location for what it permits and how it connects.</p>
+          <p className="text-lg-regular rh-muted rh-para">Zones on both coasts, a bonded logistics zone at the Riyadh airport, and industrial cities nationwide. Open any location.</p>
         </Reveal>
-        <DS.Tabs type="button-gray" items={[{ label: 'Explore', value: 'visual' }, { label: 'Compare', value: 'compare' }]} value={mode} onChange={(v: string) => setMode(v as 'visual' | 'compare')} />
-        {mode === 'compare' && n > 0 && (
+        {n > 0 && mode === 'compare' && (
           <div className="rh-table-wrap">
             <DS.Table
               striped
@@ -60,7 +59,7 @@ export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             />
           </div>
         )}
-        {mode === 'compare' ? null : n === 0 ? (
+        {n === 0 ? (
           <DS.EmptyState icon="marker-pin-01" title="No platform is listed for this route yet" description="The zone authorities have not published a platform record for the selected route." />
         ) : (
           <div className="rh-mosaic" role="list">
@@ -76,6 +75,8 @@ export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             ))}
           </div>
         )}
+        <Details DS={DS} label="Compare locations, incentives and sources">
+        <div className="rh-actions"><DS.Button hierarchy="link-gray" size="md" onClick={() => setMode(mode === 'compare' ? 'visual' : 'compare')} iconLeading="scale-01">{mode === 'compare' ? 'Hide comparison table' : 'Comparison table'}</DS.Button></div>
         <div className="rh-includes">
           <span className="text-xs-semibold rh-eyebrow">The four ECZA special economic zones share this package; ILBZ and industrial cities have their own</span>
           <dl className="rh-includes-grid">
@@ -85,10 +86,9 @@ export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
           </dl>
           <span className="text-xs-regular rh-tertiary">*Qualifying activities; economic-substance rules apply. Shown as potentially applicable, confirmed by the zone authority. Sources: ECZA, ZATCA, investsaudi.sa.</span>
         </div>
+        </Details>
         <div className="rh-actions">
-          <DS.Button hierarchy="primary" size="md" href="/regions" iconTrailing="arrow-right">Explore the zones</DS.Button>
-          <DS.Button hierarchy="secondary-gray" size="md" href="/how-to-invest/incentives">Check zone eligibility</DS.Button>
-          <DS.Button hierarchy="link-color" size="md" href="/opportunities" iconTrailing="arrow-right">Opportunities by location</DS.Button>
+          <DS.Button hierarchy="secondary-gray" size="md" href="/regions" iconTrailing="arrow-right">All regions and cities</DS.Button>
         </div>
       </div>
       {detail && (

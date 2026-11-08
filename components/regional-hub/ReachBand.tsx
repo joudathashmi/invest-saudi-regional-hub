@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { THESIS } from '@/data/regional-hub';
-import { CountUp, Reveal, SourceLine, marketNames, type HubContext } from './shared';
+import { CountUp, Details, Reveal, SourceLine, marketNames, type HubContext } from './shared';
 
 /**
  * 01 Understand. Five arguments as a thesis: Evidence, Commercial
@@ -59,7 +59,7 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">01 · Why Saudi</span>
           <h2 id="rh-reach" className="display-md-semibold rh-h2">An anchor market before it is a hub</h2>
-          <p className="text-lg-regular rh-muted rh-para">Five reasons the base matters before the reach does, for a business serving {marketNames(ctx.markets)}. Each is evidence, what it means commercially, and where to look next.</p>
+          <p className="text-lg-regular rh-muted rh-para">Five reasons the base matters before the reach does, for a business serving {marketNames(ctx.markets)}.</p>
         </Reveal>
         <div className="rh-reasons-track" ref={track}>
           <div className="rh-reasons rh-reasons--scroll" ref={ref}>
@@ -77,16 +77,16 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
               ))}
             </ul>
             <div className="rh-reason-card" role="tabpanel" key={i}>
-              <img className="rh-reason-photo" src={r.photo} alt="" aria-hidden="true" loading="lazy" />
               <div className="rh-reason-in">
                 <span className="rh-reason-dots" aria-hidden="true">{THESIS.map((_, k) => <span key={k} className={k === i ? 'rh-on' : ''} />)}</span>
                 <span className="display-lg-semibold rh-bignum" aria-label={r.fig.value}><CountUp value={r.fig.value} run={seen && !reduced} /></span>
                 <h3 className="display-xs-semibold rh-h3">{r.title}</h3>
-                <dl className="rh-thesis">
-                  <div><dt className="text-xs-semibold rh-eyebrow">Evidence</dt><dd className="text-md-regular">{r.evidence}</dd></div>
-                  <div><dt className="text-xs-semibold rh-eyebrow">Commercial implication</dt><dd className="text-md-regular">{r.implication}</dd></div>
-                  <div><dt className="text-xs-semibold rh-eyebrow">For you</dt><dd className="text-md-regular">{r.relevance} <a className="rh-inline-link text-md-semibold" href={r.href}>{r.hrefLabel} →</a></dd></div>
-                </dl>
+                <p className="text-lg-regular rh-para">{r.implication}</p>
+                <a className="rh-inline-link text-md-semibold" href={r.href}>{r.hrefLabel} →</a>
+                <Details DS={DS} label="Evidence and source">
+                  <p className="text-md-regular rh-muted rh-para">{r.evidence}</p>
+                  <p className="text-md-regular rh-muted rh-para">{r.relevance}</p>
+                </Details>
                 <SourceLine DS={DS} p={r.fig} />
               </div>
             </div>

@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { AGREEMENTS, FRAMEWORK_DETAIL, LEGAL_FOUNDATION, MARKETS, TREATIES, type Agreement } from '@/data/regional-hub';
-import { Reveal, SourceLine, type HubContext } from './shared';
+import { Details, Reveal, SourceLine, type HubContext } from './shared';
 
 /**
  * 03 One region, shared frameworks. Told as partnership, not conquest: the
@@ -31,21 +31,20 @@ export function MarketAccessBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">03 · One region</span>
           <h2 id="rh-access" className="display-md-semibold rh-h2">One region, shared frameworks</h2>
-          <p className="text-lg-regular rh-muted rh-para">Saudi Arabia is part of an integrated regional economy. The customs union with its Gulf neighbours, the Arab free trade area, the GCC&rsquo;s agreements with partners beyond the region and a growing network of tax treaties mean a business based here operates across the region under frameworks built together.</p>
+          <p className="text-lg-regular rh-muted rh-para">A business based here operates across the region under frameworks built together: the Gulf customs union, the Arab free trade area, the GCC&rsquo;s agreements beyond the region, and a network of tax treaties. Open any framework for what it covers and what it does not.</p>
         </Reveal>
 
         <div className="rh-frameworks">
           {AGREEMENTS.map((a) => (
             <button key={a.id} type="button" className={yours(a) ? 'rh-framework rh-framework--yours' : 'rh-framework'} onClick={() => setOpenFw(a)} aria-haspopup="dialog">
               <DS.FeaturedIcon icon={ICONS[a.id] ?? 'globe-01'} color="brand" size="md" />
-              <span className="text-md-semibold rh-strong">{a.name.replace(' (GAFTA)', '')}</span>
-              <span className="text-sm-regular rh-muted">{FRAMEWORK_DETAIL[a.id]?.why ?? a.summary}</span>
-              {partnersOf(a) && <span className="text-xs-regular rh-tertiary"><span className="rh-strong">Together with:</span> {partnersOf(a)}</span>}
-              <span className="text-xs-semibold rh-framework-more">What it covers, conditions, limits →</span>
+              <span className="text-md-semibold rh-strong">{a.name.replace(' (GAFTA)', '').replace('GCC and ', '')}</span>
+              <span className="text-xs-regular rh-tertiary">{partnersOf(a) ? partnersOf(a).split(', ').length > 3 ? `${partnersOf(a).split(', ').length} partners` : partnersOf(a) : 'Global'}</span>
             </button>
           ))}
         </div>
 
+        <Details DS={DS} label="Tax agreements, legal foundation and sources">
         <div className="rh-treaty">
           <div className="rh-editorial-lead">
             <span className="text-xs-semibold rh-eyebrow">Tax agreements</span>
@@ -74,8 +73,7 @@ export function MarketAccessBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
         </div>
 
         <div className="rh-actions">
-          <DS.Button hierarchy="link-gray" size="md" iconLeading={detail ? 'chevron-up' : 'chevron-down'} onClick={() => setDetail(!detail)}>{detail ? 'Hide agreement details' : 'Open agreement details'}</DS.Button>
-          <DS.Button hierarchy="link-color" size="md" href="/contact/advisor?page=regional-hub&topic=market-access" iconTrailing="arrow-right">Ask an advisor about your markets</DS.Button>
+          <DS.Button hierarchy="link-gray" size="md" iconLeading={detail ? 'chevron-up' : 'chevron-down'} onClick={() => setDetail(!detail)}>{detail ? 'Hide agreement table' : 'Agreement table'}</DS.Button>
         </div>
         {detail && (
           <div className="rh-table-wrap">
@@ -105,6 +103,8 @@ export function MarketAccessBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
           </DS.SlideoutMenu>
         ); })()}
         <p className="text-xs-regular rh-tertiary rh-para">Rules of origin decide whether goods made in Saudi Arabia qualify under each framework, and each market&rsquo;s regulator licenses activities within it; both are confirmed per case with an advisor.</p>
+        </Details>
+        <div className="rh-actions"><DS.Button hierarchy="secondary-gray" size="md" href="/contact/advisor?page=regional-hub&topic=market-access" iconTrailing="arrow-right">Ask an advisor about your markets</DS.Button></div>
       </div>
     </section>
   );

@@ -4,7 +4,7 @@ import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { AVIATION_FIGURES, COMPUTE_FIGURES, FREIGHT_FIGURES, FREIGHT_RELEVANCE, REACH, PLATFORMS, CONNECTIVITY_FIGURES, CORRIDORS, DIGITAL_FIGURES, DIGITAL_NODES, HUB_CITIES, LAND_PORTS, MARKETS, MODE_RELEVANCE, NODES, REACH_RINGS, SAUDI_CITIES, TREATIES, type Node } from '@/data/regional-hub';
 import { Globe, greatCircleKm, type GlobeArc, type GlobeLine, type GlobePoint, type GlobeView } from './Globe';
-import { Reveal, Sideways, SourceLine, marketNames, type HubContext } from './shared';
+import { Details, Reveal, Sideways, SourceLine, marketNames, type HubContext } from './shared';
 
 type Mode = 'air' | 'sea' | 'ground' | 'corridors' | 'digital';
 type Layer = 'all' | 'road' | 'rail' | 'ports';
@@ -164,7 +164,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
         <Reveal className="rh-editorial-lead">
           <span className="text-sm-semibold rh-eyebrow">02 · Connections</span>
           <h2 id="rh-connect" className="display-md-semibold rh-h2">Connected by air, land, sea and digital links</h2>
-          <p className="text-lg-regular rh-muted rh-para">Scroll, and the globe changes with the story: how {marketNames(ctx.markets)} are reached from here, mode by mode, then how the network joins up inside Saudi Arabia. Hover any point for its detail; click a market to add it to your case. The shared frameworks that carry trade across the region follow.</p>
+          <p className="text-lg-regular rh-muted rh-para">Scroll, and the globe changes mode by mode. Hover any point for its detail; click a market to add it to your case.</p>
           <DS.Tabs
             type="button-border"
             items={STEPS.map((k) => ({ label: STEP_META[k].label, value: k }))}
@@ -205,7 +205,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                 }}
               />
             </div>
-            {!focused && mode === 'air' && (
+            {false && !focused && mode === 'air' && (
               <div className="rh-reach-panel">
                 {(['Within 4 hours', 'Within 8 hours', 'Beyond 8 hours'] as const).map((band) => {
                   const all = [...MARKETS.map((m) => ({ city: m.city, country: m.name, continent: m.group === 'South Asia and Türkiye' ? 'Asia' : m.group.includes('Africa') ? 'Africa' : 'Middle East', h: flightHours(greatCircleKm(riyadh, m)) })), ...CENTRES.map((c) => ({ city: c.city, country: c.country, continent: c.continent, h: flightHours(greatCircleKm(riyadh, c)) }))];
@@ -255,7 +255,8 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                 <span className="text-sm-semibold rh-eyebrow">{STEP_META[k].label}</span>
                 <h3 className="display-sm-semibold rh-h3">{STEP_META[k].title}</h3>
                 <p className="text-md-regular rh-para">{STEP_META[k].message}</p>
-                {step === k && <p className="text-sm-regular rh-muted rh-para">{legendFor(k)}</p>}
+                {step === k && <Details DS={DS}>
+                <p className="text-sm-regular rh-muted rh-para">{legendFor(k)}</p>
                 {k === 'integrated' ? (
                   <>
                     <div className="rh-actions"><DS.Button hierarchy="link-gray" size="md" iconLeading={crossingsOpen ? 'chevron-up' : 'chevron-down'} onClick={() => setCrossingsOpen(!crossingsOpen)}>{crossingsOpen ? 'Hide border crossings' : `Border crossings (${crossings.length})`}</DS.Button></div>
@@ -275,7 +276,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                   </div>
                     )}
                   </>
-                ) : step === k && (
+                ) : (
                   <dl className="rh-statline">
                     {(k === 'digital' ? [...DIGITAL_FIGURES.slice(0, 2), ...COMPUTE_FIGURES.slice(0, 2)] : k === 'air' ? [REACH[0], REACH[1], ...AVIATION_FIGURES] : k === 'corridors' ? FREIGHT_FIGURES.filter((f) => f.status !== 'unavailable') : CONNECTIVITY_FIGURES).map((f) => (
                       <div key={f.label} className="rh-stat">
@@ -285,7 +286,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                     ))}
                   </dl>
                 )}
-                {k !== 'integrated' && step === k && (
+                {k !== 'integrated' && (
                   <div className="rh-relevance">
                     {(k === 'corridors' ? FREIGHT_RELEVANCE : MODE_RELEVANCE[k as keyof typeof MODE_RELEVANCE]).map((r) => (
                       <p key={r.who} className="text-md-regular rh-muted rh-para">
@@ -294,19 +295,20 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                     ))}
                   </div>
                 )}
-                {step === k && <p className="text-xs-regular rh-tertiary rh-para">
+                <p className="text-xs-regular rh-tertiary rh-para">
                   {k === 'integrated'
                     ? 'Roads and rail are drawn as straight corridors between known cities and border posts, not surveyed alignments; distances and drive times are great-circle estimates until MoT, SAR, Mawani, GACA and ZATCA records replace them.'
                     : k === 'air' ? 'Flight times are computed from distance, not schedules; the two rings are the published reach figures. GACA scheduled times per city pair replace the estimates once supplied. King Salman International Airport capacity and Riyadh Air operations are press-reported and confirmed against GACA and the airline.'
                     : k === 'corridors' ? 'Land Bridge delivery is the SAR statement of phased completion before 2034. Transit-time savings and port throughput are not shown until SAR and Mawani publish them; the 3 to 5 day saving in circulation is unverified.'
                     : k === 'digital' ? 'Hyperscaler commitments are press-reported (Arab News, September 2025) and confirmed against CST and each provider before the Data team marks them verified.' : ''}
-                </p>}
+                </p>
                 <Sideways DS={DS} items={linksFor(k)} />
                 {(rowsFor(k).length > 0 || k === 'digital') && (
                   <DS.Button hierarchy="link-gray" size="sm" iconLeading={details === k ? 'chevron-up' : 'chevron-down'} onClick={() => setDetails(details === k ? null : k)}>
                     {details === k ? 'Hide the records' : 'Open the records'}
                   </DS.Button>
                 )}
+                </Details>}
               </div>
             ))}
           </div>

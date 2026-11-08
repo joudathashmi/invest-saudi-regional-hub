@@ -25,7 +25,7 @@ const IMPLICATION: Record<string, string> = {
   'Consumers within a 4-hour flight': 'the regional market served from one base',
 };
 
-export function HeroBand({ DS, ctx, onChange, onBuildCase }: { DS: DS; ctx: HubContext; onChange: (c: HubContext) => void; onBuildCase: () => void }) {
+export function HeroBand({ DS, ctx, onChange, onBuildCase: _onBuildCase }: { DS: DS; ctx: HubContext; onChange: (c: HubContext) => void; onBuildCase: () => void }) {
   const strip = [REACH[3], REACH[0], REACH[1]];
   const pick = (id: RouteId) => onChange({ ...ctx, route: ctx.route === id ? null : id });
   return (
@@ -48,7 +48,6 @@ export function HeroBand({ DS, ctx, onChange, onBuildCase }: { DS: DS; ctx: HubC
           </div>
           <div className="rh-actions">
             <DS.Button hierarchy="primary" size="xl" iconTrailing="arrow-right" href="#connectivity">Explore regional reach</DS.Button>
-            <DS.Button hierarchy="link-color" size="xl" onClick={onBuildCase} iconTrailing="chevron-right">Build my regional case</DS.Button>
           </div>
         </div>
       </div>
