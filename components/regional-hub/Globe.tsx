@@ -201,12 +201,12 @@ export function Globe({
           {lines.map((l) => <path key={l.id} d={linePath(l)} className={`rh-globe-line rh-globe-line--${l.kind}`}><title>{l.name}</title></path>)}
         </g>
         <g className="rh-globe-arcs">
-          {arcs.map((a, i) => {
+          {(() => { const placed: { x: number; y: number; w: number }[] = []; return arcs.map((a, i) => {
             const d = arcPath(a);
             if (!d) return null;
             const id = `rh-arc-${uid}-${i}`;
             const interp = geoInterpolate([a.from.lon, a.from.lat], [a.to.lon, a.to.lat]);
-            const midLL = interp(0.66);
+            const midLL = interp(0.7);
             const mid = visible(midLL[0], midLL[1]) ? projection(midLL) : null;
             const vehicle = a.vehicle ?? (a.plane ? 'plane' : undefined);
             const dur = vehicle === 'ship' ? 14 : vehicle === 'truck' ? 9 : Math.max(4, (a.hours ?? 4) * 1.8);
@@ -218,12 +218,12 @@ export function Globe({
                 {vehicle && !reduced && (
                   <g className={`rh-globe-plane rh-globe-vehicle--${vehicle}`}>
                     <path d={shape} transform={vehicle === 'plane' ? 'scale(1.5)' : 'scale(1.2)'} />
-                    <animateMotion dur={`${dur}s`} repeatCount="indefinite" rotate={vehicle === 'ship' ? '0' : 'auto'} begin={`${(i * 0.7) % 3}s`} calcMode="linear">
+                    <animateMotion dur={`${dur}s`} repeatCount="indefinite" rotate={vehicle === 'ship' ? '0' : 'auto'} begin={`-${((i * 0.37) % 1) * dur}s`} calcMode="linear">
                       <mpath href={`#${id}`} />
                     </animateMotion>
                   </g>
                 )}
-                {a.label && mid && onScreen(mid) && (
+                {a.label && mid && onScreen(mid) && (() => { const w = a.label.length * 7.2 + 16; const hub = points.find((pt) => pt.kind === 'hub'); const hq = hub ? projection([hub.lon, hub.lat]) : null; const nearHub = hq ? Math.hypot(hq[0] - mid[0], hq[1] - mid[1]) < 90 : false; const hit = nearHub || placed.some((q) => Math.abs(q.x - mid[0]) < (q.w + w) / 2 + 6 && Math.abs(q.y - mid[1]) < 22); if (hit) return null; placed.push({ x: mid[0], y: mid[1], w }); return true; })() && (
                   <g className="rh-globe-pill" transform={`translate(${mid[0].toFixed(1)} ${mid[1].toFixed(1)})`}>
                     <rect x={-(a.label.length * 3.6 + 8)} y={-9} width={a.label.length * 7.2 + 16} height={18} rx={9} />
                     <text y={4} textAnchor="middle" className="text-xs-semibold">{a.label}</text>
@@ -231,16 +231,18 @@ export function Globe({
                 )}
               </g>
             );
-          })}
+          }); })()}
         </g>
         <g className="rh-globe-points">
-          {points.map((p) => {
+          {(() => { const used: { x: number; y: number }[] = []; return points.map((p) => {
             if (!visible(p.lon, p.lat)) return null;
             const q = projection([p.lon, p.lat]);
             if (!onScreen(q)) return null;
             const kind = p.kind ?? 'market';
             const cls = `rh-globe-pt rh-globe-pt--${kind}${p.selected ? ' rh-globe-pt--on' : ''}`;
-            const show = (kind !== 'market' || p.selected) && p.name !== '';
+            let show = (kind !== 'market' || p.selected) && p.name !== '';
+            if (show && (kind === 'market' || kind === 'centre' || kind === 'port') && used.some((u) => Math.abs(u.x - q![0]) < 70 && Math.abs(u.y - q![1]) < 14)) show = false;
+            if (show && kind !== 'hub') used.push({ x: q![0], y: q![1] });
             const r = kind === 'hub' ? 5 : kind === 'city' ? 3.5 : kind === 'border' ? 4 : kind === 'centre' ? 3.5 : p.selected ? 4.5 : 3;
             return (
               <g
@@ -274,7 +276,7 @@ export function Globe({
                 )}
               </g>
             );
-          })}
+          }); })()}
         </g>
       </svg>
       {hoverPt && pointCard && pointCard(hoverPt.p) && (

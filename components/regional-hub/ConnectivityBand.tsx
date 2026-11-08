@@ -70,7 +70,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
   const enterFocus = () => activate('integrated', true);
 
   const selected = MARKETS.filter((m) => ctx.markets.includes(m.code));
-  const shown = selected.length ? selected : MARKETS;
+  const shown = selected.length ? selected : MARKETS.filter((m) => ['AE', 'EG', 'TR', 'KE', 'MA'].includes(m.code));
   const riyadh = HUB_CITIES[0];
   const ground = new Set(['AE', 'QA', 'KW', 'BH', 'OM', 'JO', 'IQ']);
   const seaMarkets = shown.filter((m) => !['KW', 'JO', 'IQ'].includes(m.code));
@@ -85,26 +85,37 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
     ...(mode === 'digital' ? DIGITAL_NODES.map((d) => ({ id: d.id, name: d.name, lat: d.lat, lon: d.lon, kind: (d.kind === 'landing' ? 'port' : 'airport') as 'port' | 'airport', pulse: true, title: `${d.name}: ${d.note}`, labelAt: (d.lon < 44 ? 'left' : 'right') as 'left' | 'right', sub: d.kind === 'landing' ? '(landing)' : d.kind === 'cloud' ? '(cloud)' : '(planned)' })) : []),
     ...MARKETS.map((m) => {
       const on = ctx.markets.includes(m.code);
-      const t = mode === 'air' && on && greatCircleKm(riyadh, m) <= 2000 ? ` · ${fmtH(flightHours(greatCircleKm(riyadh, m)))}` : mode === 'ground' && ground.has(m.code) ? ` · ${fmtH(driveHours(greatCircleKm(riyadh, m)))}` : '';
+      const t = mode === 'air' && on && greatCircleKm(riyadh, m) <= 2000 ? ` · ${fmtH(flightHours(greatCircleKm(riyadh, m)))}` : mode === 'ground' && ground.has(m.code) && ['AE', 'QA', 'KW', 'BH', 'OM'].includes(m.code) ? ` · ${fmtH(driveHours(greatCircleKm({ lat: 26.43, lon: 50.10 }, m)))} from Dammam` : '';
       return { id: m.code, name: on ? m.city + t : m.city, lat: m.lat, lon: m.lon, kind: 'market' as const, selected: on || (mode === 'air' && shown.includes(m)) || (mode === 'ground' && ground.has(m.code)), pulse: mode === 'digital' ? false : undefined, labelAt: (m.lon < riyadh.lon - 8 ? 'left' : 'right') as 'left' | 'right' };
     }),
   ];
   const regionArcs: GlobeArc[] =
     mode === 'air' ? [
-      ...shown.map((m) => { const km = greatCircleKm(riyadh, m); const h = flightHours(km); return { from: riyadh, to: m, vehicle: 'plane' as const, hours: h, label: km > 2000 ? fmtH(h) : undefined }; }),
+      ...shown.map((m) => { const km = greatCircleKm(riyadh, m); const h = flightHours(km); return { from: riyadh, to: m, vehicle: 'plane' as const, hours: h, label: km > 3000 ? fmtH(h) : undefined }; }),
       ...CENTRES.map((c) => { const km = greatCircleKm(riyadh, c); const h = flightHours(km); return { from: riyadh, to: c, vehicle: 'plane' as const, thin: true, dashed: true, hours: h, label: fmtH(h) }; }),
     ]
-      : mode === 'ground' ? shown.filter((m) => ground.has(m.code)).map((m) => ({ from: riyadh, to: m, dashed: true, vehicle: 'truck' as const, label: fmtH(driveHours(greatCircleKm(riyadh, m))) }))
+      : mode === 'ground' ? (() => {
+          const dmm = { lat: 26.43, lon: 50.10 };
+          const gulf = new Set(['AE', 'QA', 'KW', 'BH', 'OM']);
+          const ms = (selected.length ? selected : MARKETS).filter((m) => ground.has(m.code));
+          const out: GlobeArc[] = [{ from: riyadh, to: dmm, vehicle: 'truck' as const, label: fmtH(driveHours(greatCircleKm(riyadh, dmm))) }];
+          for (const m of ms) {
+            const origin = gulf.has(m.code) ? dmm : riyadh;
+            const km = greatCircleKm(origin, m);
+            out.push({ from: origin, to: m, dashed: true, vehicle: 'truck' as const, thin: km < 450, label: km >= 450 ? fmtH(driveHours(km)) : undefined });
+          }
+          return out;
+        })()
         : mode === 'corridors' ? [
-          { from: { lat: 19.08, lon: 72.88 }, to: { lat: 24.5, lon: 58.5 }, dashed: true, vehicle: 'ship' as const, label: 'Asia to the Gulf' },
-          { from: { lat: 24.5, lon: 58.5 }, to: { lat: 26.3, lon: 56.4 }, dashed: true, thin: true },
-          { from: { lat: 26.3, lon: 56.4 }, to: { lat: 26.47, lon: 50.2 }, dashed: true, vehicle: 'ship' as const, label: 'Strait of Hormuz' },
-          { from: { lat: 21.47, lon: 39.17 }, to: { lat: 27.5, lon: 34.5 }, dashed: true, vehicle: 'ship' as const, label: 'Red Sea to Suez and Europe' },
-          { from: { lat: 27.5, lon: 34.5 }, to: { lat: 31.26, lon: 32.3 }, dashed: true, thin: true },
-          { from: { lat: 21.47, lon: 39.17 }, to: { lat: 13.0, lon: 42.8 }, dashed: true, vehicle: 'ship' as const, label: 'Red Sea to East Africa' },
-          { from: { lat: 13.0, lon: 42.8 }, to: { lat: -4.04, lon: 39.67 }, dashed: true, thin: true },
+          { from: { lat: 22.0, lon: 62.0 }, to: { lat: 26.47, lon: 50.2 }, dashed: true, vehicle: 'ship' as const, label: 'From Asia' },
+          { from: { lat: 21.47, lon: 39.17 }, to: { lat: 28.5, lon: 33.8 }, dashed: true, vehicle: 'ship' as const, label: 'To Suez' },
+          { from: { lat: 21.47, lon: 39.17 }, to: { lat: 13.5, lon: 42.9 }, dashed: true, vehicle: 'ship' as const, label: 'To East Africa' },
         ]
-        : mode === 'digital' ? [] : seaMarkets.map((m) => ({ from: m.lon < 44 ? { lat: 21.47, lon: 39.17 } : { lat: 26.47, lon: 50.2 }, to: m, dashed: true, vehicle: 'ship' as const }));
+        : mode === 'digital' ? [] : [
+          { from: { lat: 21.47, lon: 39.17 }, to: { lat: 29.9, lon: 32.55 }, dashed: true, vehicle: 'ship' as const, label: 'Suez, Europe' },
+          { from: { lat: 21.47, lon: 39.17 }, to: { lat: 11.6, lon: 43.1 }, dashed: true, vehicle: 'ship' as const, label: 'East Africa' },
+          { from: { lat: 26.47, lon: 50.2 }, to: { lat: 25.1, lon: 56.4 }, dashed: true, vehicle: 'ship' as const, label: 'Gulf, Asia' },
+        ]
   const rings = mode === 'air' ? REACH_RINGS.map((r) => ({ lat: riyadh.lat, lon: riyadh.lon, km: r.km, label: r.label })) : [];
 
   /* Focus view: national logistics layer. */
@@ -114,10 +125,10 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
   const portsOnly = layer === 'ports';
   const focusPoints: GlobePoint[] = [
     ...SAUDI_CITIES.map((c) => ({ ...c, kind: (c.id === 'ruh' ? 'hub' : 'city') as 'hub' | 'city', labelAt: cityLabel[c.id] ?? 'right', title: c.name, name: portsOnly && !['ruh', 'jed', 'dmm'].includes(c.id) ? '' : c.name })),
-    ...(showPorts ? NODES.filter((n) => n.mode === 'sea').map((n) => ({ id: n.id, name: portsOnly ? n.name.replace(' Port', '') : '', lat: n.lat, lon: n.lon, kind: 'port' as const, title: n.name, labelAt: (n.id === 'jub' || n.id === 'dmm' ? 'right' : 'left') as 'left' | 'right', sub: portsOnly ? '(port)' : undefined })) : []),
-    ...(showPorts ? PLATFORMS.filter((z) => z.id !== 'modon' && z.id !== 'rcjy').map((z) => ({ id: `z-${z.id}`, name: portsOnly ? z.name.replace(' SEZ', '').replace('Riyadh Integrated Special Logistics Zone', 'Riyadh ILBZ').replace('King Abdullah Economic City', 'KAEC').replace('Cloud Computing', 'Cloud') : '', lat: z.lat - (z.id === 'cloud-sez' ? 0.75 : z.id === 'ilbz' ? -0.35 : 0.55), lon: z.lon - (z.id === 'cloud-sez' ? 1.0 : z.id === 'ilbz' ? -0.5 : 0.55), kind: 'zone' as const, title: `${z.name} (${z.kind})`, labelAt: (z.id === 'rak-sez' || z.id === 'cloud-sez' ? 'left' : 'below') as 'left' | 'below', sub: portsOnly ? '(zone)' : undefined })) : []),
-    ...(showPorts ? NODES.filter((n) => n.mode === 'air').map((n) => ({ id: n.id, name: portsOnly ? n.name.replace(' International Airport', '') : '', lat: n.lat + 0.35, lon: n.lon + 0.35, kind: 'airport' as const, title: n.name, labelAt: (n.id === 'jed' ? 'left' : 'right') as 'left' | 'right', sub: portsOnly ? '(airport)' : undefined })) : []),
-    ...(showRoad || showRail ? LAND_PORTS.map((b) => ({ id: b.id, name: `${b.name} → ${b.neighbour}`, lat: b.lat, lon: b.lon, kind: 'border' as const, labelAt: (['lp-haditha', 'lp-tuwal'].includes(b.id) ? 'left' : ['lp-arar', 'lp-khafji'].includes(b.id) ? 'above' : ['lp-wadiah', 'lp-batha'].includes(b.id) ? 'below' : 'right') as 'left' | 'above' | 'right' | 'below' })) : []),
+    ...(showPorts ? NODES.filter((n) => n.mode === 'sea' && n.id !== 'kap' && (portsOnly || n.id !== 'jub')).map((n) => ({ id: n.id, name: portsOnly ? n.name.replace(' Port', '') : '', lat: n.lat, lon: n.lon, kind: 'port' as const, title: n.id === 'jip' ? 'Jeddah Islamic Port, King Abdullah Port and King Abdulaziz International Airport' : n.id === 'dmm' ? 'King Abdulaziz Port and King Fahd International Airport' : n.name, labelAt: (n.id === 'jub' || n.id === 'dmm' ? 'right' : 'left') as 'left' | 'right', sub: portsOnly ? '(port)' : undefined })) : []),
+    ...(showPorts ? PLATFORMS.filter((z) => z.id !== 'modon' && z.id !== 'rcjy').map((z) => ({ id: `z-${z.id}`, name: portsOnly ? z.name.replace(' SEZ', '').replace('Riyadh Integrated Special Logistics Zone', 'Riyadh ILBZ').replace('King Abdullah Economic City', 'KAEC').replace('Cloud Computing', 'Cloud') : '', lat: z.lat - (z.id === 'cloud-sez' ? 0.75 : z.id === 'ilbz' ? -0.35 : z.id === 'rak-sez' ? -0.6 : 0.55), lon: z.lon - (z.id === 'cloud-sez' ? 1.0 : z.id === 'ilbz' ? -0.5 : z.id === 'rak-sez' ? 0.9 : 0.55), kind: 'zone' as const, title: `${z.name} (${z.kind})`, labelAt: (z.id === 'rak-sez' || z.id === 'cloud-sez' ? 'left' : 'below') as 'left' | 'below', sub: portsOnly ? '(zone)' : undefined })) : []),
+    ...(showPorts ? NODES.filter((n) => n.mode === 'air' && !['jed', 'dmmair'].includes(n.id)).map((n) => ({ id: n.id, name: portsOnly ? n.name.replace(' International Airport', '') : '', lat: n.lat + 0.55, lon: n.lon + 0.6, kind: 'airport' as const, title: n.name, labelAt: (n.id === 'jed' ? 'left' : 'right') as 'left' | 'right', sub: portsOnly ? '(airport)' : undefined })) : []),
+    ...(showRoad || showRail ? LAND_PORTS.map((b) => ({ id: b.id, name: `${b.name} → ${b.neighbour}`, lat: b.lat, lon: b.lon, kind: 'border' as const, labelAt: (['lp-haditha', 'lp-tuwal'].includes(b.id) ? 'left' : ['lp-arar', 'lp-khafji'].includes(b.id) ? 'above' : ['lp-wadiah', 'lp-salwa'].includes(b.id) ? 'below' : 'right') as 'left' | 'above' | 'right' | 'below' })) : []),
   ];
 
   const crossings = LAND_PORTS.map((b) => ({ ...b, km: Math.round(greatCircleKm(riyadh, b)) }));
@@ -137,7 +148,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
     : k === 'sea' ? 'Red Sea ports serve Africa, Europe and the Levant; Arabian Gulf ports serve the GCC and Asia. Transit days per port pair are not yet published, so no time is shown.'
     : k === 'corridors' ? 'Solid lines are operating rail; dotted lines are planned or in delivery. Ships mark the sea legs the corridor joins: Asia into Dammam and Jubail, the Red Sea out to Suez, Europe and East Africa. Alignments are schematic until Saudi Arabia Railways publishes them.'
     : k === 'digital' ? 'Subsea landing cities on both coasts (blue), cloud and data-centre locations (orange). No cable routes are drawn: cable names, capacities and provider region status come from CST and the providers before they appear here.'
-    : 'Road corridors to the GCC, Jordan and Iraq from Riyadh with estimated drive time (road distance taken as 1.25 times great-circle at 80 km/h). Freight delivery time adds customs and handling and is quoted by carriers.';
+    : 'Road corridors: Riyadh to Dammam, then the Gulf markets from Dammam; Jordan and Iraq from Riyadh. Drive times are estimates (road distance taken as 1.25 times great-circle at 80 km/h); freight delivery adds customs and handling and is quoted by carriers.';
   const linksFor = (k: Step) =>
     k === 'air' ? [{ label: 'Riyadh logistics zone', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Corporate base route', href: '#routes', icon: 'building-07' }, { label: 'Logistics sector', href: '/sectors/logistics', icon: 'briefcase-01' }]
     : k === 'sea' ? [{ label: 'Zones beside ports', href: '#platforms', icon: 'marker-pin-01' }, { label: 'Export route', href: '#routes', icon: 'tool-02' }, { label: 'Shared frameworks', href: '#market-access', icon: 'globe-01' }]

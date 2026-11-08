@@ -35,13 +35,13 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
         </Reveal>
         <div className="rh-stories">
           {stories.map((c, i) => (
-            <figure key={c.id} className={i === 0 ? 'rh-story rh-story--lead' : 'rh-story'}>
+            <figure key={c.id} className={i === 0 ? 'rh-cstory rh-cstory--lead' : 'rh-cstory'}>
               <img src={i === 0 ? FEATURE_PHOTO.src : industryPhoto(c.industry).src} alt="" aria-hidden="true" loading="lazy" />
               <figcaption>
-                <span className="rh-story-logo"><Logo name={c.name} mono={mono(c.name)} size={40} /></span>
+                <span className="rh-cstory-logo"><Logo name={c.name} mono={mono(c.name)} size={40} /></span>
                 <span className="text-xs-semibold rh-eyebrow">{PRESENCE[c.id] ?? 'Commercial presence'} · {c.industry}</span>
                 <span className={i === 0 ? 'display-sm-semibold' : 'text-xl-semibold'}>{c.name}</span>
-                <span className="rh-story-chain text-sm-regular">{c.base} → {routeTitle(c.route)} → {c.story}</span>
+                <span className="rh-cstory-chain text-sm-regular">{c.base} → {routeTitle(c.route)} → {c.story}</span>
                 <SourceLine DS={DS} p={c} />
                 <span className="rh-actions"><DS.Button hierarchy={i === 0 ? 'primary' : 'link-color'} size="md" onClick={() => setDetail(c)} iconTrailing="arrow-right">Open the record</DS.Button></span>
               </figcaption>

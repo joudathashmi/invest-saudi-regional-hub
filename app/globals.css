@@ -247,7 +247,7 @@
 
 /* Scroll story: pinned globe, steps on the right. Below 1024px the globe is not pinned and steps stack. */
 .rh-story { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--spacing-6xl); align-items: start; }
-.rh-story-visual { position: sticky; top: calc(var(--spacing-4xl) + env(safe-area-inset-top, 0px)); display: flex; flex-direction: column; gap: var(--spacing-lg); }
+.rh-story-visual { position: sticky; top: calc(76px + env(safe-area-inset-top, 0px)); display: flex; flex-direction: column; gap: var(--spacing-lg); }
 .rh-story-steps { display: flex; flex-direction: column; gap: var(--spacing-4xl); }
 .rh-step { display: flex; flex-direction: column; gap: var(--spacing-lg); min-height: 0; padding-block: var(--spacing-2xl); opacity: 0.45; transition: opacity 300ms; }
 .rh-step--on { opacity: 1; }
@@ -287,7 +287,10 @@
 #routes::before { content: ""; position: absolute; inset: 0; z-index: -1; color: var(--border-secondary); opacity: 0.55; background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22900%22 height=%22600%22 viewBox=%220 0 900 600%22%3E%3Cline x1=%22-300%22 y1=%220%22 x2=%220%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22-240%22 y1=%220%22 x2=%2260%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22-180%22 y1=%220%22 x2=%22120%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22-120%22 y1=%220%22 x2=%22180%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22-60%22 y1=%220%22 x2=%22240%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%220%22 y1=%220%22 x2=%22300%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%2260%22 y1=%220%22 x2=%22360%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22120%22 y1=%220%22 x2=%22420%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22180%22 y1=%220%22 x2=%22480%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22240%22 y1=%220%22 x2=%22540%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22300%22 y1=%220%22 x2=%22600%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22360%22 y1=%220%22 x2=%22660%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22420%22 y1=%220%22 x2=%22720%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22480%22 y1=%220%22 x2=%22780%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22540%22 y1=%220%22 x2=%22840%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22600%22 y1=%220%22 x2=%22900%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22660%22 y1=%220%22 x2=%22960%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22720%22 y1=%220%22 x2=%221020%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22780%22 y1=%220%22 x2=%221080%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3Cline x1=%22840%22 y1=%220%22 x2=%221140%22 y2=%22600%22 stroke=%22currentColor%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3C/svg%3E"); background-repeat: repeat; mask-image: linear-gradient(90deg, transparent 0%, #000 55%, #000 100%); -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 55%, #000 100%); }
 #companies::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse 50% 40% at 15% 20%, var(--utility-brand-50) 0%, transparent 70%); opacity: 0.9; }
 #connectivity .rh-globe-wrap { background: none; border: 0; padding: 0; box-shadow: none; }
-#connectivity .rh-globe-sphere { fill: color-mix(in srgb, var(--rh-canvas) 40%, transparent); stroke: none; }
+#connectivity .rh-globe-sphere { fill: #16242a; stroke: none; }
+#connectivity .rh-globe-country { fill: #3a4046; stroke: #1b2429; stroke-width: 0.7; }
+#connectivity .rh-globe-country--nb { fill: #454c53; }
+#connectivity .rh-globe-grat { stroke: #2a3339; opacity: 0.5; }
 #connectivity .rh-story-visual::before { content: ""; position: absolute; inset: 6% 8% 10% 8%; border-radius: 50%; background: radial-gradient(circle, var(--rh-glass-2) 0%, transparent 65%); filter: blur(30px); z-index: 0; }
 #connectivity .rh-globe-box { position: relative; z-index: 1; }
 .rh-theme-light #connectivity .rh-globe-wrap { box-shadow: 0 30px 80px -50px var(--utility-brand-300); }
@@ -752,16 +755,28 @@
 /* Company stories */
 .rh-stories { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: var(--spacing-xl); }
 @media (max-width: 1023px) { .rh-stories { grid-template-columns: minmax(0, 1fr); } }
-.rh-story { position: relative; margin: 0; min-height: 360px; border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border-secondary); display: flex; align-items: flex-end; background: var(--rh-card); }
-.rh-story > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.rh-story::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 20%, color-mix(in srgb, #0a1113 85%, transparent) 75%, color-mix(in srgb, #0a1113 96%, transparent) 100%); }
-.rh-story figcaption { position: relative; z-index: 1; display: flex; flex-direction: column; gap: var(--spacing-sm); padding: var(--spacing-3xl); color: var(--base-white); width: 100%; }
-.rh-story .rh-eyebrow { color: var(--brand-400); }
-.rh-story-chain { color: var(--gray-dark-mode-200); }
-.rh-story .rh-foot { color: var(--gray-dark-mode-400); }
-.rh-story-logo .rh-logo { margin-bottom: 0; }
-.rh-story-logo { display: block; }
-.rh-story-logo .rh-logo { height: 40px; width: auto; align-self: flex-start; display: inline-flex; }
-.rh-story-logo .rh-logo img { max-height: 24px; max-width: 120px; }
-.rh-story-logo .rh-wall-mono { width: 40px; height: 40px; }
+.rh-cstory { position: relative; margin: 0; min-height: 360px; border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border-secondary); display: flex; align-items: flex-end; background: var(--rh-card); }
+.rh-cstory > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.rh-cstory::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 20%, color-mix(in srgb, #0a1113 85%, transparent) 75%, color-mix(in srgb, #0a1113 96%, transparent) 100%); }
+.rh-cstory figcaption { position: relative; z-index: 1; display: flex; flex-direction: column; gap: var(--spacing-sm); padding: var(--spacing-3xl); color: var(--base-white); width: 100%; }
+.rh-cstory .rh-eyebrow { color: var(--brand-400); }
+.rh-cstory-chain { color: var(--gray-dark-mode-200); }
+.rh-cstory .rh-foot { color: var(--gray-dark-mode-400); }
+.rh-cstory-logo .rh-logo { margin-bottom: 0; }
+.rh-cstory-logo { display: block; }
+.rh-cstory-logo .rh-logo { height: 40px; width: auto; align-self: flex-start; display: inline-flex; }
+.rh-cstory-logo .rh-logo img { max-height: 24px; max-width: 120px; }
+.rh-cstory-logo .rh-wall-mono { width: 40px; height: 40px; }
 .rh-wall-tile .rh-logo { align-self: flex-start; }
+
+/* Globe tidiness: thinner graticule, quieter labels, smaller vehicles. */
+.rh-globe-grat { opacity: 0.35; }
+.rh-globe-label { font-size: 11px; }
+.rh-globe-plane path { filter: none; }
+.rh-globe-arc-glow { opacity: 0.1; }
+.rh-globe-pill rect { stroke-width: 0.8; }
+
+.rh-globe-arc--thin { opacity: 0.5; }
+.rh-globe-vehicle--truck path { transform-box: fill-box; }
+
+@media (min-width: 1024px) { #connectivity .rh-story-visual { max-height: calc(100vh - 88px); } #connectivity .rh-globe-box { max-width: min(100%, calc(100vh - 220px)); margin-inline: auto; } }
