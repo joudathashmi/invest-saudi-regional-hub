@@ -507,8 +507,6 @@
 
 /* Understand, light and scroll-driven: pinned card on the right, reasons scroll past on the left. */
 @media (min-width: 1024px) {
-  .rh-reasons-track { height: 150vh; }
-  .rh-reasons--scroll { position: sticky; top: calc(72px + var(--spacing-3xl)); align-items: center; }
   .rh-reasons--scroll .rh-reason-list { gap: var(--spacing-sm); }
   .rh-reasons--scroll .rh-reason { padding: var(--spacing-xl) var(--spacing-2xl); }
   .rh-reasons--scroll .rh-reason-card { min-height: 0; }
@@ -809,5 +807,15 @@
 .rh-hero-stat .rh-foot { display: inline-flex; }
 .rh-reason-card { background: var(--bg-primary); }
 .rh-theme-light .rh-reason-card { background: linear-gradient(160deg, #f0fffc 0%, #ffffff 60%); box-shadow: var(--shadow-sm); }
-.rh-step { min-height: 42vh; justify-content: center; }
-@media (max-width: 1023px) { .rh-step { min-height: 0; } }
+.rh-step { min-height: 0; padding-block: var(--spacing-3xl); }
+
+/* Recovery pass */
+.rh-reasons { align-items: stretch; }
+.rh-reason-card { min-height: 100%; }
+.rh-reason-photo { opacity: 0.16; }
+.rh-ind-panels { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.rh-framework-more { color: var(--rh-accent); margin-top: auto; }
+.rh-framework { display: flex; flex-direction: column; gap: var(--spacing-xs); text-align: left; }
+.rh-explorer .rh-route-path { grid-row: 1 / span 4; }
+.rh-route-path .rh-route-photo { width: 100%; border-radius: var(--radius-xl); aspect-ratio: 16 / 10; object-fit: cover; margin-bottom: var(--spacing-lg); }
+.rh-explorer .rh-route-path { align-self: start; position: sticky; top: 96px; }

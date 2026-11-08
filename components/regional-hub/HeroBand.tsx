@@ -48,6 +48,7 @@ export function HeroBand({ DS, ctx, onChange, onBuildCase: _onBuildCase }: { DS:
           </div>
           <div className="rh-actions">
             <DS.Button hierarchy="primary" size="xl" iconTrailing="arrow-right" href="#connectivity">Explore regional reach</DS.Button>
+            <DS.Button hierarchy="link-color" size="xl" onClick={_onBuildCase} iconTrailing="chevron-right">Build my regional case</DS.Button>
           </div>
         </div>
       </div>

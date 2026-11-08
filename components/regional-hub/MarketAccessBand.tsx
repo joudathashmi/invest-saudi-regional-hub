@@ -39,7 +39,9 @@ export function MarketAccessBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             <button key={a.id} type="button" className={yours(a) ? 'rh-framework rh-framework--yours' : 'rh-framework'} onClick={() => setOpenFw(a)} aria-haspopup="dialog">
               <DS.FeaturedIcon icon={ICONS[a.id] ?? 'globe-01'} color="brand" size="md" />
               <span className="text-md-semibold rh-strong">{a.name.replace(' (GAFTA)', '').replace('GCC and ', '')}</span>
+              <span className="text-sm-regular rh-muted">{FRAMEWORK_DETAIL[a.id]?.why ?? a.summary}</span>
               <span className="text-xs-regular rh-tertiary">{partnersOf(a) ? partnersOf(a).split(', ').length > 3 ? `${partnersOf(a).split(', ').length} partners` : partnersOf(a) : 'Global'}</span>
+              <span className="text-xs-semibold rh-framework-more">Covers, conditions, limits →</span>
             </button>
           ))}
         </div>

@@ -88,7 +88,8 @@ export function PlatformsBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
         </div>
         </Details>
         <div className="rh-actions">
-          <DS.Button hierarchy="secondary-gray" size="md" href="/regions" iconTrailing="arrow-right">All regions and cities</DS.Button>
+          <DS.Button hierarchy="primary" size="md" href="/regions" iconTrailing="arrow-right">Explore the zones</DS.Button>
+          <DS.Button hierarchy="secondary-gray" size="md" href="/how-to-invest/incentives">Check zone eligibility</DS.Button>
         </div>
       </div>
       {detail && (

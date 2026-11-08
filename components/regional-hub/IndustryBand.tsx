@@ -50,7 +50,6 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
             <div className="rh-actions">
               <DS.Button hierarchy="primary" size="md" href={`${rec.sectorHref}?${contextQuery(ctx)}`} iconTrailing="arrow-right">{rec.industry} sector page</DS.Button>
             </div>
-            <Details DS={DS} label="The region, Saudi Arabia's position, figures and the green hub">
             <div className="rh-ind">
               <div className="rh-ind-panels" style={{ gridColumn: '1 / -1' }}>
                 {panels.map((p) => (
@@ -63,6 +62,7 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
                 <span className="rh-ind-src"><SourceLine DS={DS} p={rec} /></span>
               </div>
             </div>
+            <Details DS={DS} label="National figures and regional demand">
             {rec.nationalFigures.length > 0 && (
               <dl className="rh-factlist rh-factlist--4">
                 {rec.nationalFigures.map((f) => (
@@ -85,11 +85,10 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
             </Details>
           </>
         ) : (
-          <figure className="rh-ind-photo rh-ind-photo--wide"><img src={photo.src} alt={photo.alt} loading="lazy" /><figcaption className="text-sm-medium">Choose a sector above.</figcaption></figure>
+          <figure className="rh-ind-photo"><img src={photo.src} alt={photo.alt} loading="lazy" /><figcaption className="text-sm-medium">Choose a sector above for the three panels. Until then, the base every sector draws on:</figcaption></figure>
         )}
 
-        {!rec && <Details DS={DS} label="Industrial and green hub">
-        <div className="rh-green">
+        {!rec && <div className="rh-green">
           <div className="rh-editorial-lead">
             <span className="text-xs-semibold rh-eyebrow">Industrial and green hub</span>
             <h3 className="display-xs-semibold rh-h3">From exporting hydrocarbons to exporting value</h3>
@@ -112,8 +111,7 @@ export function IndustryBand({ DS, ctx, onPick }: { DS: DS; ctx: HubContext; onP
             ))}
           </dl>
           <p className="text-xs-regular rh-tertiary rh-para">NEOM figures are design capacities reported by the developer; first ammonia deliveries are expected in early 2027. NIDLP localisation figures appear once the Sector team confirms the annual report. For a regional manufacturer the point is supply security: energy-intensive processes beside competitively priced, increasingly low-carbon inputs.</p>
-        </div>
-        </Details>}
+        </div>}
       </div>
     </section>
   );

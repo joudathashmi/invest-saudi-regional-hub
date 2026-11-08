@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { THESIS } from '@/data/regional-hub';
-import { CountUp, Details, Reveal, SourceLine, marketNames, type HubContext } from './shared';
+import { CountUp, Reveal, SourceLine, marketNames, type HubContext } from './shared';
 
 /**
  * 01 Understand. Five arguments as a thesis: Evidence, Commercial
@@ -17,7 +17,6 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   const [seen, setSeen] = React.useState(false);
   const [reduced, setReduced] = React.useState(false);
   const ref = React.useRef<HTMLDivElement | null>(null);
-  const track = React.useRef<HTMLDivElement | null>(null);
   const r = THESIS[i];
   React.useEffect(() => { try { setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch { /* none */ } }, []);
   React.useEffect(() => {
@@ -27,31 +26,7 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
     io.observe(el);
     return () => io.disconnect();
   }, []);
-  React.useEffect(() => {
-    if (!window.matchMedia('(min-width: 1024px)').matches) return;
-    let raf = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const el = track.current; if (!el) return;
-        const rct = el.getBoundingClientRect(); const travel = rct.height - window.innerHeight;
-        if (travel <= 0) return;
-        const p = Math.min(1, Math.max(0, -rct.top / travel));
-        setI(Math.min(THESIS.length - 1, Math.floor(p * THESIS.length)));
-      });
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
-  }, []);
-  const pick = (k: number) => {
-    setI(k);
-    const el = track.current;
-    if (el && window.matchMedia('(min-width: 1024px)').matches) {
-      const travel = el.offsetHeight - window.innerHeight;
-      window.scrollTo({ top: window.scrollY + el.getBoundingClientRect().top + ((k + 0.5) / THESIS.length) * travel, behavior: reduced ? 'auto' : 'smooth' });
-    }
-  };
+  const pick = (k: number) => setI(k);
 
   return (
     <section id="reach" className="rh-band rh-glow-r" aria-labelledby="rh-reach">
@@ -61,8 +36,7 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
           <h2 id="rh-reach" className="display-md-semibold rh-h2">An anchor market before it is a hub</h2>
           <p className="text-lg-regular rh-muted rh-para">Five reasons the base matters before the reach does, for a business serving {marketNames(ctx.markets)}.</p>
         </Reveal>
-        <div className="rh-reasons-track" ref={track}>
-          <div className="rh-reasons rh-reasons--scroll" ref={ref}>
+        <div className="rh-reasons" ref={ref}>
             <ul className="rh-reason-list" role="tablist" aria-label="Arguments">
               {THESIS.map((x, k) => (
                 <li key={x.title} role="presentation">
@@ -77,20 +51,19 @@ export function ReachBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
               ))}
             </ul>
             <div className="rh-reason-card" role="tabpanel" key={i}>
+              <img className="rh-reason-photo" src={r.photo} alt="" aria-hidden="true" loading="lazy" />
               <div className="rh-reason-in">
                 <span className="rh-reason-dots" aria-hidden="true">{THESIS.map((_, k) => <span key={k} className={k === i ? 'rh-on' : ''} />)}</span>
                 <span className="display-lg-semibold rh-bignum" aria-label={r.fig.value}><CountUp value={r.fig.value} run={seen && !reduced} /></span>
                 <h3 className="display-xs-semibold rh-h3">{r.title}</h3>
-                <p className="text-lg-regular rh-para">{r.implication}</p>
-                <a className="rh-inline-link text-md-semibold" href={r.href}>{r.hrefLabel} →</a>
-                <Details DS={DS} label="Evidence and source">
-                  <p className="text-md-regular rh-muted rh-para">{r.evidence}</p>
-                  <p className="text-md-regular rh-muted rh-para">{r.relevance}</p>
-                </Details>
+                <dl className="rh-thesis">
+                  <div><dt className="text-xs-semibold rh-eyebrow">Evidence</dt><dd className="text-md-regular">{r.evidence}</dd></div>
+                  <div><dt className="text-xs-semibold rh-eyebrow">What it means commercially</dt><dd className="text-md-regular">{r.implication}</dd></div>
+                  <div><dt className="text-xs-semibold rh-eyebrow">For you</dt><dd className="text-md-regular">{r.relevance} <a className="rh-inline-link text-md-semibold" href={r.href}>{r.hrefLabel} →</a></dd></div>
+                </dl>
                 <SourceLine DS={DS} p={r.fig} />
               </div>
             </div>
-          </div>
         </div>
       </div>
     </section>

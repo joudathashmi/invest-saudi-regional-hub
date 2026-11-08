@@ -29,7 +29,6 @@ export function TalentBand({ DS }: { DS: DS }) {
             </div>
           ))}
         </dl>
-        <Details DS={DS} label="How talent is built, hired and relocated">
         <ol className="rh-five">
           <li><span className="rh-five-n">1</span><span className="rh-five-t text-md-semibold">Talent availability</span><span className="text-sm-regular rh-muted">A young national workforce, 70% under 35, with rising participation; figures are national and published by GASTAT.</span></li>
           <li><span className="rh-five-n">2</span><span className="rh-five-t text-md-semibold">Talent development</span><span className="text-sm-regular rh-muted">National academies and sector programmes (digital, tourism, industrial) train for the roles regional operations need; detail on the <a className="rh-inline-link" href="/how-to-invest/talent">talent programmes page</a>.</span></li>
@@ -37,6 +36,7 @@ export function TalentBand({ DS }: { DS: DS }) {
           <li><span className="rh-five-n">4</span><span className="rh-five-t text-md-semibold">Executive relocation</span><span className="text-sm-regular rh-muted">Premium Residency categories and RHQ executive visas remove the sponsorship dependency for senior hires and their families.</span></li>
           <li><span className="rh-five-n">5</span><span className="rh-five-t text-md-semibold">Quality of life</span><span className="text-sm-regular rh-muted">The districts, parks and destinations below are what decide whether an executive relocates with family; they support the location decision, they are not the reason for it.</span></li>
         </ol>
+        <Details DS={DS} label="Residency, visas and where executives live">
         <div className="rh-talent-grid">
           <div className="rh-stack" style={{ gap: 'var(--spacing-xl)' }}>
             <h3 className="display-xs-semibold rh-h3">Residency and visas</h3>

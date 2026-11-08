@@ -255,9 +255,8 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                 <span className="text-sm-semibold rh-eyebrow">{STEP_META[k].label}</span>
                 <h3 className="display-sm-semibold rh-h3">{STEP_META[k].title}</h3>
                 <p className="text-md-regular rh-para">{STEP_META[k].message}</p>
-                {step === k && <Details DS={DS}>
-                <p className="text-sm-regular rh-muted rh-para">{legendFor(k)}</p>
-                {k === 'integrated' ? (
+                {step === k && <p className="text-sm-regular rh-muted rh-para">{legendFor(k)}</p>}
+                {k === 'integrated' ? step === k && (
                   <>
                     <div className="rh-actions"><DS.Button hierarchy="link-gray" size="md" iconLeading={crossingsOpen ? 'chevron-up' : 'chevron-down'} onClick={() => setCrossingsOpen(!crossingsOpen)}>{crossingsOpen ? 'Hide border crossings' : `Border crossings (${crossings.length})`}</DS.Button></div>
                     {crossingsOpen && (
@@ -276,7 +275,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                   </div>
                     )}
                   </>
-                ) : (
+                ) : step === k && (
                   <dl className="rh-statline">
                     {(k === 'digital' ? [...DIGITAL_FIGURES.slice(0, 2), ...COMPUTE_FIGURES.slice(0, 2)] : k === 'air' ? [REACH[0], REACH[1], ...AVIATION_FIGURES] : k === 'corridors' ? FREIGHT_FIGURES.filter((f) => f.status !== 'unavailable') : CONNECTIVITY_FIGURES).map((f) => (
                       <div key={f.label} className="rh-stat">
@@ -286,7 +285,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                     ))}
                   </dl>
                 )}
-                {k !== 'integrated' && (
+                {k !== 'integrated' && step === k && (
                   <div className="rh-relevance">
                     {(k === 'corridors' ? FREIGHT_RELEVANCE : MODE_RELEVANCE[k as keyof typeof MODE_RELEVANCE]).map((r) => (
                       <p key={r.who} className="text-md-regular rh-muted rh-para">
@@ -295,6 +294,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                     ))}
                   </div>
                 )}
+                {step === k && <Details DS={DS} label="Methodology, sources and records">
                 <p className="text-xs-regular rh-tertiary rh-para">
                   {k === 'integrated'
                     ? 'Roads and rail are drawn as straight corridors between known cities and border posts, not surveyed alignments; distances and drive times are great-circle estimates until MoT, SAR, Mawani, GACA and ZATCA records replace them.'
@@ -302,13 +302,13 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                     : k === 'corridors' ? 'Land Bridge delivery is the SAR statement of phased completion before 2034. Transit-time savings and port throughput are not shown until SAR and Mawani publish them; the 3 to 5 day saving in circulation is unverified.'
                     : k === 'digital' ? 'Hyperscaler commitments are press-reported (Arab News, September 2025) and confirmed against CST and each provider before the Data team marks them verified.' : ''}
                 </p>
-                <Sideways DS={DS} items={linksFor(k)} />
                 {(rowsFor(k).length > 0 || k === 'digital') && (
                   <DS.Button hierarchy="link-gray" size="sm" iconLeading={details === k ? 'chevron-up' : 'chevron-down'} onClick={() => setDetails(details === k ? null : k)}>
                     {details === k ? 'Hide the records' : 'Open the records'}
                   </DS.Button>
                 )}
                 </Details>}
+                {step === k && <Sideways DS={DS} items={linksFor(k)} />}
               </div>
             ))}
           </div>

@@ -59,8 +59,6 @@ export function RoutesBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onC
             <span className="rh-q-n text-xs-semibold">3</span>
             <div className="rh-q-body">
               <h3 className="display-xs-semibold rh-h3">What would I need?</h3>
-              <p className="text-md-regular rh-para">{selected.licence}. Locations, incentives, frameworks and people below.</p>
-              <Details DS={DS} label="Locations, incentives, frameworks, people and steps">
               <dl className="rh-needs">
                 <div><dt className="text-xs-semibold rh-eyebrow">Locations</dt><dd className="text-sm-regular">{PLATFORMS.filter((p) => p.routes.includes(selected.id)).map((p) => p.name).join(', ') || 'Any licensed premises'} <a className="rh-inline-link" href="#platforms">See locations →</a></dd></div>
                 <div><dt className="text-xs-semibold rh-eyebrow">Licence</dt><dd className="text-sm-regular">{selected.licence}.</dd></div>
@@ -68,6 +66,7 @@ export function RoutesBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onC
                 <div><dt className="text-xs-semibold rh-eyebrow">Shared frameworks</dt><dd className="text-sm-regular">{selected.id === 'export' || selected.id === 'logistics' ? 'GCC customs union and GAFTA rules of origin for goods.' : 'National licensing in each market; tax treaties where in force.'} <a className="rh-inline-link" href="#market-access">See frameworks →</a></dd></div>
                 <div><dt className="text-xs-semibold rh-eyebrow">People</dt><dd className="text-sm-regular">Residency routes and Saudization terms per programme. <a className="rh-inline-link" href="#talent">See talent →</a></dd></div>
               </dl>
+              <Details DS={DS} label="The establishment steps, in order">
               <ol className="rh-pathlist">
                 {selected.steps.map((st, i) => (
                   <li key={st.title} data-i={i} ref={(el) => { refs.current[i] = el; }} className={i <= current ? 'rh-pathitem rh-pathitem--on' : 'rh-pathitem'}>
@@ -93,8 +92,10 @@ export function RoutesBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContext; onC
 
             </div>
           </div>
-          <aside className="rh-route-path rh-route-path--photo">
+          <aside className="rh-route-path">
             <img key={selected.id} className="rh-route-photo" src={ROUTE_PHOTOS[selected.id].src} alt={ROUTE_PHOTOS[selected.id].alt} loading="lazy" />
+            <span className="text-sm-semibold rh-eyebrow">The path, in order</span>
+            <DS.ProgressSteps steps={selected.steps} current={current} />
           </aside>
         </div>
       </div>
