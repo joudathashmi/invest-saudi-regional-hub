@@ -868,3 +868,50 @@
 .rh-proof-tile--lead .rh-proof-text { max-width: 44ch; }
 .rh-proof-cta { display: inline-flex; align-items: center; justify-content: center; gap: var(--spacing-sm); padding: 12px 18px; border-radius: var(--radius-md); background: #fff; color: var(--rh-canvas); text-decoration: none; transition: transform .2s, box-shadow .2s; }
 .rh-proof-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 20px -10px rgba(0,0,0,.4); }
+
+/* 04 Where you operate: two coasts and a capital */
+.rh-coasts { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--spacing-3xl); align-items: start; }
+.rh-coasts-map { position: sticky; top: 96px; display: flex; flex-direction: column; gap: var(--spacing-sm); }
+.rh-coastmap { width: 100%; height: auto; display: block; border-radius: var(--radius-2xl); border: 1px solid rgba(255,255,255,.08); }
+.rh-coast-country { fill: #1c2328; stroke: #0a1113; stroke-width: .6; }
+.rh-coast-country--home { fill: #2a3a3c; stroke: var(--rh-accent); stroke-width: 1.2; }
+.rh-coast-reach { fill: none; stroke: var(--rh-mint); stroke-width: 1.6; stroke-dasharray: 5 6; opacity: .85; stroke-dashoffset: 0; animation: rh-dash 2.4s linear infinite; }
+@keyframes rh-dash { to { stroke-dashoffset: -22; } }
+@media (prefers-reduced-motion: reduce) { .rh-coast-reach { animation: none; } }
+.rh-coast-pin { cursor: pointer; }
+.rh-coast-dot { fill: #8a9aa0; stroke: #0a1113; stroke-width: 1.5; transition: fill .3s, r .3s; }
+.rh-coast-pin--on .rh-coast-dot { fill: var(--rh-mint); }
+.rh-coast-halo { fill: var(--rh-mint); opacity: .18; animation: rh-halo 2.4s ease-out infinite; transform-origin: center; }
+@keyframes rh-halo { 0% { transform: scale(.5); opacity: .35; } 100% { transform: scale(1.6); opacity: 0; } }
+.rh-coast-label { fill: #aab6bb; font-family: var(--font-body, inherit); font-size: 12px; font-weight: 600; letter-spacing: .01em; paint-order: stroke; stroke: #0a1113; stroke-width: 3px; stroke-linejoin: round; }
+.rh-coast-pin--on .rh-coast-label { fill: #fff; }
+.rh-coasts-note { color: var(--text-quaternary, #7a868b); }
+.rh-coasts-panel { display: flex; flex-direction: column; gap: var(--spacing-2xl); }
+.rh-coast-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--spacing-sm); }
+.rh-coast-tab { display: flex; flex-direction: column; gap: 4px; text-align: left; padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.03); color: var(--text-primary); font: inherit; cursor: pointer; transition: border-color .25s, background .25s, transform .25s; }
+.rh-coast-tab:hover { border-color: rgba(255,255,255,.3); transform: translateY(-1px); }
+.rh-coast-tab--on { border-color: var(--rh-accent); background: rgba(22, 202, 190, .1); }
+.rh-coast-tab-eyebrow { color: var(--rh-accent); letter-spacing: .06em; text-transform: uppercase; }
+.rh-coast-story { display: flex; flex-direction: column; gap: var(--spacing-md); animation: rh-fadeup .45s cubic-bezier(.2,.7,.2,1); }
+@keyframes rh-fadeup { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.rh-coast-faces { color: var(--rh-mint); }
+.rh-coast-list { list-style: none; margin: var(--spacing-md) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-md); }
+.rh-coast-card { display: grid; grid-template-columns: 168px minmax(0, 1fr) auto; gap: var(--spacing-xl); align-items: center; width: 100%; padding: 0; padding-right: var(--spacing-xl); border-radius: var(--radius-xl); border: 1px solid rgba(255,255,255,.1); background: var(--rh-card); color: var(--text-primary); font: inherit; text-align: left; cursor: pointer; overflow: hidden; transition: border-color .25s, transform .3s, box-shadow .3s; }
+.rh-coast-card:hover { border-color: var(--rh-accent); transform: translateY(-2px); box-shadow: 0 18px 40px -26px rgba(0,0,0,.8); }
+.rh-coast-card-img { width: 168px; height: 124px; object-fit: cover; display: block; }
+.rh-coast-card-body { display: flex; flex-direction: column; gap: 4px; padding: var(--spacing-md) 0; }
+.rh-coast-card-top { display: flex; align-items: center; gap: var(--spacing-sm); flex-wrap: wrap; }
+.rh-coast-card-go { color: var(--rh-accent); white-space: nowrap; }
+@media (max-width: 1023px) {
+  .rh-coasts { grid-template-columns: 1fr; }
+  .rh-coasts-map { position: static; }
+  .rh-coast-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 639px) {
+  .rh-coast-card { grid-template-columns: 1fr; padding-right: 0; }
+  .rh-coast-card-img { width: 100%; height: 160px; }
+  .rh-coast-card-body { padding: 0 var(--spacing-lg); }
+  .rh-coast-card-go { padding: 0 var(--spacing-lg) var(--spacing-lg); }
+}
+.rh-coast-halo { transform-box: fill-box; transform-origin: center; }
+.rh-coast-country { fill: #222b30; }

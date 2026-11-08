@@ -321,3 +321,44 @@ export function MiniMap({ lat, lon, zoom = 18, size = 420, label }: { lat: numbe
     </svg>
   );
 }
+
+/* Country map for section 04: Saudi Arabia with its two coasts and the capital.
+ * Pins are the locations; the active coast draws short dashed reach lines in
+ * the direction its ports face. Boundaries: Natural Earth. */
+export interface CoastPin extends LatLon { id: string; name: string; coast: string; labelAt?: 'left' | 'right' | 'above' | 'below' }
+export function CoastMap({ pins, active, onPick, reach = [], size = 560 }: { pins: CoastPin[]; active: string; onPick?: (coast: string) => void; reach?: { from: LatLon; to: LatLon }[]; size?: number }) {
+  const [hi, setHi] = React.useState<Countries | null>(countries50);
+  React.useEffect(() => { if (!hi) load50().then(setHi).catch(() => undefined); }, [hi]);
+  const projection = React.useMemo(() => geoOrthographic().translate([size / 2, size / 2]).scale(size * 2.05).rotate([-45.2, -24.2]).clipAngle(90), [size]);
+  const path = React.useMemo(() => geoPath(projection), [projection]);
+  const data = hi ?? COUNTRIES_110;
+  return (
+    <svg className="rh-coastmap" viewBox={`0 0 ${size} ${size}`} role="img" aria-label="Map of Saudi Arabia with the Red Sea coast, the Arabian Gulf coast and Riyadh">
+      <defs>
+        <radialGradient id="rh-coast-sea" cx="50%" cy="50%" r="70%"><stop offset="0%" stopColor="#16242a" /><stop offset="100%" stopColor="#0a1113" /></radialGradient>
+      </defs>
+      <rect width={size} height={size} fill="url(#rh-coast-sea)" />
+      <g>
+        {data.features.map((f) => <path key={String(f.id)} d={path(f) ?? ''} className={String(f.id) === '682' ? 'rh-coast-country rh-coast-country--home' : 'rh-coast-country'} />)}
+      </g>
+      {reach.map((r, i) => {
+        const d = path({ type: 'LineString', coordinates: [[r.from.lon, r.from.lat], [r.to.lon, r.to.lat]] });
+        return d ? <path key={i} d={d} className="rh-coast-reach" /> : null;
+      })}
+      {pins.map((p) => {
+        const q = projection([p.lon, p.lat]); if (!q) return null;
+        const on = p.coast === active;
+        const dx = p.labelAt === 'left' ? -12 : p.labelAt === 'above' || p.labelAt === 'below' ? 0 : 12;
+        const dy = p.labelAt === 'above' ? -12 : p.labelAt === 'below' ? 20 : 4;
+        return (
+          <g key={p.id} transform={`translate(${q[0]} ${q[1]})`} className={on ? 'rh-coast-pin rh-coast-pin--on' : 'rh-coast-pin'} onClick={() => onPick?.(p.coast)} role={onPick ? 'button' : undefined} tabIndex={onPick ? 0 : undefined} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onPick?.(p.coast); }}>
+            <title>{p.name}</title>
+            {on && <circle r={16} className="rh-coast-halo" />}
+            <circle r={on ? 6 : 4.5} className="rh-coast-dot" />
+            <text x={dx} y={dy} textAnchor={p.labelAt === 'left' ? 'end' : p.labelAt === 'above' || p.labelAt === 'below' ? 'middle' : 'start'} className="rh-coast-label">{p.name}</text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
