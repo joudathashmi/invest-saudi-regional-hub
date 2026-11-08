@@ -15,11 +15,13 @@ import { Logo } from './Logo';
 export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
   const [detail, setDetail] = React.useState<(typeof COMPANIES)[number] | null>(null);
   const [filter, setFilter] = React.useState<RouteId | 'all'>('all');
+  const [all, setAll] = React.useState(false);
   const routeTitle = (id: RouteId) => ROUTES.find((r) => r.id === id)?.title.replace(' (Regional Headquarters)', '') ?? id;
   const matches = (c: (typeof COMPANIES)[number]) => (!ctx.route || c.route === ctx.route) && (!ctx.industry || c.industry === ctx.industry);
   const story = COMPANIES.find((c) => c.story && matches(c)) ?? COMPANIES.find((c) => c.story && (!ctx.route || c.route === ctx.route)) ?? COMPANIES.find((c) => c.story)!;
   const mono = (n: string) => n.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase();
-  const list = COMPANIES.filter((c) => filter === 'all' || c.route === filter);
+  const full = COMPANIES.filter((c) => filter === 'all' || c.route === filter);
+  const list = all ? full : full.slice(0, 8);
   const counts = ROUTES.map((r) => ({ id: r.id, title: routeTitle(r.id), n: COMPANIES.filter((c) => c.route === r.id).length })).filter((x) => x.n > 0);
 
   return (
@@ -56,6 +58,9 @@ export function CompaniesBand({ DS, ctx }: { DS: DS; ctx: HubContext }) {
             </button>
           ))}
         </div>
+        {full.length > 8 && (
+          <div className="rh-actions"><DS.Button hierarchy="link-gray" size="md" iconLeading={all ? 'chevron-up' : 'chevron-down'} onClick={() => setAll(!all)}>{all ? 'Show fewer' : `Show all ${full.length}`}</DS.Button></div>
+        )}
         <p className="text-xs-regular rh-tertiary rh-para">Names from public announcements. Marks are loaded from public sources for this prototype and are each company&rsquo;s trademark; production use needs the company&rsquo;s consent and the brand team&rsquo;s files. Tiles outside your current case are dimmed, not hidden.</p>
       </div>
       {detail && (

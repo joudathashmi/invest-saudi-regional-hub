@@ -39,6 +39,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
   type Step = Mode | 'integrated';
   const STEPS: Step[] = ['air', 'sea', 'ground', 'corridors', 'digital', 'integrated'];
   const [step, setStep] = React.useState<Step>('air');
+  const [crossingsOpen, setCrossingsOpen] = React.useState(false);
   const [layer, setLayer] = React.useState<Layer>('all');
   const [view, setView] = React.useState<GlobeView>(REGION_VIEW);
   const [details, setDetails] = React.useState<Step | null>(null);
@@ -237,6 +238,9 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                 <h3 className="display-sm-semibold rh-h3">{STEP_META[k].title}</h3>
                 <p className="text-md-regular rh-muted rh-para">{legendFor(k)}</p>
                 {k === 'integrated' ? (
+                  <>
+                    <div className="rh-actions"><DS.Button hierarchy="link-gray" size="md" iconLeading={crossingsOpen ? 'chevron-up' : 'chevron-down'} onClick={() => setCrossingsOpen(!crossingsOpen)}>{crossingsOpen ? 'Hide border crossings' : `Border crossings (${crossings.length})`}</DS.Button></div>
+                    {crossingsOpen && (
                   <div className="rh-table-wrap">
                     <DS.Table
                       title="Border crossings"
@@ -250,6 +254,8 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                       rows={crossings}
                     />
                   </div>
+                    )}
+                  </>
                 ) : (
                   <dl className="rh-statline">
                     {(k === 'digital' ? [...DIGITAL_FIGURES.slice(0, 2), ...COMPUTE_FIGURES.slice(0, 2)] : k === 'air' ? [REACH[0], REACH[1], ...AVIATION_FIGURES] : k === 'corridors' ? FREIGHT_FIGURES.filter((f) => f.status !== 'unavailable') : CONNECTIVITY_FIGURES).map((f) => (
@@ -260,7 +266,7 @@ export function ConnectivityBand({ DS, ctx, onChange }: { DS: DS; ctx: HubContex
                     ))}
                   </dl>
                 )}
-                {k !== 'integrated' && (
+                {k !== 'integrated' && step === k && (
                   <div className="rh-relevance">
                     {(k === 'corridors' ? FREIGHT_RELEVANCE : MODE_RELEVANCE[k as keyof typeof MODE_RELEVANCE]).map((r) => (
                       <p key={r.who} className="text-md-regular rh-muted rh-para">

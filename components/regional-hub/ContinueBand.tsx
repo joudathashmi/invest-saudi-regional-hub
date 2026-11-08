@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import type { DS } from '@/lib/ds';
 import { FAQ_ITEMS, ROUTES } from '@/data/regional-hub';
 import { Reveal, marketNames, type HubContext } from './shared';
@@ -9,6 +10,7 @@ import { Reveal, marketNames, type HubContext } from './shared';
  * case summary that travels with the request, then the FAQ and the sideways links.
  */
 export function ContinueBand({ DS, ctx, onEditCase }: { DS: DS; ctx: HubContext; onEditCase: () => void }) {
+  const [faq, setFaq] = React.useState(false);
   const routeTitle = ctx.route ? ROUTES.find((r) => r.id === ctx.route)?.title : null;
   const summary = [ctx.industry, routeTitle, ctx.markets.length ? marketNames(ctx.markets) : null].filter(Boolean).join(' · ');
   const query = new URLSearchParams({ page: 'regional-hub', ...(ctx.industry ? { industry: ctx.industry } : {}), ...(ctx.route ? { route: ctx.route } : {}), ...(ctx.markets.length ? { markets: ctx.markets.join(',') } : {}) }).toString();
@@ -45,8 +47,8 @@ export function ContinueBand({ DS, ctx, onEditCase }: { DS: DS; ctx: HubContext;
           <DS.Button hierarchy="link-gray" size="md" href="/sectors">Sectors</DS.Button>
           <DS.Button hierarchy="link-gray" size="md" href="/opportunities">Opportunities</DS.Button>
         </div>
-        <h3 className="display-xs-semibold rh-h3">Questions investors ask</h3>
-        <DS.FAQ items={FAQ_ITEMS} firstOpen />
+        <div className="rh-actions"><DS.Button hierarchy="link-gray" size="md" iconLeading={faq ? 'chevron-up' : 'help-circle'} onClick={() => setFaq(!faq)}>{faq ? 'Hide questions' : 'Questions investors ask'}</DS.Button></div>
+        {faq && <DS.FAQ items={FAQ_ITEMS} firstOpen />}
       </div>
     </section>
   );
